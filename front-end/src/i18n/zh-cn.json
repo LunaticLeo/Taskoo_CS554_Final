@@ -1,0 +1,9 @@
+{
+	"email": "电子邮箱",
+	"password": "密码",
+	"signin": "登录",
+	"signup": "注册",
+	"firstname": "名称",
+	"lastname": "姓氏",
+	"department": "部门"
+}
