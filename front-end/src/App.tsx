@@ -1,45 +1,52 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { createContext, useMemo, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Box, PaletteMode } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Account from './components/account/Account';
+
+export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [mode, setMode] = useState<PaletteMode>('light');
+	const colorMode = useMemo(
+		() => ({
+			// The dark mode switch would invoke this method
+			toggleColorMode: () => {
+				setMode((prevMode: PaletteMode) => (prevMode === 'light' ? 'dark' : 'light'));
+			}
+		}),
+		[]
+	);
+	const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
+	return (
+		<ColorModeContext.Provider value={colorMode}>
+			<ThemeProvider theme={theme}>
+				<Router>
+					<Box sx={{ height: '100vh' }}>
+						<Routes>
+							<Route path='*' element={<Account />} />
+							<Route path='/account' element={<Account />} />
+						</Routes>
+					</Box>
+				</Router>
+			</ThemeProvider>
+		</ColorModeContext.Provider>
+	);
 }
 
-export default App
+const getDesignTokens = (mode: PaletteMode) => ({
+	palette: {
+		mode,
+		...(mode === 'light'
+			? {
+					primary: { main: '#3f6af6' },
+					background: { default: '#eef2f5' }
+			  }
+			: {
+					background: { default: '#121212' }
+			  })
+	}
+});
+
+export default App;
