@@ -9,7 +9,7 @@ const LangButton: React.FC<{ sx?: SxProps<Theme> }> = ({ sx }) => {
 
 	return (
 		<>
-			<IconButton sx={sx} size='large' onClick={e => setAnchorEl(e.currentTarget)}>
+			<IconButton sx={sx} size='large' onClick={e => setAnchorEl(e.currentTarget)} aria-label='lang-btn'>
 				<TranslateIcon />
 			</IconButton>
 

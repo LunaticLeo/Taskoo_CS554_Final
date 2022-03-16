@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { styled, Switch } from '@mui/material';
+import { Box, styled, Switch } from '@mui/material';
 import { ColorModeContext } from '../App';
 
 const ModeSwitch = styled(Switch)(({ theme }) => ({
@@ -51,7 +51,11 @@ const ModeSwitch = styled(Switch)(({ theme }) => ({
 
 const ThemeSwitch: React.FC = () => {
 	const colorMode = useContext(ColorModeContext);
-	return <ModeSwitch sx={{ mt: 1, mb: 1 }} onChange={colorMode.toggleColorMode} />;
+	return (
+		<Box component='label'>
+			<ModeSwitch sx={{ mt: 1, mb: 1 }} onChange={colorMode.toggleColorMode} />
+		</Box>
+	);
 };
 
 export default ThemeSwitch;
