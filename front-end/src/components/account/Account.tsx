@@ -12,9 +12,9 @@ const Account: React.FC = () => {
 			<Stack
 				sx={{
 					position: 'absolute',
-					top: { md: 15, xs: 'auto' },
+					top: { sm: 15, xs: 'auto' },
 					right: 15,
-					bottom: { md: 'auto', xs: 15 },
+					bottom: { sm: 'auto', xs: 15 },
 					zIndex: theme => theme.zIndex.appBar
 				}}
 				direction='row'

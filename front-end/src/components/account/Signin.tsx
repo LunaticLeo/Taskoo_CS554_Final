@@ -9,14 +9,14 @@ const Signin: React.FC = () => {
 	return (
 		<Box
 			sx={{
-				width: { lg: '30%', md: '40%', xs: '100%' },
-				height: { lg: '70%', md: '85%', xs: '100%' },
+				width: { lg: '30%', md: '40%', sm: '60%', xs: '100%' },
+				height: 'fit-content',
 				padding: { lg: 9, md: 6, xs: 3 }
 			}}
 			className='all-center'
 		>
-			<Logo />
 			<Stack component='form' autoComplete='off' spacing={5}>
+				<Logo />
 				<TextField id='email' label={t('email')} variant='standard' type='email' />
 				<TextField id='password' label={t('password')} variant='standard' type='password' />
 				<Button size='large' variant='contained'>

@@ -14,7 +14,7 @@ const LangButton: React.FC<{ sx?: SxProps<Theme> }> = ({ sx }) => {
 			</IconButton>
 
 			<Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
-				<MenuItem onClick={() => i18n.changeLanguage('en')}>English (United State)</MenuItem>
+				<MenuItem onClick={() => i18n.changeLanguage('en')}>English (United States)</MenuItem>
 				<MenuItem onClick={() => i18n.changeLanguage('cn')}>简体中文</MenuItem>
 			</Menu>
 		</>
