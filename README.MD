@@ -23,3 +23,4 @@ This web application is used by organizations (company/university) to manage pro
 
 ## Documentation 📖
 * [Technical Implementation Plan](https://stevens0-my.sharepoint.com/:w:/g/personal/sxiong5_stevens_edu/EWJkiuUG4PhEliMxonPS0RQBJVH_C_mfK4eOoFqYGfcwnQ?e=4dv2rL)
+* [Database Design ](https://stevens0-my.sharepoint.com/:w:/g/personal/sxiong5_stevens_edu/EfxWAIsqfp5FmLfp-46rxpIBk4Ep4YOiGzqBIBuWKB3gyQ?e=a7fxRu)
