@@ -1,7 +1,7 @@
 import { createContext, useMemo, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Box, PaletteMode } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material/styles';
 import Account from './components/account/Account';
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -35,15 +35,18 @@ function App() {
 	);
 }
 
-const getDesignTokens = (mode: PaletteMode) => ({
+// set the paramters for theme
+const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 	palette: {
 		mode,
 		...(mode === 'light'
 			? {
+					// light mode
 					primary: { main: '#3f6af6' },
 					background: { default: '#eef2f5' }
 			  }
 			: {
+					// dark mode
 					background: { default: '#121212' }
 			  })
 	}

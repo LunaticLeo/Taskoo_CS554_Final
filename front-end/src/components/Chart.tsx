@@ -29,7 +29,7 @@ const Chart: React.FC<ChartProps> = ({ option, sx, height = '100%', width = '100
 		};
 	}, [option]);
 
-	const resize = () => chart?.resize;
+	const resize = () => chart?.resize();
 
 	return <Box sx={{ ...sx, width, height }} ref={chartRef}></Box>;
 };

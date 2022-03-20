@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Logo from '../Logo';
 import { useParams, Link as RouterLink } from 'react-router-dom';
+import { toCapitalize } from '@/utils';
+import Logo from '../Logo';
 
 const Signup: React.FC = () => {
 	const { t } = useTranslation();
 	const { firstname, lastname } = useParams();
+
+	const firstName = useMemo(() => toCapitalize(firstname!), [firstname]);
+	const lastName = useMemo(() => toCapitalize(lastname!), [lastname]);
 
 	return (
 		<Box
@@ -20,8 +24,8 @@ const Signup: React.FC = () => {
 			<Stack component='form' autoComplete='off' spacing={1.5}>
 				<Logo />
 				<Stack direction='row' justifyContent='space-between' spacing={1.5}>
-					<TextField id='firstname' label={t('firstname')} variant='standard' disabled value={firstname} />
-					<TextField id='lastname' label={t('lastname')} variant='standard' disabled value={lastname} />
+					<TextField id='firstname' label={t('firstname')} variant='standard' disabled value={firstName} />
+					<TextField id='lastname' label={t('lastname')} variant='standard' disabled value={lastName} />
 				</Stack>
 				<TextField id='email' label={t('email')} variant='standard' type='email' />
 				<TextField id='password' label={t('password')} variant='standard' type='password' />
