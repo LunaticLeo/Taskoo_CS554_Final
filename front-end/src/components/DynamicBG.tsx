@@ -12,6 +12,13 @@ const DynamicBG: React.FC = () => {
 		canvas.height = window.innerHeight;
 		const ctx = canvas.getContext('2d')!;
 
+		const resize = () => {
+			console.log(1);
+
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+
 		const rects: RoundSquare[] = [];
 		const count = canvas.width <= theme.breakpoints.values.sm ? 10 : 20;
 		for (let i = 0; i < count; i++) {
@@ -29,6 +36,9 @@ const DynamicBG: React.FC = () => {
 		};
 
 		update();
+
+		window.addEventListener('resize', resize);
+		return () => window.removeEventListener('resize', resize);
 	}, []);
 
 	return <Box component='canvas' ref={canvasRef}></Box>;
