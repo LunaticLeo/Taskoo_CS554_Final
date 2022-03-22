@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 
 const DynamicBG: React.FC = () => {
 	const colors = ['#1c4189', '#d1504c', '#20a17d', '#e1ac35'];
 	const canvasRef = useRef<HTMLCanvasElement>();
+	const theme = useTheme();
 
 	useEffect(() => {
 		const { current: canvas } = canvasRef as React.MutableRefObject<HTMLCanvasElement>;
@@ -12,7 +13,7 @@ const DynamicBG: React.FC = () => {
 		const ctx = canvas.getContext('2d')!;
 
 		const rects: RoundSquare[] = [];
-		const count = canvas.width <= 900 ? 10 : 20;
+		const count = canvas.width <= theme.breakpoints.values.sm ? 10 : 20;
 		for (let i = 0; i < count; i++) {
 			const len = ~~(Math.random() * 50) + 20;
 			const x = ~~(Math.random() * (canvas.width - len)) + len;
@@ -22,9 +23,7 @@ const DynamicBG: React.FC = () => {
 
 		const update = () => {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			for (let i = 0; i < rects.length; i++) {
-				rects[i].animate();
-			}
+			rects.forEach(item => item.animate());
 
 			window.requestAnimationFrame(update);
 		};

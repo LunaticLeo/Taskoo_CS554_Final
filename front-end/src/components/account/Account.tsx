@@ -25,10 +25,19 @@ const Account: React.FC = () => {
 				<ThemeSwitch />
 				<LangButton />
 			</Stack>
-			<Routes>
-				<Route path='/' element={<Signin />} />
-				<Route path='/account/signup/:firstname/:lastname' element={<Signup />} />
-			</Routes>
+			<Box
+				sx={{
+					width: { lg: '30%', md: '40%', sm: '60%', xs: '100%' },
+					height: 'fit-content',
+					padding: { lg: 9, md: 6, xs: 3 }
+				}}
+				className='all-center'
+			>
+				<Routes>
+					<Route path='/signin' element={<Signin />} />
+					<Route path='/signup/:firstname/:lastname' element={<Signup />} />
+				</Routes>
+			</Box>
 		</Box>
 	);
 };
