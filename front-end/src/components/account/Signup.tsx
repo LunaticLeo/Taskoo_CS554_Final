@@ -36,9 +36,9 @@ const Signup: React.FC = () => {
 				</Button>
 
 				<Typography variant='body2' color='text.secondary' sx={{ alignSelf: 'flex-end' }}>
-					Already have an account? Go to{' '}
+					{t('signupTip')}
 					<Link component={RouterLink} to='/'>
-						Sign In
+						{t('signin')}
 					</Link>
 				</Typography>
 			</Stack>
