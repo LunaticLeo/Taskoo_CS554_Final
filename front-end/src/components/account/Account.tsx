@@ -5,10 +5,12 @@ import Signin from './Signin';
 import LangButton from '../LangButton';
 import ThemeSwitch from '../ThemeSwitch';
 import Signup from './Signup';
+import DynamicBG from '../DynamicBG';
 
 const Account: React.FC = () => {
 	return (
-		<Box sx={{ height: '100%', background: theme => theme.palette.background.default }}>
+		<Box sx={{ height: '100%' }}>
+			<DynamicBG />
 			<Stack
 				sx={{
 					position: 'absolute',
@@ -25,7 +27,7 @@ const Account: React.FC = () => {
 			</Stack>
 			<Routes>
 				<Route path='/' element={<Signin />} />
-				<Route path='/signup/:firstname/:lastname' element={<Signup />} />
+				<Route path='/account/signup/:firstname/:lastname' element={<Signup />} />
 			</Routes>
 		</Box>
 	);
