@@ -9,7 +9,7 @@ import DynamicBG from '../DynamicBG';
 
 const Account: React.FC = () => {
 	return (
-		<Box sx={{ height: '100%' }}>
+		<Box sx={{ height: '100%', background: theme => theme.palette.background.default }}>
 			<DynamicBG />
 			<Stack
 				sx={{

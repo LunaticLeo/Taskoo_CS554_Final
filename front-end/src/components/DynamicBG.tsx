@@ -31,14 +31,7 @@ const DynamicBG: React.FC = () => {
 		update();
 	}, []);
 
-	return (
-		<Box
-			className='canvasBg'
-			component='canvas'
-			ref={canvasRef}
-			sx={{ background: theme => theme.palette.background.default }}
-		></Box>
-	);
+	return <Box component='canvas' ref={canvasRef}></Box>;
 };
 
 class RoundSquare {
