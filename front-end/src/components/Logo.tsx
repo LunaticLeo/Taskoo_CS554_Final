@@ -1,14 +1,28 @@
-import React from 'react';
+import React, { RefObject, useEffect, useRef } from 'react';
 import Chart from './Chart';
 import { GraphicComponentOption } from 'echarts/components';
 import { ComposeOption } from 'echarts/core';
 import { useTheme } from '@mui/material';
+import VanillaTilt, { HTMLVanillaTiltElement } from 'vanilla-tilt';
 
 const Logo: React.FC = () => {
-	const option = createLogo({ fontSize: 40 });
+	const option = createLogo({ fontSize: 50 });
+	const logoRef = useRef<RefObject<HTMLElement>>(null);
+	useEffect(() => {
+		const { current } = logoRef.current! as RefObject<HTMLVanillaTiltElement>;
+		VanillaTilt.init(current!, { max: 40, scale: 1.5 });
+
+		return () => current!.vanillaTilt.destroy();
+	});
 
 	return (
-		<Chart sx={{ margin: 'auto', minWidth: '140px', minHeight: '75px' }} height='20%' width='40%' option={option} />
+		<Chart
+			ref={logoRef}
+			sx={{ minWidth: '140px', minHeight: '75px', alignSelf: 'center' }}
+			height='20%'
+			width='60%'
+			option={option}
+		/>
 	);
 };
 
@@ -19,6 +33,7 @@ export const createLogo = ({ color, fontSize }: logoProps): ComposeOption<Graphi
 
 	return {
 		graphic: {
+			id: 'logo',
 			elements: [
 				{
 					type: 'text',
