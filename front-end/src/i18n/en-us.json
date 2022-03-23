@@ -1,0 +1,10 @@
+{
+	"email": "Email",
+	"password": "Password",
+	"signin": "Sign In",
+	"signup": "Sign Up",
+	"firstname": "First Name",
+	"lastname": "Last Name",
+	"department": "Department",
+	"signupTip": "Already have an account? Go to "
+}
