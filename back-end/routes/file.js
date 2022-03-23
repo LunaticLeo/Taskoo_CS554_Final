@@ -3,7 +3,7 @@ const { file } = require('../data');
 
 router.post('/upload', async (req, res) => {
 	try {
-		const { attachment } = req.files;
+		const attachment = req.file;
 		const url = await file.upload(attachment);
 		res.json({
 			message: 'Upload was successful',

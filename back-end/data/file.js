@@ -9,21 +9,20 @@ const bucket = storage.bucket('taskoo_bucket');
  */
 const upload = file =>
 	new Promise((resolve, reject) => {
-		const { name } = file;
+		const { originalname, buffer } = file;
 
-		const blob = bucket.file(name.replace(/ /g, '_'));
+		const blob = bucket.file(originalname.replace(/ /g, '_'));
 		const blobStream = blob.createWriteStream({ resumable: false });
 		blobStream
 			.on('finish', async () => {
-				const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-				await bucket.file(name).makePrivate();
+				const publicUrl = `https://storage.cloud.google.com/${bucket.name}/${blob.name}`;
 				resolve(publicUrl);
 			})
 			.on('error', error => {
 				console.log(error);
 				reject(`Unable to upload file, something went wrong`);
 			})
-			.end();
+			.end(buffer);
 	});
 
 module.exports = { upload };
