@@ -1,9 +1,9 @@
-import { createContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useMemo, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Box, PaletteMode } from '@mui/material';
 import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material/styles';
 import Account from './components/account/Account';
-import Error from './components/Error';
+import Error from './components/layout/Error';
 import { getMediaTheme } from './utils';
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });

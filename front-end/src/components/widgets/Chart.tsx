@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { forwardRef, RefObject, useEffect, useImperativeHandle, useRef } from 'react';
 import * as echarts from 'echarts/core';
 import { GraphicComponent, GraphicComponentOption } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -12,8 +12,15 @@ interface ChartProps {
 }
 export type Option = echarts.ComposeOption<GraphicComponentOption>;
 
-const Chart: React.FC<ChartProps> = ({ option, sx, height = '100%', width = '100%' }) => {
+const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> = (
+	{ option, sx, height = '100%', width = '100%' },
+	ref
+) => {
 	const chartRef = useRef<HTMLDivElement>(null);
+
+	useImperativeHandle(ref, () => ({
+		current: chartRef.current
+	}));
 
 	let chart: echarts.ECharts;
 	useEffect(() => {
@@ -36,4 +43,4 @@ const Chart: React.FC<ChartProps> = ({ option, sx, height = '100%', width = '100
 
 echarts.use([GraphicComponent, CanvasRenderer]);
 
-export default Chart;
+export default forwardRef(Chart);

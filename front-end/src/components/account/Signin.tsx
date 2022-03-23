@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Stack, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Logo from '../Logo';
+import Logo from '../widgets/Logo';
 
 const Signin: React.FC = () => {
 	const { t } = useTranslation();
