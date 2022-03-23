@@ -2,7 +2,6 @@ const express = require('express');
 const session = require('express-session');
 const app = express();
 const configRoutes = require('./routes');
-// const bodyParser = require('body-parser')
 const multer = require('multer');
 
 const multerMid = multer({
@@ -13,13 +12,10 @@ const multerMid = multer({
 });
 
 app.use(express.json());
-// app.use(fileUpload());
 app.use(express.urlencoded({ extended: true }));
 
 app.disable('x-powered-by');
 app.use(multerMid.single('file'));
-// app.use(bodyParser.json())
-// app.use(bodyParser.urlencoded({extended: false}))
 app.use(
 	session({
 		name: 'AuthCookie',
