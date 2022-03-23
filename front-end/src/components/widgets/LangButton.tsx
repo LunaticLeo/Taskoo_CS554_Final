@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { IconButton, Menu, MenuItem, SxProps, Theme } from '@mui/material';
 import TranslateIcon from '@mui/icons-material/Translate';
-import i18n from '../i18n';
+import i18n from '@/i18n';
 
 const LangButton: React.FC<{ sx?: SxProps<Theme> }> = ({ sx }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

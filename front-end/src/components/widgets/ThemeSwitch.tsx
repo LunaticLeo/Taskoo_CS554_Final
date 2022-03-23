@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Box, styled, Switch } from '@mui/material';
-import { ColorModeContext } from '../App';
+import { ColorModeContext } from '@/App';
 
 const ModeSwitch = styled(Switch)(({ theme }) => ({
 	width: 62,

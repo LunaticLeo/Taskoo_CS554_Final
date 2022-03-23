@@ -3,7 +3,7 @@ import { Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import { toCapitalize } from '@/utils';
-import Logo from '../Logo';
+import Logo from '../widgets/Logo';
 
 const Signup: React.FC = () => {
 	const { t } = useTranslation();

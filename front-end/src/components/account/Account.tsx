@@ -2,10 +2,10 @@ import React from 'react';
 import { Box, Stack } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 import Signin from './Signin';
-import LangButton from '../LangButton';
-import ThemeSwitch from '../ThemeSwitch';
+import LangButton from '../widgets/LangButton';
+import ThemeSwitch from '../widgets/ThemeSwitch';
 import Signup from './Signup';
-import DynamicBG from '../DynamicBG';
+import DynamicBG from '../layout/DynamicBG';
 
 const Account: React.FC = () => {
 	return (
