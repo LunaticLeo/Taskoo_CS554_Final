@@ -6,6 +6,7 @@ const bucket = storage.bucket('taskoo_bucket');
 
 /**
  * @param {File} file
+ * @returns {Promise<String>} the url of the file
  */
 const upload = file =>
 	new Promise((resolve, reject) => {
@@ -18,8 +19,7 @@ const upload = file =>
 				const publicUrl = `https://storage.cloud.google.com/${bucket.name}/${blob.name}`;
 				resolve(publicUrl);
 			})
-			.on('error', error => {
-				console.log(error);
+			.on('error', () => {
 				reject(`Unable to upload file, something went wrong`);
 			})
 			.end(buffer);
