@@ -4,7 +4,7 @@
 <img src="https://img.shields.io/badge/-React-eee?style=flat-square&logo=react" />
 <img src="https://img.shields.io/badge/-TypeScript-eee?style=flat-square&logo=typescript" />
 <img src="https://img.shields.io/badge/-NodeJS-eee?style=flat-square&logo=node.js" />
-<img src="https://img.shields.io/badge/-MySQL-eee?style=flat-square&logo=mongodb" />
+<img src="https://img.shields.io/badge/-MongoDB-eee?style=flat-square&logo=mongodb" />
 </p>
 
 <p>
