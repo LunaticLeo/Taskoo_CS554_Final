@@ -1,0 +1,67 @@
+{
+	"departments": [
+		{
+			"name": "Product Development Department"
+		},
+		{
+			"name": "Researchand Development Department"
+		}
+	],
+	"positions": [
+		{ "name": "Product Manager", "level": 0 },
+		{ "name": "Architect", "level": 1 },
+		{ "name": "UI Designer", "level": 2 },
+		{ "name": "Software Development Engineer", "level": 2 },
+		{ "name": "Test Engineer", "level": 2 },
+		{ "name": "Algorithm Engineer", "level": 2 }
+	],
+	"roles": [
+		{ "name": "Manager" },
+		{ "name": "Front-end Developer" },
+		{ "name": "Back-end Developer" },
+		{ "name": "Test Engineer" }
+	],
+	"status": [{ "name": "Pending" }, { "name": "Processing" }, { "name": "Testing" }, { "name": "Done" }],
+	"account": [
+		{
+			"email": "sxiong5@taskoo.com",
+			"password": "123456",
+			"firstName": "Shihao",
+			"lastName": "Xiong",
+			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0586.JPG",
+			"disabled": false
+		},
+		{
+			"email": "yufu@taskoo.com",
+			"password": "123456",
+			"firstName": "Yufu",
+			"lastName": "Liao",
+			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0587.JPG",
+			"disabled": false
+		},
+		{
+			"email": "shilin@taskoo.com",
+			"password": "123456",
+			"firstName": "Shilin",
+			"lastName": "Ding",
+			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0588.JPG",
+			"disabled": false
+		},
+		{
+			"email": "peixin@taskoo.com",
+			"password": "123456",
+			"firstName": "Peixin",
+			"lastName": "Dai",
+			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0589.JPG",
+			"disabled": false
+		},
+		{
+			"email": "wenqing@taskoo.com",
+			"password": "123456",
+			"firstName": "Wenqing",
+			"lastName": "Zhou",
+			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0590.JPG",
+			"disabled": false
+		}
+	]
+}
