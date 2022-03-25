@@ -42,6 +42,20 @@ module.exports = {
 			throw Error(`manager id: ${param} is not valid`);
 		}
 		return param;
+	},
+
+	bucket(param) {
+		if (!validate(param)) {
+			throw Error(`bucket id: ${param} is not valid`);
+		}
+		return param;
+	},
+
+	owner(param) {
+		if (!validate(param)) {
+			throw Error(`the id of owner: ${param} is not valid`);
+		}
+		return param;
 	}
 };
 

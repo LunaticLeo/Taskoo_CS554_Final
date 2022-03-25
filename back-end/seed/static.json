@@ -1,8 +1,27 @@
 {
-	"departments": [],
-	"positions": [],
-	"roles": [],
-	"status": [],
+	"departments": [
+		{
+			"name": "Product Development Department"
+		},
+		{
+			"name": "Researchand Development Department"
+		}
+	],
+	"positions": [
+		{ "name": "Product Manager", "level": 0 },
+		{ "name": "Architect", "level": 1 },
+		{ "name": "UI Designer", "level": 2 },
+		{ "name": "Software Development Engineer", "level": 2 },
+		{ "name": "Test Engineer", "level": 2 },
+		{ "name": "Algorithm Engineer", "level": 2 }
+	],
+	"roles": [
+		{ "name": "Manager" },
+		{ "name": "Front-end Developer" },
+		{ "name": "Back-end Developer" },
+		{ "name": "Test Engineer" }
+	],
+	"status": [{ "name": "Pending" }, { "name": "Processing" }, { "name": "Testing" }, { "name": "Done" }],
 	"account": [
 		{
 			"email": "sxiong5@taskoo.com",
