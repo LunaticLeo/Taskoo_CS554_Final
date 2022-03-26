@@ -4,7 +4,7 @@
 <img src="https://img.shields.io/badge/-React-eee?style=flat-square&logo=react" />
 <img src="https://img.shields.io/badge/-TypeScript-eee?style=flat-square&logo=typescript" />
 <img src="https://img.shields.io/badge/-NodeJS-eee?style=flat-square&logo=node.js" />
-<img src="https://img.shields.io/badge/-MySQL-eee?style=flat-square&logo=mongodb" />
+<img src="https://img.shields.io/badge/-MongoDB-eee?style=flat-square&logo=mongodb" />
 </p>
 
 <p>
@@ -25,3 +25,4 @@ This web application is used by organizations (company/university) to manage pro
 * [Technical Implementation Plan](https://stevens0-my.sharepoint.com/:w:/g/personal/sxiong5_stevens_edu/EWJkiuUG4PhEliMxonPS0RQBJVH_C_mfK4eOoFqYGfcwnQ?e=4dv2rL)
 * [Project Features ](https://stevens0-my.sharepoint.com/:w:/g/personal/yliao10_stevens_edu/EWtM_BAAjthHj5dDtcM9W-8BXkLfIYMzv8x_0xUkKB1zXQ?e=fAyAbY)
 * [Database Design ](https://stevens0-my.sharepoint.com/:w:/g/personal/sxiong5_stevens_edu/EfxWAIsqfp5FmLfp-46rxpIBk4Ep4YOiGzqBIBuWKB3gyQ?e=a7fxRu)
+* [Postman API Doc](https://app.getpostman.com/join-team?invite_code=97317db12f5c9057048125131286d414&ws=7d76f691-65f3-4312-a5bc-894eaac14632)
