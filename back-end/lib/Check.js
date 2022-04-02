@@ -16,7 +16,7 @@ module.exports = {
 			throw Error('name is not provided');
 		}
 
-		if (!isType(param, 'string')) {
+		if (!isType(param, 'string') || param.trim() === '') {
 			throw Error(`name: ${param} is not valid`);
 		}
 		return param;
@@ -54,6 +54,33 @@ module.exports = {
 	owner(param) {
 		if (!validate(param)) {
 			throw Error(`the id of owner: ${param} is not valid`);
+		}
+		return param;
+	},
+
+	firstName(param) {
+		this.name(param);
+	},
+
+	lastName(param) {
+		this.name(param);
+	},
+
+	// TODO
+	email(param) {
+		return param;
+	},
+
+	department(param) {
+		if (!validate(param)) {
+			throw Error(`the id of department: ${param} is not valid`);
+		}
+		return param;
+	},
+
+	position(param) {
+		if (!validate(param)) {
+			throw Error(`the id of position: ${param} is not valid`);
 		}
 		return param;
 	}
