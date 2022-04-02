@@ -1,9 +1,6 @@
 const { validate } = require('uuid');
 
 module.exports = {
-	/**
-	 * @description check the validation of _id
-	 */
 	_id(param) {
 		if (!validate(param)) {
 			throw Error(`_id: ${param} is not valid`);
@@ -59,11 +56,11 @@ module.exports = {
 	},
 
 	firstName(param) {
-		this.name(param);
+		return this.name(param);
 	},
 
 	lastName(param) {
-		this.name(param);
+		return this.name(param);
 	},
 
 	// TODO
