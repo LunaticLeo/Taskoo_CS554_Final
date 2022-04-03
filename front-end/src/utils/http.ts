@@ -1,12 +1,12 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 type RequestMethod = 'get' | 'post' | 'put' | 'delete';
 interface ResponseData<T> {
 	code: number;
 	message: string;
-	data: T;
+	data?: T;
 }
-type AxiosHttp = Record<RequestMethod, (path: string, param: Object) => Promise<AxiosResponse<ResponseData<unknown>>>>;
+type AxiosHttp = Record<RequestMethod, <T = {}>(path: string, param: Object) => Promise<ResponseData<T>>>;
 
 const METHODS: RequestMethod[] = ['get', 'post', 'put', 'delete'];
 const DEFAULT_CONFIG: AxiosRequestConfig = {
@@ -19,23 +19,23 @@ instance.interceptors.response.use(
 	res => (res.status >= 200 && res.status < 300 ? res.data : Promise.reject('Request error, please try again later!')),
 	err => {
 		const msg = err?.response?.data ?? err;
-		console.log('error: ' + msg);
+		console.error(msg);
 		return Promise.reject(msg);
 	}
 );
 
 const http: AxiosHttp = METHODS.reduce((pre, key: RequestMethod) => {
-	pre[key] = (path: string, param) => {
+	pre[key] = async <T>(path: string, param: Object) => {
 		const requestData = {
 			method: key,
 			url: path,
 			[key === 'get' ? 'params' : 'data']: param
 		};
 
-		return instance
+		return (await instance
 			.request(requestData)
 			.then(res => Promise.resolve(res))
-			.catch(err => Promise.reject(err));
+			.catch(err => Promise.reject(err))) as ResponseData<T>;
 	};
 	return pre;
 }, {} as AxiosHttp);

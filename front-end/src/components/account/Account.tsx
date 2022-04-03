@@ -35,7 +35,7 @@ const Account: React.FC = () => {
 			>
 				<Routes>
 					<Route path='/signin' element={<Signin />} />
-					<Route path='/signup/:firstname/:lastname' element={<Signup />} />
+					<Route path='/signup/:registerId' element={<Signup />} />
 				</Routes>
 			</Box>
 		</Box>
