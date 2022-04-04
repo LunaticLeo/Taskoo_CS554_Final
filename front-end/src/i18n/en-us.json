@@ -6,5 +6,6 @@
 	"firstname": "First Name",
 	"lastname": "Last Name",
 	"department": "Department",
+	"position": "Position",
 	"signupTip": "Already have an account? Go to "
 }
