@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Box, IconButton, Toolbar, Typography } from '@mui/material';
+import { Box, IconButton, Paper, Toolbar, Typography } from '@mui/material';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import Dashboard from './Dashboard';
@@ -15,9 +15,9 @@ const Home: React.FC = () => {
 	}, [pathname]);
 
 	return (
-		<Box sx={{ display: 'flex' }}>
+		<Box sx={{ display: 'flex', height: '100vh' }}>
 			<Nav openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
-			<Box component='main'>
+			<Paper component='main' square elevation={0} sx={{flex: 1}}>
 				<Toolbar>
 					<IconButton
 						aria-label='drawer-control'
@@ -34,7 +34,7 @@ const Home: React.FC = () => {
 					<Route path='/' element={<Navigate to='/home/dashboard' replace />} />
 					<Route path='/dashboard' element={<Dashboard />} />
 				</Routes>
-			</Box>
+			</Paper>
 		</Box>
 	);
 };
