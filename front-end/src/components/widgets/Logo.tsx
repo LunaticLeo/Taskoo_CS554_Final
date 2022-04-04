@@ -5,8 +5,8 @@ import { ComposeOption } from 'echarts/core';
 import { useTheme } from '@mui/material';
 import VanillaTilt, { HTMLVanillaTiltElement } from 'vanilla-tilt';
 
-const Logo: React.FC = () => {
-	const option = createLogo({ fontSize: 50 });
+const Logo: React.FC<{ fontSize?: number }> = ({ fontSize = 50 }) => {
+	const option = createLogo({ fontSize });
 	const logoRef = useRef<RefObject<HTMLElement>>(null);
 	useEffect(() => {
 		const { current } = logoRef.current! as RefObject<HTMLVanillaTiltElement>;
