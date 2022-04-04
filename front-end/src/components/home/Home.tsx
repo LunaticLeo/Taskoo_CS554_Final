@@ -4,14 +4,15 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import Dashboard from './Dashboard';
 import Nav from './Nav';
-import { toCapitalize } from '@/utils';
+import { useTranslation } from 'react-i18next';
 
 const Home: React.FC = () => {
+	const { t } = useTranslation();
 	const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 	const { pathname } = useLocation();
 	const curView = useMemo(() => {
 		const title = pathname.match(/\/home\/(\w+)$/);
-		return title ? toCapitalize(title[1]) : '';
+		return title ? title[1] : '';
 	}, [pathname]);
 
 	return (
@@ -27,7 +28,7 @@ const Home: React.FC = () => {
 						<MenuRoundedIcon />
 					</IconButton>
 					<Typography component='h1' variant='h4'>
-						{curView}
+						{t(`menu.${curView}`)}
 					</Typography>
 				</Toolbar>
 				<Routes>

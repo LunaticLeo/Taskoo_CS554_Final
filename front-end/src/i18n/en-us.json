@@ -7,5 +7,11 @@
 	"lastname": "Last Name",
 	"department": "Department",
 	"position": "Position",
-	"signupTip": "Already have an account? Go to "
+	"signupTip": "Already have an account? Go to ",
+	"menu": {
+		"dashboard": "Dashboard",
+		"project": "Project",
+		"calendar": "Calendar",
+		"organization": "Organization"
+	}
 }

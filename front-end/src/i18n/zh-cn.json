@@ -7,5 +7,11 @@
 	"lastname": "姓氏",
 	"department": "部门",
 	"position": "职位",
-	"signupTip": "已有账户，去"
+	"signupTip": "已有账户，去",
+	"menu": {
+		"dashboard": "控制台",
+		"project": "项目",
+		"calendar": "日程",
+		"organization": "组织"
+	}
 }
