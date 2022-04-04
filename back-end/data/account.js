@@ -4,6 +4,7 @@ const Check = require('../lib/Check');
 const dayjs = require('dayjs');
 const nodemailer = require('nodemailer');
 const Mail = require('nodemailer/lib/mailer');
+const mailConfig = require('../utils/mail.json');
 
 /**
  * add the account info to register list (waitting for sign up)
@@ -26,10 +27,10 @@ const addToRegisterList = async (accountInfo, email) => {
 
 	// MODIFY the content
 	await sendEmail({
-		from: '"Taskoo" <hr@taskoo.com>',
+		// from: '"Taskoo" <hr@taskoo.com>',
 		to: email,
 		subject: 'Taskoo Registe Invitation',
-		text: `http://localhost:3000/account/signup/shihao/xiong/${registerId}`
+		text: `http://localhost:3000/#/account/signup/${registerId}`
 	});
 
 	return registerId;
@@ -39,21 +40,20 @@ const addToRegisterList = async (accountInfo, email) => {
  * TODO
  * send email to target address
  * @param {Mail.Options} content the email detail content
- */
-const sendEmail = async content => {
-	const testAccount = await nodemailer.createTestAccount();
-	const transporter = nodemailer.createTransport({
-		host: 'smtp.ethereal.email',
-		port: 587,
-		secure: false, // true for 465, false for other ports
-		auth: {
-			user: testAccount.user, // generated ethereal user
-			pass: testAccount.pass // generated ethereal password
-		}
-	});
+ * mail = {
+ *     	to: 'yliao10@stevens.edu',
+ *     	subject: 'Message title',
+ *		text: 'content'
+ * 	};
+*/
 
+const sendEmail = async mail => {
+	const transporter = nodemailer.createTransport(mailConfig);
+
+	mail.from = "taskoo.cs554final@gmail.com";
 	// send mail
-	const info = await transporter.sendMail(content);
+	const info = await transporter.sendMail(mail);
+	// console.log(info)
 };
 
 /**

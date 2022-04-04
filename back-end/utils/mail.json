@@ -3,5 +3,8 @@
     "auth": {
         "user": "taskoo.cs554final@gmail.com",
         "pass": "kuwulmtcraxhplue"
-    }
+    },
+    "host": "smtp.ethereal.email",
+    "port": 587,
+    "secure": false
 }
