@@ -1,4 +1,4 @@
-import React, { RefObject, useEffect, useRef } from 'react';
+import React, { memo, RefObject, useEffect, useRef } from 'react';
 import Chart from './Chart';
 import { GraphicComponentOption } from 'echarts/components';
 import { ComposeOption } from 'echarts/core';
@@ -77,4 +77,4 @@ export const createLogo = ({ color, fontSize }: logoProps): ComposeOption<Graphi
 	};
 };
 
-export default Logo;
+export default memo(Logo);

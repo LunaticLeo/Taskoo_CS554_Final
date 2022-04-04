@@ -6,5 +6,6 @@
 	"firstname": "名称",
 	"lastname": "姓氏",
 	"department": "部门",
+	"position": "职位",
 	"signupTip": "已有账户，去"
 }

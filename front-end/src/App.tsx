@@ -1,5 +1,5 @@
 import { createContext, useMemo, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Box, PaletteMode } from '@mui/material';
 import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material/styles';
 import Account from './components/account/Account';
@@ -34,6 +34,7 @@ function App() {
 						<Routes>
 							<Route path='/' element={<Navigate to='/account/signin' replace />} />
 							<Route path='/account/*' element={<Account />} />
+							<Route path='/error/:code/:message' element={<Error />} />
 							<Route path='*' element={<Error />} />
 						</Routes>
 					</Box>

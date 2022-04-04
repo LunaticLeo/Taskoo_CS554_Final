@@ -1,9 +1,6 @@
 const { validate } = require('uuid');
 
 module.exports = {
-	/**
-	 * @description check the validation of _id
-	 */
 	_id(param) {
 		if (!validate(param)) {
 			throw Error(`_id: ${param} is not valid`);
@@ -16,7 +13,7 @@ module.exports = {
 			throw Error('name is not provided');
 		}
 
-		if (!isType(param, 'string')) {
+		if (!isType(param, 'string') || param.trim() === '') {
 			throw Error(`name: ${param} is not valid`);
 		}
 		return param;
@@ -54,6 +51,33 @@ module.exports = {
 	owner(param) {
 		if (!validate(param)) {
 			throw Error(`the id of owner: ${param} is not valid`);
+		}
+		return param;
+	},
+
+	firstName(param) {
+		return this.name(param);
+	},
+
+	lastName(param) {
+		return this.name(param);
+	},
+
+	// TODO
+	email(param) {
+		return param;
+	},
+
+	department(param) {
+		if (!validate(param)) {
+			throw Error(`the id of department: ${param} is not valid`);
+		}
+		return param;
+	},
+
+	position(param) {
+		if (!validate(param)) {
+			throw Error(`the id of position: ${param} is not valid`);
 		}
 		return param;
 	}
