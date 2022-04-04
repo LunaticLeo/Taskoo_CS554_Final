@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport(config);
 
 // nodemailer API: https://nodemailer.com/about/
 
-function sendMail(mail){
+function sendMail(mail) {
     transporter.sendMail(mail, function (error, info) {
         if (error) {
             console.log(error);
@@ -21,4 +21,4 @@ function sendMail(mail){
     });
 }
 
-export default sendMail;
+module.exports = sendMail;
