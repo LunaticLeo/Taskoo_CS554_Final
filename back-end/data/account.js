@@ -45,12 +45,11 @@ const addToRegisterList = async (accountInfo, email) => {
  *     	subject: 'Message title',
  *		text: 'content'
  * 	};
-*/
-
+ */
 const sendEmail = async mail => {
 	const transporter = nodemailer.createTransport(mailConfig);
 
-	mail.from = "taskoo.cs554final@gmail.com";
+	mail.from = 'taskoo.cs554final@gmail.com';
 	// send mail
 	const info = await transporter.sendMail(mail);
 	// console.log(info)

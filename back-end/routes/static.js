@@ -15,10 +15,14 @@ router.get('/:collection', async (req, res, next) => {
 	}
 
 	try {
-		const redisData = await client.get(collection);
-		redisData ? res.json({ code: 200, message: '', data: JSON.parse(staticData) }) : next();
+		if (id) {
+			next();
+		} else {
+			const redisData = await client.get(collection);
+			redisData ? res.json({ code: 200, message: '', data: JSON.parse(redisData) }) : next();
+		}
 	} catch (error) {
-		res.status(500).json({ code: 400, message: error?.message ?? error });
+		res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
 
