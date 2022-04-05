@@ -5,13 +5,14 @@ const dayjs = require('dayjs');
 const nodemailer = require('nodemailer');
 const Mail = require('nodemailer/lib/mailer');
 const mailConfig = require('../utils/mail.json');
+const { toCapitalize } = require('../utils/helpers');
 
 /**
  * add the account info to register list (waitting for sign up)
  * use redis store the list
  * @param {{firstName: string, lastName: string, department: string, position: string}} accountInfo
  * @param {string} email the target email address (not the account email)
- * @param {string} registerId
+ * @returns {string} registerId
  */
 const addToRegisterList = async (accountInfo, email) => {
 	Check.firstName(accountInfo.firstName);
@@ -27,10 +28,9 @@ const addToRegisterList = async (accountInfo, email) => {
 
 	// MODIFY the content
 	await sendEmail({
-		// from: '"Taskoo" <hr@taskoo.com>',
 		to: email,
 		subject: 'Taskoo Registe Invitation',
-		text: `http://localhost:3000/#/account/signup/${registerId}`
+		text: mailTemplate(accountInfo.firstName, registerId)
 	});
 
 	return registerId;
@@ -40,19 +40,26 @@ const addToRegisterList = async (accountInfo, email) => {
  * TODO
  * send email to target address
  * @param {Mail.Options} content the email detail content
- * mail = {
- *     	to: 'yliao10@stevens.edu',
- *     	subject: 'Message title',
- *		text: 'content'
- * 	};
  */
 const sendEmail = async mail => {
 	const transporter = nodemailer.createTransport(mailConfig);
-
 	mail.from = 'taskoo.cs554final@gmail.com';
 	// send mail
-	const info = await transporter.sendMail(mail);
-	// console.log(info)
+	await transporter.sendMail(mail);
+};
+
+const mailTemplate = (firstName, registerId) => {
+	return `
+		Hi ${toCapitalize(firstName)},
+
+		Welcome to Taskoo, please click the link below to start sign up your account.
+		This link will expier in 1 hour.
+
+		http://localhost:3000/#/account/signup/${registerId}
+
+		Best,
+		Taskoo Team
+	`;
 };
 
 /**
