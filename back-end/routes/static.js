@@ -1,98 +1,38 @@
+const client = require('../utils/redis');
 const router = require('express').Router();
-const  data  = require('../data');
-const department=data.departments;
-const positions=data.positions;
-const roles=data.roles;
-const status=data.status;
+const { getStaticData } = require('../data/static');
+const Check = require('../lib/Check');
 
-router.post('/departments', async (req, res) => {
+router.get('/:collection', async (req, res, next) => {
+	const { collection } = req.params;
+	const { id } = req.query;
+
 	try {
-        let departmentsList = await department.getDepartments();
-        res.json(departmentsList);
+		id && Check._id(id);
 	} catch (error) {
-		res.status(500).json({ message: error });
+		res.status(400).json({ code: 400, message: error?.message ?? error });
+		return;
+	}
+
+	try {
+		const redisData = await client.get(collection);
+		redisData ? res.json({ code: 200, message: '', data: JSON.parse(staticData) }) : next();
+	} catch (error) {
+		res.status(500).json({ code: 400, message: error?.message ?? error });
 	}
 });
 
-router.post('/departments/:id', async (req, res) => {
-    if (!req.params.id) {
-        res.status(400).json({ error: 'You must provide ID' });
-        return;
-    }
+router.get('/:collection', async (req, res) => {
+	const { collection } = req.params;
+	const { id } = req.query;
+
 	try {
-        let departmentsList = await department.getDepartmentbyId(req.params.id);
-        res.json(departmentsList);
+		const staticData = await getStaticData(collection, id);
+		!id && (await client.set(collection, JSON.stringify(staticData)));
+		res.json({ code: 200, message: '', data: staticData });
 	} catch (error) {
-		res.status(500).json({ message: error });
+		res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
-
-
-router.post('/positions', async (req, res) => {
-	try {
-        let positionsList = await positions.getPositions();
-        res.json(positionsList);
-	} catch (error) {
-		res.status(500).json({ message: error });
-	}
-});
-
-router.post('/positions/:id', async (req, res) => {
-    if (!req.params.id) {
-        res.status(400).json({ error: 'You must provide ID' });
-        return;
-    }
-	try {
-        let positionsList = await positions.getPositionsbyId(req.params.id);
-        res.json(positionsList);
-	} catch (error) {
-		res.status(500).json({ message: error });
-	}
-});
-
-router.post('/roles', async (req, res) => {
-	try {
-        let rolesList = await roles.getRoles();
-        res.json(rolesList);
-	} catch (error) {
-		res.status(500).json({ message: error });
-	}
-});
-
-router.post('/roles/:id', async (req, res) => {
-    if (!req.params.id) {
-        res.status(400).json({ error: 'You must provide ID' });
-        return;
-    }
-	try {
-        let rolesList = await roles.getRolebyId(req.params.id);
-        res.json(rolesList);
-	} catch (error) {
-		res.status(500).json({ message: error });
-	}
-});
-
-router.post('/status', async (req, res) => {
-	try {
-        let statusList = await status.getStatus();
-        res.json(statusList);
-	} catch (error) {
-		res.status(500).json({ message: error });
-	}
-});
-
-router.post('/status/:id', async (req, res) => {
-    if (!req.params.id) {
-        res.status(400).json({ error: 'You must provide ID' });
-        return;
-    }
-	try {
-        let statusList = await status.getStatusbyId(req.params.id);
-        res.json(statusList);
-	} catch (error) {
-		res.status(500).json({ message: error });
-	}
-});
-
 
 module.exports = router;

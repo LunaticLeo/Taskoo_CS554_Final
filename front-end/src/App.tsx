@@ -4,6 +4,7 @@ import { Box, PaletteMode } from '@mui/material';
 import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material/styles';
 import Account from './components/account/Account';
 import Error from './components/layout/Error';
+import Home from './components/home/Home';
 import { getMediaTheme } from './utils';
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -34,6 +35,7 @@ function App() {
 						<Routes>
 							<Route path='/' element={<Navigate to='/account/signin' replace />} />
 							<Route path='/account/*' element={<Account />} />
+							<Route path='/home/*' element={<Home />} />
 							<Route path='/error/:code/:message' element={<Error />} />
 							<Route path='*' element={<Error />} />
 						</Routes>
@@ -58,6 +60,10 @@ const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 					// dark mode
 					background: { default: '#121212' }
 			  })
+	},
+	typography: {
+		fontFamily:
+			"Avenir, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;"
 	}
 });
 
