@@ -6,6 +6,8 @@ const nodemailer = require('nodemailer');
 const Mail = require('nodemailer/lib/mailer');
 const mailConfig = require('../utils/mail.json');
 const { toCapitalize } = require('../utils/helpers');
+const { account } = require('../config/mongoCollections');
+const bcrypt = require('bcrypt');
 
 /**
  * add the account info to register list (waitting for sign up)
@@ -73,7 +75,37 @@ const getRegisterInfo = async registerId => {
 	return registerInfo ? JSON.parse(registerInfo) : null;
 };
 
+/**
+ * get the info from account list accounding email
+ * @param {string} email
+ * @returns {Promise<null | {firstName: string, lastName: string, department: string, position: string}>}
+ */
+const getUserData = async email => {
+	Check.email(email);
+	const accountCollection = await account();
+	const accountData = await accountCollection.findOne({ email });
+
+	return accountData;
+};
+
+/**
+ * check the identity
+ * @param {Account} dbUserData the account data from db
+ * @param {string} password the password from client
+ * @returns {Promise<Account>}
+ */
+const checkIdentity = async (dbUserData, password) => {
+	const validation = await bcrypt.compare(password, dbUserData.password);
+	if (!validation) throw new Error('The account email or password is wrong');
+
+	delete dbUserData.disabled;
+	delete dbUserData.password;
+	return dbUserData;
+};
+
 module.exports = {
 	addToRegisterList,
-	getRegisterInfo
+	getRegisterInfo,
+	getUserData,
+	checkIdentity
 };

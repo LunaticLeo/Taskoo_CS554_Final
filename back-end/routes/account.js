@@ -1,7 +1,6 @@
-const { addToRegisterList, getRegisterInfo } = require('../data/account');
-const Check = require('../lib/Check');
-
 const router = require('express').Router();
+const { addToRegisterList, getRegisterInfo, getUserData, checkIdentity } = require('../data/account');
+const Check = require('../lib/Check');
 
 router.post('/register', async (req, res) => {
 	// TODO check the login status and level
@@ -38,6 +37,38 @@ router.get('/registerInfo', async (req, res) => {
 	}
 
 	res.json({ code: 200, message: '', data: registerInfo });
+});
+
+router.post('/signin', async (req, res) => {
+	const { email, password } = req.body;
+
+	try {
+		Check.email(email);
+		Check.name(password); //check password missing
+	} catch (error) {
+		res.status(400).json({ code: 400, message: error?.message ?? error });
+		return;
+	}
+
+	let userData;
+	try {
+		userData = await getUserData(email, password);
+	} catch (error) {
+		res.status(500).json({ code: 500, message: error?.message ?? error });
+		return;
+	}
+
+	if (!userData) {
+		res.status(404).json({ code: 404, message: 'Account not exist' });
+		return;
+	}
+
+	try {
+		const accountData = await checkIdentity(userData, password);
+		res.json({ code: 200, message: 'Sign in successfully', data: accountData });
+	} catch (error) {
+		res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
 });
 
 module.exports = router;
