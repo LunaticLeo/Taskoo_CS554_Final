@@ -1,19 +1,23 @@
 import React, { useMemo, useState } from 'react';
 import { Box, IconButton, Paper, Toolbar, Typography } from '@mui/material';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import Dashboard from './Dashboard';
 import Nav from './Nav';
+import { SESSION_KEY } from '@/utils/keys';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 	const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 	const { pathname } = useLocation();
 	const curView = useMemo(() => {
 		const title = pathname.match(/\/home\/(\w+)$/);
 		return title ? title[1] : '';
 	}, [pathname]);
+
+	!sessionStorage.getItem(SESSION_KEY) && navigate('/account/signin');
 
 	return (
 		<Box sx={{ display: 'flex', height: '100vh' }}>

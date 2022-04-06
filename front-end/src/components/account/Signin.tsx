@@ -7,6 +7,7 @@ import { toFormData } from '@/utils';
 import http from '@/utils/http';
 import Loading from '../widgets/Loading';
 import { useNavigate } from 'react-router-dom';
+import { SESSION_KEY } from '@/utils/keys';
 
 interface SignInForm {
 	email: string;
@@ -27,7 +28,7 @@ const Signin: React.FC = () => {
 		http
 			.post('/account/signin', formData)
 			.then(res => {
-				sessionStorage.setItem('account', JSON.stringify(res.data));
+				sessionStorage.setItem(SESSION_KEY, JSON.stringify(res.data));
 				setLoading(false);
 				navigate('/home');
 			})

@@ -64,8 +64,9 @@ router.post('/signin', async (req, res) => {
 	}
 
 	try {
-		const accountData = await checkIdentity(userData, password);
-		res.json({ code: 200, message: 'Sign in successfully', data: accountData });
+		const accountInfo = await checkIdentity(userData, password);
+		req.session.accountInfo = accountInfo;
+		res.json({ code: 200, message: 'Sign in successfully', data: accountInfo });
 	} catch (error) {
 		res.status(400).json({ code: 400, message: error?.message ?? error });
 	}
