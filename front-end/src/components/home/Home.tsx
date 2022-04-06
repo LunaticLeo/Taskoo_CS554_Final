@@ -6,6 +6,7 @@ import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import Dashboard from './Dashboard';
 import Nav from './Nav';
 import { SESSION_KEY } from '@/utils/keys';
+import AvatarMenu from '../widgets/AvatarMenu';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
@@ -34,6 +35,8 @@ const Home: React.FC = () => {
 					<Typography component='h1' variant='h4'>
 						{t(`menu.${curView}`)}
 					</Typography>
+
+					<AvatarMenu sx={{ ml: 'auto' }} />
 				</Toolbar>
 				<Routes>
 					<Route path='/' element={<Navigate to='/home/dashboard' replace />} />
