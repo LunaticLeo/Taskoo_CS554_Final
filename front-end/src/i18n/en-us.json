@@ -9,6 +9,7 @@
 	"position": "Position",
 	"signupTip": "Already have an account? Go to ",
 	"menu": {
+		"studio": "Studio",
 		"dashboard": "Dashboard",
 		"project": "Project",
 		"calendar": "Calendar",
