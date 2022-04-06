@@ -15,7 +15,7 @@ const navMenu: Menu[] = [
 	},
 	{
 		id: 2,
-		title: 'Studio',
+		title: 'studio',
 		children: [
 			{ icon: <AssignmentRoundedIcon />, text: 'project', route: '/home/project' },
 			{ icon: <CalendarMonthRoundedIcon />, text: 'calendar', route: '/home/calendar' },
@@ -35,7 +35,10 @@ const Menu: React.FC = () => {
 			<Translation>
 				{t =>
 					navMenu.map(list => (
-						<List key={list.id} subheader={list.title ? <ListSubheader>{list.title}</ListSubheader> : null}>
+						<List
+							key={list.id}
+							subheader={list.title ? <ListSubheader>{t(`menu.${list.title}`)}</ListSubheader> : null}
+						>
 							{list.children.map(item => (
 								<ListItemButton to={item.route} component={Link} key={item.text} selected={pathname === item.route}>
 									<ListItemIcon>{item.icon}</ListItemIcon>

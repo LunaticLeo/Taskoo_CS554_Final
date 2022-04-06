@@ -31,3 +31,14 @@ export const getStaticData = async (
 	const res = await http.get<StaticData | StaticData[]>(`/static/${collectionName}`, { id });
 	return res.data!;
 };
+
+/**
+ * transfer obj to FormData
+ * @param {T} obj
+ * @returns {FormData}
+ */
+export const toFormData = <T extends object>(obj: T): FormData => {
+	const formData = new FormData();
+	Object.keys(obj).forEach(key => formData.append(key, (obj as any)[key]));
+	return formData;
+};
