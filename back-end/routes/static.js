@@ -9,15 +9,14 @@ router.get('/:collection', async (req, res) => {
 	try {
 		id && Check._id(id);
 	} catch (error) {
-		res.status(400).json({ code: 400, message: error?.message ?? error });
-		return;
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}
 
 	try {
 		const staticData = await getStaticData(collection, id);
 		res.json({ code: 200, message: '', data: staticData });
 	} catch (error) {
-		res.status(500).json({ code: 500, message: error?.message ?? error });
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
 

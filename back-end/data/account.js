@@ -14,7 +14,7 @@ const bcrypt = require('bcrypt');
  * use redis store the list
  * @param {{firstName: string, lastName: string, department: string, position: string}} accountInfo
  * @param {string} email the target email address (not the account email)
- * @returns {string} registerId
+ * @returns {Promise<string>} registerId
  */
 const addToRegisterList = async (accountInfo, email) => {
 	Check.firstName(accountInfo.firstName);
@@ -28,7 +28,6 @@ const addToRegisterList = async (accountInfo, email) => {
 	const expireTime = dayjs().add(1, 'hour').valueOf();
 	await client.set(registerId, JSON.stringify(accountInfo), { PXAT: expireTime });
 
-	// MODIFY the content
 	await sendEmail({
 		to: email,
 		subject: 'Taskoo Registe Invitation',
