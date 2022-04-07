@@ -1,5 +1,6 @@
 const Check = require('./Check');
 const { DBCollection } = require('./Collection');
+const { bucket } = require('../config/mongoCollections');
 
 class Bucket extends DBCollection {
 	owner = null;
@@ -35,6 +36,30 @@ class Bucket extends DBCollection {
 			Object.values(this.projects).forEach(ids => ids.forEach(item => Check._id(item)));
 			Object.values(this.tasks).forEach(ids => ids.forEach(item => Check._id(item)));
 		}
+	}
+
+	/**
+	 * update the status
+	 * @param {object} category 'projects' | 'tasks'
+	 * @param {string} id
+	 * @param {string} from previous status
+	 * @param {string} to target status
+	 */
+	static async updateStatus(bucketId, category, id, from = null, to) {
+		category = category.toLowerCase();
+		const bucketCol = await bucket();
+		const bucketInfo = await bucketCol.findOne({ _id: bucketId }, { projection: { [category]: 1 } });
+
+		if (!to) return;
+
+		if (!from) {
+			bucketInfo[category].pending.push(id);
+		} else {
+			const index = bucketInfo[category][from].findIndex(item => item === id);
+			bucketInfo[category][from].splice(index, 1);
+			bucketInfo[category][to].push(id);
+		}
+		await bucketCol.updateOne({ _id: bucketId }, { $set: { [category]: bucketInfo[category] } });
 	}
 }
 

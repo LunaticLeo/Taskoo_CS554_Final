@@ -1,5 +1,5 @@
-const { Project } = require('../lib');
-const { project, bucket } = require('../config/mongoCollections');
+const { Project, Bucket } = require('../lib');
+const { project } = require('../config/mongoCollections');
 
 /**
  * create project
@@ -12,10 +12,7 @@ const createProject = async (projectObj, bucketId) => {
 	const { insertedId } = await peojectCol.insertOne(newProject);
 
 	// update bucket
-	const bucketCol = await bucket();
-	const { projects } = await bucketCol.findOne({ _id: bucketId }, { projection: { projects: 1 } });
-	projects[newProject.status.toLowerCase()].push(newProject._id);
-	await bucketCol.updateOne({ _id: bucketId }, { $set: { projects } });
+	await Bucket.updateStatus(bucketId, 'projects', newProject._id, null, newProject.status);
 
 	return `Project ${newProject.name} (id: ${insertedId}) create successfully`;
 };
