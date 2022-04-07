@@ -24,11 +24,11 @@ class Account extends DBCollection {
 
 	checkValidation() {
 		const requiredFields = ['email', 'password', 'firstName', 'lastName', 'department', 'position'];
-		for (const key of requiredFields) {
+		for (const key in requiredFields) {
 			if (this[key] === null || this[key] === undefined) {
 				throw new Error(`${key} is ${this[key]}`);
 			}
-			// TODO add validation checking
+			Check[key](this[key]);
 		}
 	}
 

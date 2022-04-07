@@ -21,5 +21,6 @@ module.exports = {
 	roles: getCollectionFn('roles'),
 	status: getCollectionFn('status'),
 	account: getCollectionFn('account'),
-	bucket: getCollectionFn('bucket')
+	bucket: getCollectionFn('bucket'),
+	project: getCollectionFn('project')
 };

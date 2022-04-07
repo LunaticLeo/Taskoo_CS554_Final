@@ -1,9 +1,14 @@
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4, validate } = require('uuid');
 const Check = require('./Check');
 
 class DBCollection {
 	constructor({ _id }) {
-		this._id = _id ? Check._id(_id) : uuidv4();
+		if (!_id) {
+			this._id = uuidv4();
+		} else {
+			if (!validate(_id)) throw Error(`_id: ${param} is not valid`);
+			this._id = _id;
+		}
 	}
 }
 
@@ -16,4 +21,6 @@ class DBStaticCollection extends DBCollection {
 	}
 }
 
-module.exports = { DBCollection, DBStaticCollection };
+const Status = ['Pending', 'Processing', 'Testing', 'Done'];
+
+module.exports = { DBCollection, DBStaticCollection, Status };

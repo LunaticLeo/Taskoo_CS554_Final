@@ -1,4 +1,5 @@
 const { validate } = require('uuid');
+const { Status } = require('./Collection');
 
 module.exports = {
 	_id(param) {
@@ -79,6 +80,18 @@ module.exports = {
 		if (!validate(param)) {
 			throw Error(`the id of position: ${param} is not valid`);
 		}
+		return param;
+	},
+
+	status(param) {
+		if (param === null || param === undefined) {
+			throw Error('status is not provided');
+		}
+
+		if (!isType(param, 'string') || param.trim() === '' || !Status.includes(param)) {
+			throw Error(`status: ${param} is not valid`);
+		}
+
 		return param;
 	}
 };

@@ -1,6 +1,7 @@
-const account = require('./account');
 const file = require('./file');
 const static = require('./static');
+const account = require('./account');
+const project = require('./project');
 
 // the whitelist routes
 const whitelist = ['/account/signin', '/account/signup'];
@@ -14,9 +15,10 @@ module.exports = app => {
 		next();
 	});
 
-	app.use('/account', account);
 	app.use('/file', file);
 	app.use('/static', static);
+	app.use('/account', account);
+	app.use('/project', project);
 
 	app.use('*', (_, res) => {
 		res.status(404).json({ error: 'API not Found!' });
