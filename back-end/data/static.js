@@ -9,6 +9,7 @@ const Check = require('../lib/Check');
  * @returns {Promise<DBStaticCollection | DBStaticCollection[]>}
  */
 const getStaticData = async (collectionName, _id) => {
+	_id && Check._id(_id);
 	if (!(await client.hLen(collectionName))) {
 		const collection = await mongoCollections[collectionName]();
 		const staticList = await collection.find({}).toArray();
@@ -19,8 +20,7 @@ const getStaticData = async (collectionName, _id) => {
 	if (_id) {
 		staticData = JSON.parse(await client.hGet(collectionName, _id));
 	} else {
-		const data = await client.hVals(collectionName);
-		staticData = data.map(item => JSON.parse(item));
+		staticData = (await client.hVals(collectionName)).map(item => JSON.parse(item));
 	}
 
 	return staticData;
