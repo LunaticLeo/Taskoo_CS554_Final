@@ -29,7 +29,7 @@ class Bucket extends DBCollection {
 		const requiredFields = ['owner'];
 		for (const key of requiredFields) {
 			if (this[key] === null || this[key] === undefined) {
-				throw new Error(`${key} is ${this[key]}`);
+				throw Error(`${key} is ${this[key]}`);
 			}
 
 			Check.owner(this.owner);

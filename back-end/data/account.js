@@ -95,7 +95,7 @@ const getUserData = async email => {
  */
 const checkIdentity = async (dbUserData, password) => {
 	const validation = await bcrypt.compare(password, dbUserData.password);
-	if (!validation) throw new Error('The account email or password is wrong');
+	if (!validation) throw Error('The account email or password is wrong');
 
 	delete dbUserData.disabled;
 	delete dbUserData.password;

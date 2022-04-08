@@ -1,5 +1,5 @@
 const { validate } = require('uuid');
-const { Status } = require('./Collection');
+const Status = ['Pending', 'Processing', 'Testing', 'Done'];
 
 module.exports = {
 	_id(param) {
@@ -29,6 +29,18 @@ module.exports = {
 			throw Error(`level: ${param} is not valid`);
 		}
 		return param;
+	},
+
+	prerequire(param) {
+		if (![...Status, null].includes(param)) {
+			throw Error('prerequire is not valid');
+		}
+
+		return param;
+	},
+
+	permit(param) {
+		return this.level(param);
 	},
 
 	manager(param) {
@@ -66,6 +78,10 @@ module.exports = {
 
 	// TODO
 	email(param) {
+		return param;
+	},
+
+	password(param) {
 		return param;
 	},
 

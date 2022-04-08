@@ -18,10 +18,10 @@
 		{ "_id": "81525eb2-a0cb-492d-a38f-a4c49dfd817b", "name": "Test Engineer" }
 	],
 	"status": [
-		{ "_id": "848f293f-6088-4328-9f65-e2a1dee66259", "name": "Pending" },
-		{ "_id": "2258e221-daef-4725-a577-eef6be1bb608", "name": "Processing" },
-		{ "_id": "60d5888c-6779-4de0-a004-19e69d1156df", "name": "Testing" },
-		{ "_id": "e4c63bb2-85bd-482b-91ef-1f4c22d7dc2d", "name": "Done" }
+		{ "_id": "848f293f-6088-4328-9f65-e2a1dee66259", "name": "Pending", "prerequire": null, "permit": 0 },
+		{ "_id": "2258e221-daef-4725-a577-eef6be1bb608", "name": "Processing", "prerequire": "Pending", "permit": 2 },
+		{ "_id": "60d5888c-6779-4de0-a004-19e69d1156df", "name": "Testing", "prerequire": "Processing", "permit": 2 },
+		{ "_id": "e4c63bb2-85bd-482b-91ef-1f4c22d7dc2d", "name": "Done", "prerequire": "Testing", "permit": 1 }
 	],
 	"account": [
 		{
