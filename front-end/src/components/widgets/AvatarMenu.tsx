@@ -11,7 +11,7 @@ const AvatarMenu: React.FC<{ sx?: SxProps<Theme> }> = ({ sx }) => {
 		<Box sx={sx}>
 			<Tooltip title='Open settings'>
 				<IconButton onClick={e => setAnchorElUser(e.currentTarget)} sx={{ p: 0 }}>
-					{avatar ? <Avatar alt='avatar' src={avatar} /> : <Avatar alt='avatar' {...stringAvatar(fullName)} />}
+					{avatar ? <Avatar alt={fullName} src={avatar} /> : <Avatar alt={fullName} {...stringAvatar(fullName)} />}
 				</IconButton>
 			</Tooltip>
 			<Menu

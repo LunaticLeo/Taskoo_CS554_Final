@@ -1,7 +1,7 @@
 {
 	"departments": [
-		{ "_id": "c1ae3e2f-99d7-48f5-a661-887c9bfe0598", "name": "Product Development Department" },
-		{ "_id": "50596f2c-3d93-4bda-a02a-2c0fe71cf0db", "name": "Researchand Development Department" }
+		{ "_id": "c1ae3e2f-99d7-48f5-a661-887c9bfe0598", "name": "Product Dev Dept" },
+		{ "_id": "50596f2c-3d93-4bda-a02a-2c0fe71cf0db", "name": "Researchand Dev Dept" }
 	],
 	"positions": [
 		{ "_id": "01bcb711-f5c4-44bc-a0fe-949b1a4e1273", "name": "Product Manager", "level": 0 },

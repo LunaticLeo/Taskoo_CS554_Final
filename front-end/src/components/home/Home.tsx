@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { Box, IconButton, Paper, Toolbar, Typography } from '@mui/material';
+import { Box, IconButton, Paper, Stack, Toolbar, Typography } from '@mui/material';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
-import Dashboard from './Dashboard';
-import Nav from './Nav';
 import { SESSION_KEY } from '@/utils/keys';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+import Dashboard from './Dashboard/Dashboard';
+import Nav from './Nav';
 import AvatarMenu from '../widgets/AvatarMenu';
+import Notification from '../widgets/Notification';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
@@ -36,7 +37,10 @@ const Home: React.FC = () => {
 						{t(`menu.${curView}`)}
 					</Typography>
 
-					<AvatarMenu sx={{ ml: 'auto' }} />
+					<Stack direction='row' spacing={2} sx={{ ml: 'auto' }}>
+						<Notification />
+						<AvatarMenu />
+					</Stack>
 				</Toolbar>
 				<Box sx={{ p: 3 }}>
 					<Routes>

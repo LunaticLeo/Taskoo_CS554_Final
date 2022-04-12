@@ -1,4 +1,4 @@
-import { PaletteMode } from '@mui/material';
+import { PaletteMode, SxProps } from '@mui/material';
 import http from './http';
 
 /**
@@ -43,6 +43,11 @@ export const toFormData = <T extends object>(obj: T): FormData => {
 	return formData;
 };
 
+/**
+ * calculate string and got a color
+ * @param {string} string
+ * @returns {string} color
+ */
 const stringToColor = (string: string): string => {
 	let hash = 0;
 	let i;
@@ -62,11 +67,13 @@ const stringToColor = (string: string): string => {
 	return color;
 };
 
-export const stringAvatar = (name: string) => {
+export const stringAvatar = (name: string, width?: number, height?: number) => {
+	const sx: SxProps = { bgcolor: stringToColor(name) };
+	width && (sx.width = width);
+	height && (sx.height = height);
+
 	return {
-		sx: {
-			bgcolor: stringToColor(name)
-		},
+		sx,
 		children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
 	};
 };

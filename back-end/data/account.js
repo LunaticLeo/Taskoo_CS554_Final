@@ -6,7 +6,7 @@ const nodemailer = require('nodemailer');
 const Mail = require('nodemailer/lib/mailer');
 const mailConfig = require('../utils/mail.json');
 const { toCapitalize } = require('../utils/helpers');
-const { account } = require('../config/mongoCollections');
+const { accounts } = require('../config/mongoCollections');
 const bcrypt = require('bcrypt');
 
 /**
@@ -82,7 +82,7 @@ const getRegisterInfo = async registerId => {
 const getUserData = async email => {
 	Check.email(email);
 	const accountCollection = await accounts();
-	const accountData = await accountsCollection.findOne({ email });
+	const accountData = await accountCollection.findOne({ email });
 
 	return accountData;
 };

@@ -1,5 +1,5 @@
 const { Project, Bucket } = require('../lib');
-const { project } = require('../config/mongoCollections');
+const { projects } = require('../config/mongoCollections');
 
 /**
  * create project

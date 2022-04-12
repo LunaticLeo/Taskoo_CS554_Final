@@ -13,23 +13,23 @@ const insertStatic = async collectionName => {
 
 const insertAccounts = async (departmentIds, positionIds) => {
 	// insert account
-	const accountCol = await mongoCollections.account();
+	const accountCol = await mongoCollections.accounts();
 	const accountData = await Promise.all(
 		staticData.account.map(
 			async (item, index) =>
 				await new Account({ ...item, department: departmentIds[0], position: positionIds[index] }).hashPwd()
 		)
 	);
-	const { insertedIds: accountIds } = await accountsCol.insertMany(accountData);
+	const { insertedIds: accountIds } = await accountCol.insertMany(accountData);
 
 	// create bucket and bind owner id
-	const bucketCol = await mongoCollections.bucket();
+	const bucketCol = await mongoCollections.buckets();
 	const bucketData = Object.values(accountIds).map(id => new Bucket({ owner: id }));
-	const { insertedIds: bucketIds } = await bucketsCol.insertMany(bucketData);
+	const { insertedIds: bucketIds } = await bucketCol.insertMany(bucketData);
 
 	// update account to bind the bucket
 	for (const index in Object.values(accountIds)) {
-		await accountsCol.updateOne({ _id: accountIds[index] }, { $set: { bucket: bucketIds[index] } });
+		await accountCol.updateOne({ _id: accountIds[index] }, { $set: { bucket: bucketIds[index] } });
 	}
 };
 

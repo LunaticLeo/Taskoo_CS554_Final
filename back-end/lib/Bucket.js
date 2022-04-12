@@ -1,6 +1,6 @@
 const Check = require('./Check');
 const { DBCollection } = require('./Collection');
-const { bucket } = require('../config/mongoCollections');
+const { buckets, status } = require('../config/mongoCollections');
 
 class Bucket extends DBCollection {
 	owner = null;
@@ -41,26 +41,22 @@ class Bucket extends DBCollection {
 
 	/**
 	 * update the status
+	 * @param {string} bucketId
 	 * @param {object} category 'projects' | 'tasks'
-	 * @param {string} id
-	 * @param {string} from previous status
-	 * @param {string} to target status
+	 * @param {string} id project id | task id
+	 * @param {null | string} from source status
+	 * @param {string} to next status
 	 */
-	static async updateStatus(bucketId, category, id, from = null, to) {
-		category = category.toLowerCase();
+	static async updateStatus(bucketId, category, id, from, to) {
+		// check the peermission
+		const statusCol = await status();
+		const { prerequire } = await statusCol.findOne({ name: to }, { projection: { prerequire: 1 } });
+		if (prerequire !== from) throw Error(`Changing status from ${from} to ${to} are not allowed`);
+
 		const bucketCol = await buckets();
-		const bucketInfo = await bucketsCol.findOne({ _id: bucketId }, { projection: { [category]: 1 } });
-
-		if (!to) return;
-
-		if (!from) {
-			bucketInfo[category].pending.push(id);
-		} else {
-			const index = bucketInfo[category][from].findIndex(item => item === id);
-			bucketInfo[category][from].splice(index, 1);
-			bucketInfo[category][to].push(id);
-		}
-		await bucketsCol.updateOne({ _id: bucketId }, { $set: { [category]: bucketInfo[category] } });
+		category = category.toLowerCase();
+		from && (await bucketCol.updateOne({ _id: bucketId }, { $pull: { [`${category}.${from.toLowerCase()}`]: id } }));
+		await bucketCol.updateOne({ _id: bucketId }, { $push: { [`${category}.${to.toLowerCase()}`]: id } });
 	}
 }
 

@@ -22,3 +22,8 @@ interface ProjectList extends DBCollections {
 	status: StaticStatus;
 	members: Required<AccountInfo>[];
 }
+
+interface ContactList extends AccountInfo {
+	email: string;
+	position: string;
+}

@@ -17,12 +17,17 @@
 	},
 	"overview": "Overview",
 	"statistic": "Statistic",
+	"profile": "Profile",
+	"contacts": "Contacts",
 	"table": {
 		"header": {
 			"name": "Name",
 			"createTime": "Create Time",
 			"status": "Status",
-			"members": "Members"
+			"members": "Members",
+			"fullName": "Full Name",
+			"email": "Email",
+			"position": "Position"
 		}
 	}
 }
