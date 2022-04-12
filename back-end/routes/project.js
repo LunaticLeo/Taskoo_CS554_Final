@@ -1,4 +1,4 @@
-const { createProject } = require('../data/project');
+const { createProject, projectStatistic } = require('../data/project');
 const { Project } = require('../lib');
 
 const router = require('express').Router();
@@ -20,5 +20,18 @@ router.post('/create', async (req, res) => {
 		res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
+
+router.get('/statistic', async (req, res) => {
+	const { bucket } = req.session.accountInfo;
+
+	try {
+		const data = await projectStatistic(bucket);
+		res.status(200).json({ code: 200, "message": "", "data": data });
+	} catch (error) {
+		res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+
+});
+
 
 module.exports = router;

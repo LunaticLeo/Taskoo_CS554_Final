@@ -1,5 +1,5 @@
 const { Project, Bucket } = require('../lib');
-const { projects } = require('../config/mongoCollections');
+const { projects, buckets } = require('../config/mongoCollections');
 
 /**
  * create project
@@ -8,8 +8,8 @@ const { projects } = require('../config/mongoCollections');
 const createProject = async (projectObj, bucketId) => {
 	const newProject = new Project(projectObj);
 
-	const peojectCol = await projects();
-	const { insertedId } = await peojectCol.insertOne(newProject);
+	const projectCol = await projects();
+	const { insertedId } = await projectCol.insertOne(newProject);
 
 	// update bucket
 	await Bucket.updateStatus(bucketId, 'projects', newProject._id, null, newProject.status);
@@ -17,6 +17,23 @@ const createProject = async (projectObj, bucketId) => {
 	return `Project ${newProject.name} (id: ${insertedId}) create successfully`;
 };
 
+const projectStatistic = async (bucket_id) => {
+	const bucketsCol = await buckets();
+	const data = await bucketsCol.findOne({ _id: bucket_id },
+		{
+			projection: {
+				"pending": { $size: "$projects.pending" },
+				"processing": { $size: "$projects.processing" },
+				"testing": { $size: "$projects.testing" },
+				"done": { $size: "$projects.done" },
+			}
+
+		});
+	console.log(data)
+	return data;
+};
+
 module.exports = {
-	createProject
+	createProject,
+	projectStatistic
 };

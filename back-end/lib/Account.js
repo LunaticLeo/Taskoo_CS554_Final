@@ -1,7 +1,7 @@
 const Check = require('./Check');
 const { DBCollection } = require('./Collection');
 const bcrypt = require('bcrypt');
-const saltRounds = 16;
+const saltRounds = 5;
 
 class Account extends DBCollection {
 	email = null;
