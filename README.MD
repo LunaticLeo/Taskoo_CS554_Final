@@ -26,3 +26,4 @@ This web application is used by organizations (company/university) to manage pro
 * [Project Features ](https://stevens0-my.sharepoint.com/:w:/g/personal/yliao10_stevens_edu/EWtM_BAAjthHj5dDtcM9W-8BXkLfIYMzv8x_0xUkKB1zXQ?e=fAyAbY)
 * [Database Design ](https://stevens0-my.sharepoint.com/:w:/g/personal/sxiong5_stevens_edu/EfxWAIsqfp5FmLfp-46rxpIBk4Ep4YOiGzqBIBuWKB3gyQ?e=a7fxRu)
 * [Postman API Doc](https://documenter.getpostman.com/view/13354448/UVyn1yY2)
+* [Tasks Assign](https://docs.google.com/document/d/1zbjgbLGnco0On2ik0vOc84S6zpXB2IiVcLU0Z4C0ibM/edit?usp=sharing)
