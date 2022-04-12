@@ -2,12 +2,14 @@ import { createContext, useMemo, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Box, PaletteMode } from '@mui/material';
 import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material/styles';
+import { getMediaTheme } from './utils';
 import Account from './components/account/Account';
 import Error from './components/layout/Error';
 import Home from './components/home/Home';
-import { getMediaTheme } from './utils';
+import Loading from './components/widgets/Loading';
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
+export const LoadingContext = createContext({ setLoading: (status: boolean) => {} });
 
 function App() {
 	// set default theme mode
@@ -27,21 +29,27 @@ function App() {
 	);
 	const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
 
+	const [loading, setLoading] = useState<boolean>(false);
+	const setLoadingStatus = useMemo(() => ({ setLoading: (status: boolean) => setLoading(status) }), []);
+
 	return (
 		<ColorModeContext.Provider value={colorMode}>
-			<ThemeProvider theme={theme}>
-				<Router>
-					<Box sx={{ height: '100vh', position: 'relative' }}>
-						<Routes>
-							<Route path='/' element={<Navigate to='/account/signin' replace />} />
-							<Route path='/account/*' element={<Account />} />
-							<Route path='/home/*' element={<Home />} />
-							<Route path='/error/:code/:message' element={<Error />} />
-							<Route path='*' element={<Error />} />
-						</Routes>
-					</Box>
-				</Router>
-			</ThemeProvider>
+			<LoadingContext.Provider value={setLoadingStatus}>
+				<ThemeProvider theme={theme}>
+					<Router>
+						<Box sx={{ height: '100vh', position: 'relative' }}>
+							<Routes>
+								<Route path='/' element={<Navigate to='/account/signin' replace />} />
+								<Route path='/account/*' element={<Account />} />
+								<Route path='/home/*' element={<Home />} />
+								<Route path='/error/:code/:message' element={<Error />} />
+								<Route path='*' element={<Error />} />
+							</Routes>
+						</Box>
+						<Loading open={loading} />
+					</Router>
+				</ThemeProvider>
+			</LoadingContext.Provider>
 		</ColorModeContext.Provider>
 	);
 }

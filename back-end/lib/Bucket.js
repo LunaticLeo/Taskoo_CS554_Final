@@ -16,6 +16,7 @@ class Bucket extends DBCollection {
 		testing: [],
 		done: []
 	};
+	favorites = [];
 
 	constructor(obj) {
 		super(obj);
@@ -47,8 +48,8 @@ class Bucket extends DBCollection {
 	 */
 	static async updateStatus(bucketId, category, id, from = null, to) {
 		category = category.toLowerCase();
-		const bucketCol = await bucket();
-		const bucketInfo = await bucketCol.findOne({ _id: bucketId }, { projection: { [category]: 1 } });
+		const bucketCol = await buckets();
+		const bucketInfo = await bucketsCol.findOne({ _id: bucketId }, { projection: { [category]: 1 } });
 
 		if (!to) return;
 
@@ -59,7 +60,7 @@ class Bucket extends DBCollection {
 			bucketInfo[category][from].splice(index, 1);
 			bucketInfo[category][to].push(id);
 		}
-		await bucketCol.updateOne({ _id: bucketId }, { $set: { [category]: bucketInfo[category] } });
+		await bucketsCol.updateOne({ _id: bucketId }, { $set: { [category]: bucketInfo[category] } });
 	}
 }
 

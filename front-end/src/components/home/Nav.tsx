@@ -8,7 +8,7 @@ const drawerWidth = 240;
 
 const Nav: React.FC<NavProps> = ({ openDrawer, setOpenDrawer }) => {
 	return (
-		<Box component='nav' sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label='mailbox folders'>
+		<Box component='nav' sx={{ width: { lg: drawerWidth }, flexShrink: { lg: 0 } }} aria-label='mailbox folders'>
 			<Drawer
 				container={window.document.body}
 				variant='temporary'
@@ -16,7 +16,7 @@ const Nav: React.FC<NavProps> = ({ openDrawer, setOpenDrawer }) => {
 				onClose={() => setOpenDrawer(!openDrawer)}
 				ModalProps={{ keepMounted: true }}
 				sx={{
-					display: { xs: 'block', sm: 'none' },
+					display: { xs: 'block', lg: 'none' },
 					position: 'relative',
 					'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
 				}}
@@ -26,7 +26,7 @@ const Nav: React.FC<NavProps> = ({ openDrawer, setOpenDrawer }) => {
 			<Drawer
 				variant='permanent'
 				sx={{
-					display: { xs: 'none', sm: 'block' },
+					display: { xs: 'none', lg: 'block' },
 					position: 'relative',
 					'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
 				}}

@@ -81,8 +81,8 @@ const getRegisterInfo = async registerId => {
  */
 const getUserData = async email => {
 	Check.email(email);
-	const accountCollection = await account();
-	const accountData = await accountCollection.findOne({ email });
+	const accountCollection = await accounts();
+	const accountData = await accountsCollection.findOne({ email });
 
 	return accountData;
 };

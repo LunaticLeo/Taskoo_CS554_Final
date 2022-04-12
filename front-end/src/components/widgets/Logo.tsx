@@ -1,7 +1,5 @@
 import React, { memo, RefObject, useEffect, useRef } from 'react';
-import Chart from './Chart';
-import { GraphicComponentOption } from 'echarts/components';
-import { ComposeOption } from 'echarts/core';
+import Chart, { Option } from './Chart';
 import { useTheme } from '@mui/material';
 import VanillaTilt, { HTMLVanillaTiltElement } from 'vanilla-tilt';
 
@@ -26,8 +24,8 @@ const Logo: React.FC<{ fontSize?: number }> = ({ fontSize = 50 }) => {
 	);
 };
 
-type logoProps = { color?: string; fontSize: number };
-export const createLogo = ({ color, fontSize }: logoProps): ComposeOption<GraphicComponentOption> => {
+type LogoProps = { color?: string; fontSize: number };
+export const createLogo = ({ color, fontSize }: LogoProps): Option => {
 	const theme = useTheme();
 	color = color ?? theme.palette.primary.main;
 

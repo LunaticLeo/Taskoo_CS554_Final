@@ -8,7 +8,7 @@ const { project } = require('../config/mongoCollections');
 const createProject = async (projectObj, bucketId) => {
 	const newProject = new Project(projectObj);
 
-	const peojectCol = await project();
+	const peojectCol = await projects();
 	const { insertedId } = await peojectCol.insertOne(newProject);
 
 	// update bucket

@@ -14,5 +14,15 @@
 		"project": "Project",
 		"calendar": "Calendar",
 		"organization": "Organization"
+	},
+	"overview": "Overview",
+	"statistic": "Statistic",
+	"table": {
+		"header": {
+			"name": "Name",
+			"createTime": "Create Time",
+			"status": "Status",
+			"members": "Members"
+		}
 	}
 }

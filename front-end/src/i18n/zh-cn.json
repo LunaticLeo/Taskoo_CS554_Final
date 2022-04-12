@@ -14,5 +14,15 @@
 		"project": "项目",
 		"calendar": "日程",
 		"organization": "组织"
+	},
+	"overview": "预览",
+	"statistic": "统计",
+	"table": {
+		"header": {
+			"name": "项目名称",
+			"createTime": "创建时间",
+			"status": "状态",
+			"members": "成员"
+		}
 	}
 }

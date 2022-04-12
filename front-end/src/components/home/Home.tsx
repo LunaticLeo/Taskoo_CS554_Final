@@ -27,7 +27,7 @@ const Home: React.FC = () => {
 				<Toolbar>
 					<IconButton
 						aria-label='drawer-control'
-						sx={{ mr: 2, display: { sm: 'none' } }}
+						sx={{ mr: 2, display: { lg: 'none' } }}
 						onClick={() => setOpenDrawer(true)}
 					>
 						<MenuRoundedIcon />
@@ -38,10 +38,12 @@ const Home: React.FC = () => {
 
 					<AvatarMenu sx={{ ml: 'auto' }} />
 				</Toolbar>
-				<Routes>
-					<Route path='/' element={<Navigate to='/home/dashboard' replace />} />
-					<Route path='/dashboard' element={<Dashboard />} />
-				</Routes>
+				<Box sx={{ p: 3 }}>
+					<Routes>
+						<Route path='/' element={<Navigate to='/home/dashboard' replace />} />
+						<Route path='/dashboard' element={<Dashboard />} />
+					</Routes>
+				</Box>
 			</Paper>
 		</Box>
 	);

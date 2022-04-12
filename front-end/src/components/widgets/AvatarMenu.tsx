@@ -1,12 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Avatar, Box, IconButton, Menu, MenuItem, SxProps, Theme, Tooltip, Typography } from '@mui/material';
-import { SESSION_KEY } from '@/utils/keys';
-import { stringAvatar, toCapitalize } from '@/utils';
+import { stringAvatar } from '@/utils';
+import useAccountInfo from '@/hooks/useAccountInfo';
 
 const AvatarMenu: React.FC<{ sx?: SxProps<Theme> }> = ({ sx }) => {
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-	const { avatar, firstName, lastName } = JSON.parse(sessionStorage.getItem(SESSION_KEY)!) as Account;
-	const fullName = useMemo(() => `${toCapitalize(firstName)} ${toCapitalize(lastName)}`, [firstName, lastName]);
+	const { avatar, fullName } = useAccountInfo();
 
 	return (
 		<Box sx={sx}>
