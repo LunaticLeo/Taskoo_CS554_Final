@@ -22,6 +22,7 @@ const projectStatistic = async (bucket_id) => {
 	const data = await bucketsCol.findOne({ _id: bucket_id },
 		{
 			projection: {
+				"_id": 0,
 				"pending": { $size: "$projects.pending" },
 				"processing": { $size: "$projects.processing" },
 				"testing": { $size: "$projects.testing" },
@@ -29,11 +30,27 @@ const projectStatistic = async (bucket_id) => {
 			}
 
 		});
+	return data;
+};
+
+const projectList = async (bucket_id) => {
+	const bucketsCol = await buckets();
+	const data = await bucketsCol.findOne(
+		{ _id: bucket_id },
+		{
+			projection: {
+				"pending": { $size: "$projects.pending" },
+				"processing": { $size: "$projects.processing" },
+				"testing": { $size: "$projects.testing" },
+				"done": { $size: "$projects.done" },
+			}
+		});
 	console.log(data)
 	return data;
 };
 
 module.exports = {
 	createProject,
-	projectStatistic
+	projectStatistic,
+	projectList
 };
