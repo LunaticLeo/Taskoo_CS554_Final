@@ -29,10 +29,13 @@ const Signin: React.FC = () => {
 			.post('/account/signin', formData)
 			.then(res => {
 				sessionStorage.setItem(SESSION_KEY, JSON.stringify(res.data));
-				setLoading(false);
-				navigate('/home');
+
+				setTimeout(() => {
+					setLoading(false);
+					navigate('/home');
+				}, 1000);
 			})
-			.catch(() => setLoading(false));
+			.catch(() => setTimeout(() => setLoading(false), 1000));
 	};
 	const handleInputChange = (val: Partial<SignInForm>) => {
 		setSigninForm(preVal => ({ ...preVal, ...val }));

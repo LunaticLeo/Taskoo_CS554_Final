@@ -11,6 +11,7 @@
 	"menu": {
 		"studio": "工作区",
 		"dashboard": "控制台",
+		"profile": "个人中心",
 		"project": "项目",
 		"calendar": "日程",
 		"organization": "组织"

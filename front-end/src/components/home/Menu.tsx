@@ -4,6 +4,7 @@ import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
 import AccountTreeRoundedIcon from '@mui/icons-material/AccountTreeRounded';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import Logo from '../widgets/Logo';
 import { Link, useLocation } from 'react-router-dom';
 import { Translation } from 'react-i18next';
@@ -11,7 +12,10 @@ import { Translation } from 'react-i18next';
 const navMenu: Menu[] = [
 	{
 		id: 1,
-		children: [{ icon: <DashboardRoundedIcon />, text: 'dashboard', route: '/home/dashboard' }]
+		children: [
+			{ icon: <DashboardRoundedIcon />, text: 'dashboard', route: '/home/dashboard' },
+			{ icon: <AssignmentIndIcon />, text: 'profile', route: '/home/profile' }
+		]
 	},
 	{
 		id: 2,

@@ -11,6 +11,7 @@
 	"menu": {
 		"studio": "Studio",
 		"dashboard": "Dashboard",
+		"profile": "Profile",
 		"project": "Project",
 		"calendar": "Calendar",
 		"organization": "Organization"
