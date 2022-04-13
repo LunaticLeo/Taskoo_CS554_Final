@@ -27,3 +27,17 @@ interface ContactList extends AccountInfo {
 	email: string;
 	position: string;
 }
+
+interface TaskInfo extends DBCollections {
+	name: string;
+	description?: string;
+	dueTime: number;
+	status: string;
+	members: AccountInfo[];
+}
+
+interface Task extends TaskInfo {
+	project: string;
+	createTime: number;
+	attachments?: string[];
+}

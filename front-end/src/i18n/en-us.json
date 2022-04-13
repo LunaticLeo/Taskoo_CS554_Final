@@ -29,5 +29,17 @@
 			"email": "Email",
 			"position": "Position"
 		}
-	}
+	},
+	"status": {
+		"pending": "Pending",
+		"processing": "Processing",
+		"testing": "Testing",
+		"done": "Done"
+	},
+	"statisticChart": {
+		"statisticData": "Statistic Data"
+	},
+	"detail": "Get Detail",
+	"dueTime": "DUE",
+	"todo": "TO DO"
 }

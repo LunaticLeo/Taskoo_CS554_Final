@@ -29,5 +29,17 @@
 			"email": "电子邮箱",
 			"position": "职位"
 		}
-	}
+	},
+	"status": {
+		"pending": "待开始",
+		"processing": "进行中",
+		"testing": "测试",
+		"done": "完成"
+	},
+	"statisticChart": {
+		"statisticData": "统计数据"
+	},
+	"detail": "查看更多",
+	"dueTime": "截止日期",
+	"todo": "待完成"
 }

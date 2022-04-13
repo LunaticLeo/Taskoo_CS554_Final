@@ -1,8 +1,8 @@
 import React, { useLayoutEffect, useState } from 'react';
 import Chart, { Option } from '@/components/widgets/Chart';
 import { CardContent, useTheme } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import { DashboardCard, DashboardTitle } from './Dashboard';
+import { TFunction, useTranslation } from 'react-i18next';
+import Styled from '@/components/widgets/Styled';
 
 const StatisticChart: React.FC = () => {
 	const { t } = useTranslation();
@@ -11,33 +11,39 @@ const StatisticChart: React.FC = () => {
 
 	useLayoutEffect(() => {
 		setOption(
-			statisticChartOption({
-				pending: 5,
-				processing: 10,
-				testing: 3,
-				done: 7,
-				borderColor: theme.palette.background.paper
-			})
+			statisticChartOption(
+				{
+					pending: 5,
+					processing: 10,
+					testing: 3,
+					done: 7,
+					borderColor: theme.palette.background.paper
+				},
+				t
+			)
 		);
 	}, []);
 
 	return (
-		<DashboardCard>
+		<Styled.Card>
 			<CardContent>
-				<DashboardTitle>{t('statistic')}</DashboardTitle>
+				<Styled.Title>{t('statistic')}</Styled.Title>
 				<Chart height='230px' option={option} />
 			</CardContent>
-		</DashboardCard>
+		</Styled.Card>
 	);
 };
 
-const statisticChartOption = ({ pending, processing, testing, done, borderColor }: StatisticChartOption): Option => {
+const statisticChartOption = (
+	{ pending, processing, testing, done, borderColor }: StatisticChartOption,
+	t: TFunction<'translation', undefined>
+): Option => {
 	return {
 		tooltip: { trigger: 'item' },
 		legend: { top: 'center', right: 'right', orient: 'vertical' },
 		series: [
 			{
-				name: 'Statistic Data',
+				name: t('statisticChart.statisticData') as any,
 				type: 'pie',
 				radius: ['40%', '70%'],
 				center: ['35%', '50%'],
@@ -60,10 +66,10 @@ const statisticChartOption = ({ pending, processing, testing, done, borderColor 
 				},
 				labelLine: { show: false },
 				data: [
-					{ name: 'Pending', value: pending },
-					{ name: 'Processing', value: processing },
-					{ name: 'Testing', value: testing },
-					{ name: 'Done', value: done }
+					{ name: t('status.pending') as any, value: pending },
+					{ name: t('status.processing'), value: processing },
+					{ name: t('status.testing'), value: testing },
+					{ name: t('status.done'), value: done }
 				]
 			}
 		]

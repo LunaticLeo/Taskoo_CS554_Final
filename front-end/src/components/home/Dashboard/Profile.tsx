@@ -2,8 +2,8 @@ import React from 'react';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import { Avatar, CardContent, Divider, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { DashboardCard, DashboardTitle } from './Dashboard';
 import { stringAvatar } from '@/utils';
+import Styled from '@/components/widgets/Styled';
 
 const size = 80;
 
@@ -12,9 +12,9 @@ const Profile: React.FC = () => {
 	const { avatar, fullName, department, position } = useAccountInfo();
 
 	return (
-		<DashboardCard>
+		<Styled.Card>
 			<CardContent>
-				<DashboardTitle>{t('Profile')}</DashboardTitle>
+				<Styled.Title>{t('Profile')}</Styled.Title>
 				<Stack alignItems='center' spacing={1}>
 					<label htmlFor='upload-avatar' style={{ cursor: 'pointer' }}>
 						<input style={{ display: 'none' }} accept='image/*' id='upload-avatar' type='file' />
@@ -34,7 +34,7 @@ const Profile: React.FC = () => {
 					</Stack>
 				</Stack>
 			</CardContent>
-		</DashboardCard>
+		</Styled.Card>
 	);
 };
 

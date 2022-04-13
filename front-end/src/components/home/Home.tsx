@@ -8,6 +8,7 @@ import Dashboard from './Dashboard/Dashboard';
 import Nav from './Nav';
 import AvatarMenu from '../widgets/AvatarMenu';
 import Notification from '../widgets/Notification';
+import Project from './Project/Project';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
@@ -46,6 +47,7 @@ const Home: React.FC = () => {
 					<Routes>
 						<Route path='/' element={<Navigate to='/home/dashboard' replace />} />
 						<Route path='/dashboard' element={<Dashboard />} />
+						<Route path='/project' element={<Project />} />
 					</Routes>
 				</Box>
 			</Paper>

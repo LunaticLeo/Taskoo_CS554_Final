@@ -1,14 +1,15 @@
 import React, { useMemo, useState } from 'react';
-import TableList from '@/components/widgets/TableList';
-import { CardContent, Chip, Link } from '@mui/material';
+import { Box, Chip, Grid, Link, Typography } from '@mui/material';
+import ToDoList from './ToDoList';
 import { useTranslation } from 'react-i18next';
-import { Link as NavLink } from 'react-router-dom';
-import * as dayjs from 'dayjs';
+import TableList from '@/components/widgets/TableList';
+import dayjs from 'dayjs';
 import Styled from '@/components/widgets/Styled';
+import { Link as NavLink } from 'react-router-dom';
 
 const header: (keyof ProjectList)[] = ['name', 'createTime', 'status', 'members'];
 
-const List: React.FC = () => {
+const Project: React.FC = () => {
 	const { t } = useTranslation();
 	const [data, setData] = useState<ProjectList[]>([
 		{
@@ -66,13 +67,24 @@ const List: React.FC = () => {
 	);
 
 	return (
-		<Styled.Card>
-			<CardContent>
-				<Styled.Title>{t('overview')}</Styled.Title>
+		// <Box>
+		// 	<Box sx={{ mb: 3 }}>
+		// 		<Typography variant='h5' component='h2' sx={{ mb: 2 }}>
+		// 			{t('todo')}
+		// 		</Typography>
+		// 		<ToDoList />
+		// 	</Box>
+		// 	<TableList<ProjectList> showHeader size='small' header={header} data={tableData} />
+		// </Box>
+		<Grid container spacing={2} flexDirection={{ xs: 'row', lg: 'row-reverse' }}>
+			<Grid item xs={12} lg={3}>
+				<ToDoList />
+			</Grid>
+			<Grid item xs={12} lg={9}>
 				<TableList<ProjectList> showHeader size='small' header={header} data={tableData} />
-			</CardContent>
-		</Styled.Card>
+			</Grid>
+		</Grid>
 	);
 };
 
-export default List;
+export default Project;
