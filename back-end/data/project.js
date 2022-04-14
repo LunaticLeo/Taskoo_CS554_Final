@@ -44,20 +44,7 @@ const projectStatistic = async bucketId => {
 };
 
 const projectList = async bucket_id => {
-	const bucketsCol = await buckets();
-	const data = await bucketsCol.findOne(
-		{ _id: bucket_id },
-		{
-			projection: {
-				pending: { $size: '$projects.pending' },
-				processing: { $size: '$projects.processing' },
-				testing: { $size: '$projects.testing' },
-				done: { $size: '$projects.done' }
-			}
-		}
-	);
-	console.log(data);
-	return data;
+	
 };
 
 /**

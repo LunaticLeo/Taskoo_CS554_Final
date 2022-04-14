@@ -1,6 +1,7 @@
 const dbConnection = require('../config/mongoConnection');
 const mongoCollections = require('../config/mongoCollections');
 const { DBStaticCollection, Account, Bucket } = require('../lib');
+const { createProject } = require('../data/project');
 const staticData = require('./static.json');
 
 const insertStatic = async collectionName => {
@@ -33,6 +34,46 @@ const insertAccounts = async (departmentIds, positionIds) => {
 	}
 };
 
+const insertProjects = async () => {
+
+	const accountsCol = await mongoCollections["accounts"]();
+
+	const accounts = await accountsCol.find().toArray()
+
+	for (let i = 0; i < accounts.length; i++) {
+
+		let projectObj = {
+
+			"name": `project managed by ${accounts[i].firstName} ${accounts[i].lastName}`,
+			"description": `project managed by ${accounts[i].firstName} ${accounts[i].lastName}`,
+			"manager": {
+				"role": "Manager",
+				"fullName": accounts[i].firstName + accounts[i].lastName,
+				"_id": accounts[i]._id,
+				"avatar": accounts[i].avatar
+			},
+			"members":
+				accounts.slice(0, i).concat(accounts.slice(i + 1, accounts.length)).map(ele => {
+					return {
+						"role": "worker",
+						"fullName": `${ele.firstName} ${ele.lastName}`,
+						"_id": ele._id,
+						"avatar": ele.avatar
+					}
+				})
+			,
+			"status": "Pending",
+			"tasks": [],
+			"attachments": []
+		}
+		// console.log(projectObj)
+		await createProject(projectObj, accounts[i].bucket);
+
+	}
+
+
+};
+
 async function main() {
 	const db = await dbConnection();
 	await db.dropDatabase();
@@ -40,7 +81,7 @@ async function main() {
 		const insertFunc = ['departments', 'positions', 'roles', 'status'].map(item => insertStatic(item));
 		const [departmentIds, positionIds] = await Promise.all(insertFunc);
 		await insertAccounts(departmentIds, positionIds);
-
+		await insertProjects();
 		console.log('Done seeding database');
 	} catch (error) {
 		console.error(error);
