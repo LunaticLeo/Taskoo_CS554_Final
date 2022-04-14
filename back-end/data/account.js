@@ -8,6 +8,7 @@ const mailConfig = require('../utils/mail.json');
 const { toCapitalize } = require('../utils/helpers');
 const { accounts } = require('../config/mongoCollections');
 const bcrypt = require('bcrypt');
+const { getStaticData } = require('./static');
 
 /**
  * add the account info to register list (waitting for sign up)
@@ -102,9 +103,35 @@ const checkIdentity = async (dbUserData, password) => {
 	return dbUserData;
 };
 
+/**
+ * query all the members in department
+ * @param {string} _id department id
+ * @returns {Promise<{_id: string, fullName: string, avatar: null | string, position: string, department: string}>}
+ */
+const getDepartmentMembers = async _id => {
+	const collection = await accounts();
+	const allMember = await collection
+		.find({ department: _id }, { projection: { password: 0, disabled: 0, email: 0, bucket: 0 } })
+		.toArray();
+	const departmentName = (await getStaticData('departments', _id)).name;
+	const positions = await getStaticData('positions');
+
+	const members = allMember.map(item => {
+		item.fullName = `${toCapitalize(item.firstName)} ${toCapitalize(item.lastName)}`;
+		item.department = departmentName;
+		item.position = positions.find(position => position._id === item.position).name;
+		delete item.firstName;
+		delete item.lastName;
+		return item;
+	});
+
+	return members;
+};
+
 module.exports = {
 	addToRegisterList,
 	getRegisterInfo,
 	getUserData,
-	checkIdentity
+	checkIdentity,
+	getDepartmentMembers
 };

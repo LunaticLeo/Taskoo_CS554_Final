@@ -1,5 +1,11 @@
 const router = require('express').Router();
-const { addToRegisterList, getRegisterInfo, getUserData, checkIdentity } = require('../data/account');
+const {
+	addToRegisterList,
+	getRegisterInfo,
+	getUserData,
+	checkIdentity,
+	getDepartmentMembers
+} = require('../data/account');
 const Check = require('../lib/Check');
 
 router.post('/register', async (req, res) => {
@@ -61,6 +67,17 @@ router.post('/signin', async (req, res) => {
 		res.json({ code: 200, message: 'Sign in successfully', data: accountInfo });
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+});
+
+router.get('/members', async (req, res) => {
+	const { department } = req.session.accountInfo;
+
+	try {
+		const members = await getDepartmentMembers(department);
+		res.json({ code: 200, message: '', data: members });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
 

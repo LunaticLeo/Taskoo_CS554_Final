@@ -7,7 +7,7 @@
 		{ "_id": "01bcb711-f5c4-44bc-a0fe-949b1a4e1273", "name": "Product Manager", "level": 0 },
 		{ "_id": "3abec250-9a1d-4a85-a1fd-0c2f8e972554", "name": "Architect", "level": 1 },
 		{ "_id": "ff6d6cdb-d10e-4c12-92ca-fc24d5505466", "name": "UI Designer", "level": 2 },
-		{ "_id": "9c4545e8-dcc7-4145-8b6f-e99642e25835", "name": "Software Development Engineer", "level": 2 },
+		{ "_id": "9c4545e8-dcc7-4145-8b6f-e99642e25835", "name": "Software Dev Engineer", "level": 2 },
 		{ "_id": "dff8af24-79ed-4944-a028-b3e2f0672fbc", "name": "Test Engineer", "level": 2 },
 		{ "_id": "9d08634e-8619-4676-983f-b0406bcb19bb", "name": "Algorithm Engineer", "level": 2 }
 	],

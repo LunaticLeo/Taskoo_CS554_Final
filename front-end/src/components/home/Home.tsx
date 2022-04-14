@@ -9,6 +9,8 @@ import Nav from './Nav';
 import AvatarMenu from '../widgets/AvatarMenu';
 import Notification from '../widgets/Notification';
 import Project from './Project/Project';
+import Profile from './Profile/Profile';
+import Detail from './Project/Detail';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
@@ -47,7 +49,9 @@ const Home: React.FC = () => {
 					<Routes>
 						<Route path='/' element={<Navigate to='/home/dashboard' replace />} />
 						<Route path='/dashboard' element={<Dashboard />} />
+						<Route path='/profile' element={<Profile />} />
 						<Route path='/project' element={<Project />} />
+						<Route path='/project/:id' element={<Detail />} />
 					</Routes>
 				</Box>
 			</Paper>

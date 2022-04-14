@@ -25,7 +25,7 @@ instance.interceptors.response.use(
 );
 
 const http: AxiosHttp = METHODS.reduce((pre, key: RequestMethod) => {
-	pre[key] = async <T>(path: string, param?: Object) => {
+	pre[key] = async <T = any>(path: string, param?: Object) => {
 		const requestData = {
 			method: key,
 			url: path,

@@ -23,6 +23,14 @@ interface ProjectList extends DBCollections {
 	members: Required<AccountInfo>[];
 }
 
+type ProjectForm = {
+	name: string;
+	description: string;
+	members: (AccountInfo & { role: string })[];
+	attachments: File[];
+};
+type ProjectFormData = Record<keyof ProjectForm, string | string[] | File | File[]>;
+
 interface ContactList extends AccountInfo {
 	email: string;
 	position: string;
