@@ -1,4 +1,5 @@
 import { PaletteMode, SxProps } from '@mui/material';
+import React from 'react';
 import http from './http';
 
 /**
@@ -37,9 +38,15 @@ export const getStaticData = async (
  * @param {T} obj
  * @returns {FormData}
  */
-export const toFormData = <T extends object>(obj: T): FormData => {
+export const toFormData = <T extends Record<string, string | string[] | File | File[]>>(obj: T): FormData => {
 	const formData = new FormData();
-	Object.keys(obj).forEach(key => formData.append(key, (obj as any)[key]));
+	Object.keys(obj).forEach(key => {
+		if (Array.isArray(obj[key])) {
+			(<string[] | File[]>obj[key]).forEach((item: string | Blob) => formData.append(key, item));
+		} else {
+			formData.append(key, obj[key] as string | Blob);
+		}
+	});
 	return formData;
 };
 
@@ -67,7 +74,18 @@ const stringToColor = (string: string): string => {
 	return color;
 };
 
-export const stringAvatar = (name: string, width?: number, height?: number) => {
+/**
+ * get the proprity of Avatar
+ * @param {string} name
+ * @param {number} width the width
+ * @param {number} height the height
+ * @returns {{sx: SxProps, children: React.ReactNode}}
+ */
+export const stringAvatar = (
+	name: string,
+	width?: number,
+	height?: number
+): { sx: SxProps; children: React.ReactNode } => {
 	const sx: SxProps = { bgcolor: stringToColor(name) };
 	width && (sx.width = width);
 	height && (sx.height = height);

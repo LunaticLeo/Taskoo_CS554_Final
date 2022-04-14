@@ -29,12 +29,14 @@ const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> 
 ) => {
 	const chartRef = useRef<HTMLDivElement>(null);
 
-	useImperativeHandle(ref, () => ({
-		current: chartRef.current
-	}));
+	useImperativeHandle(ref, () => ({ current: chartRef.current }));
 
 	let chart: echarts.ECharts;
 	useLayoutEffect(() => {
+		const resize = () => {
+			chart?.resize();
+		};
+
 		if (!chart) {
 			chart = echarts.init(chartRef.current!);
 			chartRef.current?.addEventListener('resize', resize);
@@ -46,8 +48,6 @@ const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> 
 			echarts.dispose(chart);
 		};
 	}, [option]);
-
-	const resize = () => chart?.resize();
 
 	return <Box sx={{ ...sx, width, height }} ref={chartRef}></Box>;
 };

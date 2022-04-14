@@ -16,10 +16,16 @@
 		"calendar": "Calendar",
 		"organization": "Organization"
 	},
-	"overview": "Overview",
-	"statistic": "Statistic",
-	"profile": "Profile",
-	"contacts": "Contacts",
+	"tooltip": {
+		"setting": "Open settings",
+		"avatar": "Upload Avatar"
+	},
+	"button": {
+		"newProject": "New Project",
+		"cancel": "Cancel",
+		"submit": "Submit",
+		"upload": "Select Files"
+	},
 	"table": {
 		"header": {
 			"name": "Name",
@@ -40,7 +46,22 @@
 	"statisticChart": {
 		"statisticData": "Statistic Data"
 	},
+	"overview": "Overview",
+	"statistic": "Statistic",
+	"profile": "Profile",
+	"contacts": "Contacts",
 	"detail": "Get Detail",
 	"dueTime": "DUE",
-	"todo": "TO DO"
+	"todo": "TO DO",
+	"project": {
+		"dialogTitle": "Create New project",
+		"manager": "Manager",
+		"info": "Project Info",
+		"members": "Members",
+		"attachments": "Attachments",
+		"form": {
+			"name": "Project Name",
+			"description": "Description"
+		}
+	}
 }

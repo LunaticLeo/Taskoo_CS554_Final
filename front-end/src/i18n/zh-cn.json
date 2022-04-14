@@ -16,10 +16,16 @@
 		"calendar": "日程",
 		"organization": "组织"
 	},
-	"overview": "预览",
-	"statistic": "统计",
-	"profile": "个人信息",
-	"contacts": "联系人",
+	"tooltip": {
+		"setting": "打开设置",
+		"avatar": "上传图片"
+	},
+	"button": {
+		"newProject": "新建项目",
+		"cancel": "取消",
+		"submit": "提交",
+		"upload": "选择文件"
+	},
 	"table": {
 		"header": {
 			"name": "项目名称",
@@ -40,7 +46,22 @@
 	"statisticChart": {
 		"statisticData": "统计数据"
 	},
+	"overview": "预览",
+	"statistic": "统计",
+	"profile": "个人信息",
+	"contacts": "联系人",
 	"detail": "查看更多",
 	"dueTime": "截止日期",
-	"todo": "待完成"
+	"todo": "待完成",
+	"project": {
+		"dialogTitle": "创建项目",
+		"manager": "项目经理",
+		"info": "项目信息",
+		"members": "成员",
+		"attachments": "附件",
+		"form": {
+			"name": "项目名称",
+			"description": "项目简介"
+		}
+	}
 }

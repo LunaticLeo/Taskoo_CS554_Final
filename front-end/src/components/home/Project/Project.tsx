@@ -1,16 +1,39 @@
-import React, { useMemo, useState } from 'react';
-import { Box, Chip, Grid, Link, Typography } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+	Box,
+	Button,
+	Checkbox,
+	Chip,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Fab,
+	Grid,
+	Link,
+	List,
+	ListItem,
+	ListItemButton,
+	Menu,
+	MenuItem,
+	Stack,
+	TextField,
+	Typography
+} from '@mui/material';
 import ToDoList from './ToDoList';
 import { useTranslation } from 'react-i18next';
 import TableList from '@/components/widgets/TableList';
 import dayjs from 'dayjs';
 import Styled from '@/components/widgets/Styled';
 import { Link as NavLink } from 'react-router-dom';
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import useAccountInfo from '@/hooks/useAccountInfo';
+import http from '@/utils/http';
+import { useDropzone } from 'react-dropzone';
+import { toFormData } from '@/utils';
 
 const header: (keyof ProjectList)[] = ['name', 'createTime', 'status', 'members'];
 
 const Project: React.FC = () => {
-	const { t } = useTranslation();
 	const [data, setData] = useState<ProjectList[]>([
 		{
 			_id: '1',
@@ -67,24 +90,242 @@ const Project: React.FC = () => {
 	);
 
 	return (
-		// <Box>
-		// 	<Box sx={{ mb: 3 }}>
-		// 		<Typography variant='h5' component='h2' sx={{ mb: 2 }}>
-		// 			{t('todo')}
-		// 		</Typography>
-		// 		<ToDoList />
-		// 	</Box>
-		// 	<TableList<ProjectList> showHeader size='small' header={header} data={tableData} />
-		// </Box>
-		<Grid container spacing={2} flexDirection={{ xs: 'row', lg: 'row-reverse' }}>
-			<Grid item xs={12} lg={3}>
-				<ToDoList />
+		<>
+			<Grid container spacing={2} flexDirection={{ xs: 'row', lg: 'row-reverse' }}>
+				<Grid item xs={12} lg={3}>
+					<ToDoList />
+				</Grid>
+				<Grid item xs={12} lg={9}>
+					<TableList<ProjectList> showHeader size='small' header={header} data={tableData} />
+				</Grid>
 			</Grid>
-			<Grid item xs={12} lg={9}>
-				<TableList<ProjectList> showHeader size='small' header={header} data={tableData} />
-			</Grid>
-		</Grid>
+			<FormDialog />
+		</>
 	);
 };
+
+const FormDialog: React.FC = () => {
+	const { t } = useTranslation();
+	const [openDialog, setOpenDialog] = useState<boolean>(false);
+	const [members, setMembers] = useState<(AccountInfo & { position: string })[]>([]);
+	const [projectForm, setProjectForm] = useState<ProjectForm>({
+		name: '',
+		description: '',
+		members: [],
+		attachments: []
+	});
+	const accountInfo = useAccountInfo();
+
+	useEffect(() => {
+		http.get<(AccountInfo & { position: string })[]>('/account/members').then(res => {
+			const memberList = res.data!.filter(item => item._id !== accountInfo._id);
+			setMembers(memberList);
+		});
+	}, []);
+
+	const handleInputChange = (val: Partial<ProjectForm>) => {
+		setProjectForm(preVal => ({ ...preVal, ...val }));
+	};
+
+	const handleCancel = () => {
+		setOpenDialog(false);
+	};
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		projectForm.members = projectForm.members.map(item => JSON.stringify(item)) as any;
+		const formData = toFormData<ProjectFormData>(projectForm as any);
+		http.post('/project/create', formData).then(res => {
+			console.log(res);
+		});
+	};
+
+	return (
+		<>
+			<Fab
+				variant='extended'
+				color='primary'
+				sx={{ position: 'absolute', bottom: 24, right: 24 }}
+				onClick={() => setOpenDialog(true)}
+			>
+				<AddBoxOutlinedIcon sx={{ mr: 1 }} />
+				{t('button.newProject')}
+			</Fab>
+			<Styled.Dialog open={openDialog} onClose={setOpenDialog}>
+				<DialogTitle>{t('project.dialogTitle')}</DialogTitle>
+				<form onSubmit={handleSubmit}>
+					<DialogContent>
+						<Stack spacing={2}>
+							<Box>
+								<Typography variant='h6' component='h3'>
+									{t('project.manager')}
+								</Typography>
+								<Styled.AccountInfo {...accountInfo} />
+							</Box>
+							<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
+								<Stack flexGrow={1}>
+									<Typography variant='h6' component='h3'>
+										{t('project.info')}
+									</Typography>
+									<TextField
+										id='name'
+										value={projectForm.name}
+										label={t('project.form.name')}
+										variant='outlined'
+										margin='normal'
+										onChange={e => handleInputChange({ name: e.target.value })}
+									/>
+									<TextField
+										id='description'
+										value={projectForm.description}
+										label={t('project.form.description')}
+										multiline
+										rows={5}
+										margin='normal'
+										onChange={e => handleInputChange({ description: e.target.value })}
+									/>
+								</Stack>
+								<MemberList data={members} members={projectForm.members} setMembers={setProjectForm} />
+							</Stack>
+						</Stack>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleCancel}>{t('button.cancel')}</Button>
+						<Button variant='contained' type='submit'>
+							{t('button.submit')}
+						</Button>
+					</DialogActions>
+				</form>
+			</Styled.Dialog>
+		</>
+	);
+};
+
+const MemberList: React.FC<{
+	data: (AccountInfo & { position: string })[];
+	members: (AccountInfo & { role: string })[];
+	setMembers: (value: React.SetStateAction<ProjectForm>) => void;
+}> = ({ data, members, setMembers }) => {
+	const { t } = useTranslation();
+	const [checked, setChecked] = useState<boolean[]>(Array(data.length).fill(false));
+	const [roleList, setRoleList] = useState<StaticData[]>([]);
+	const [anchorEl, setAnchorEl] = useState<{ el: null | HTMLDivElement; index: number }>({
+		el: null,
+		index: -1
+	});
+
+	useEffect(() => {
+		http.get<StaticData[]>('/static/roles').then(res => {
+			setRoleList(res.data!);
+		});
+	}, []);
+
+	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+		setChecked(preVal => {
+			preVal.splice(index, 1, e.target.checked);
+			return [...preVal];
+		});
+		if (e.target.checked) {
+			setAnchorEl({ el: e.target, index });
+		} else {
+			setMembers(preVal => {
+				const { members } = preVal;
+				const _index = members.findIndex(item => item._id === data[index]._id);
+				members.splice(_index, 1);
+
+				return { ...preVal, members };
+			});
+			setAnchorEl({ el: null, index: -1 });
+		}
+	};
+
+	const handleMenuClose = () => {
+		setAnchorEl({ el: null, index: -1 });
+	};
+
+	const handleAssignRole = (role: StaticData) => {
+		setMembers(preVal => {
+			const { members } = preVal;
+			const { fullName, _id, avatar } = data[anchorEl.index];
+			members.push({
+				role: role.name,
+				fullName,
+				_id,
+				avatar
+			});
+			return { ...preVal, members };
+		});
+		setAnchorEl({ el: null, index: -1 });
+	};
+
+	const getRoles = (_id: string) => {
+		const exist = members.find(item => item._id === _id);
+		return exist ? (
+			<Typography variant='body2' component='span' color='text.secondary'>
+				{exist.role}
+			</Typography>
+		) : null;
+	};
+
+	return (
+		<Stack flexGrow={1}>
+			<Typography variant='h6' component='h3'>
+				{t('project.members')}
+			</Typography>
+			<List dense sx={{ maxHeight: 260, overflow: 'auto' }}>
+				{data.map((member, index) => (
+					<ListItem
+						key={member._id}
+						disablePadding
+						secondaryAction={
+							<Stack direction='row' alignItems='center'>
+								{getRoles(member._id)}
+								<Checkbox
+									edge='end'
+									checked={checked[index]}
+									onChange={e => handleToggle(e, index)}
+									inputProps={{ 'aria-labelledby': member._id }}
+								/>
+							</Stack>
+						}
+					>
+						<Styled.AccountInfo {...(member as Account & { fullName: string })} component={ListItemButton} />
+					</ListItem>
+				))}
+			</List>
+			<Menu open={Boolean(anchorEl.el)} anchorEl={anchorEl.el} onClose={handleMenuClose}>
+				{roleList.map(item => (
+					<MenuItem key={item._id} onClick={() => handleAssignRole(item)}>
+						{item.name}
+					</MenuItem>
+				))}
+			</Menu>
+		</Stack>
+	);
+};
+
+// const FileUpload: React.FC<{ setAttachments: (val: Partial<ProjectForm>) => void }> = ({ setAttachments }) => {
+// 	const { t } = useTranslation();
+// 	const { getRootProps, getInputProps, acceptedFiles } = useDropzone({ noKeyboard: true });
+
+// 	useEffect(() => {
+// 		setAttachments({ attachments: acceptedFiles });
+// 	}, [acceptedFiles]);
+
+// 	return (
+// 		<Stack flexGrow={1}>
+// 			<Typography variant='h6' component='h3' sx={{ pb: 1 }}>
+// 				{t('project.attachments')}
+// 			</Typography>
+// 			<Stack>
+// 				<label {...getRootProps()}>
+// 					<input style={{ display: 'none' }} {...getInputProps({ accept: 'pdf/*', multiple: true, type: 'file' })} />
+// 					<Button variant='outlined' component='span' fullWidth>
+// 						{t('button.upload')}
+// 					</Button>
+// 				</label>
+// 			</Stack>
+// 		</Stack>
+// 	);
+// };
 
 export default Project;

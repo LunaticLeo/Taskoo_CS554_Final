@@ -9,10 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { SESSION_KEY } from '@/utils/keys';
 import { LoadingContext } from '@/App';
 
-interface SignInForm {
+type SignInForm = {
 	email: string;
 	password: string;
-}
+};
 
 const Signin: React.FC = () => {
 	const { t } = useTranslation();
