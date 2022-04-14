@@ -16,6 +16,10 @@ class Project extends DBCollection {
 		super(obj);
 		obj?._id && delete obj._id;
 
+		try {
+			obj.members = obj.members.map(item => JSON.parse(item));
+		} catch (error) {}
+
 		Object.keys(obj).forEach(key => (this[key] = obj[key]));
 		this.checkValidation();
 	}
@@ -24,7 +28,7 @@ class Project extends DBCollection {
 		Check.name(this.name);
 		Check._id(this.manager);
 		for (const member of this.members) {
-			Check._id(member);
+			Check._id(member._id);
 		}
 		Check.status(this.status);
 	}

@@ -30,6 +30,7 @@ import useAccountInfo from '@/hooks/useAccountInfo';
 import http from '@/utils/http';
 import { useDropzone } from 'react-dropzone';
 import { toFormData } from '@/utils';
+import { useSnackbar } from 'notistack';
 
 const header: (keyof ProjectList)[] = ['name', 'createTime', 'status', 'members'];
 
@@ -104,16 +105,19 @@ const Project: React.FC = () => {
 	);
 };
 
+class ProjectFormClass implements ProjectForm {
+	name = '';
+	description = '';
+	members = [];
+	attachments = [];
+}
+
 const FormDialog: React.FC = () => {
 	const { t } = useTranslation();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [members, setMembers] = useState<(AccountInfo & { position: string })[]>([]);
-	const [projectForm, setProjectForm] = useState<ProjectForm>({
-		name: '',
-		description: '',
-		members: [],
-		attachments: []
-	});
+	const { enqueueSnackbar } = useSnackbar();
+	const [projectForm, setProjectForm] = useState<ProjectForm>(new ProjectFormClass());
 	const accountInfo = useAccountInfo();
 
 	useEffect(() => {
@@ -134,9 +138,17 @@ const FormDialog: React.FC = () => {
 		e.preventDefault();
 		projectForm.members = projectForm.members.map(item => JSON.stringify(item)) as any;
 		const formData = toFormData<ProjectFormData>(projectForm as any);
-		http.post('/project/create', formData).then(res => {
-			console.log(res);
-		});
+		http
+			.post('/project/create', formData)
+			.then(res => {
+				console.log(res);
+				enqueueSnackbar(res.message, { variant: 'success' });
+				setOpenDialog(false);
+			})
+			.catch(err => {
+				enqueueSnackbar(err?.message ?? err, { variant: 'error' });
+			})
+			.finally(() => setProjectForm(new ProjectFormClass()));
 	};
 
 	return (
@@ -206,7 +218,6 @@ const MemberList: React.FC<{
 	setMembers: (value: React.SetStateAction<ProjectForm>) => void;
 }> = ({ data, members, setMembers }) => {
 	const { t } = useTranslation();
-	const [checked, setChecked] = useState<boolean[]>(Array(data.length).fill(false));
 	const [roleList, setRoleList] = useState<StaticData[]>([]);
 	const [anchorEl, setAnchorEl] = useState<{ el: null | HTMLDivElement; index: number }>({
 		el: null,
@@ -220,10 +231,6 @@ const MemberList: React.FC<{
 	}, []);
 
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-		setChecked(preVal => {
-			preVal.splice(index, 1, e.target.checked);
-			return [...preVal];
-		});
 		if (e.target.checked) {
 			setAnchorEl({ el: e.target, index });
 		} else {
@@ -281,7 +288,6 @@ const MemberList: React.FC<{
 								{getRoles(member._id)}
 								<Checkbox
 									edge='end'
-									checked={checked[index]}
 									onChange={e => handleToggle(e, index)}
 									inputProps={{ 'aria-labelledby': member._id }}
 								/>

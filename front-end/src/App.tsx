@@ -7,6 +7,7 @@ import Account from './components/account/Account';
 import Error from './components/layout/Error';
 import Home from './components/home/Home';
 import Loading from './components/widgets/Loading';
+import { SnackbarProvider } from 'notistack';
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 export const LoadingContext = createContext({ setLoading: (status: boolean) => {} });
@@ -34,22 +35,24 @@ function App() {
 
 	return (
 		<ColorModeContext.Provider value={colorMode}>
-			<LoadingContext.Provider value={setLoadingStatus}>
-				<ThemeProvider theme={theme}>
-					<Router>
-						<Box sx={{ height: '100vh', position: 'relative' }}>
-							<Routes>
-								<Route path='/' element={<Navigate to='/account/signin' replace />} />
-								<Route path='/account/*' element={<Account />} />
-								<Route path='/home/*' element={<Home />} />
-								<Route path='/error/:code/:message' element={<Error />} />
-								<Route path='*' element={<Error />} />
-							</Routes>
-						</Box>
-						<Loading open={loading} />
-					</Router>
-				</ThemeProvider>
-			</LoadingContext.Provider>
+			<SnackbarProvider maxSnack={3}>
+				<LoadingContext.Provider value={setLoadingStatus}>
+					<ThemeProvider theme={theme}>
+						<Router>
+							<Box sx={{ height: '100vh', position: 'relative' }}>
+								<Routes>
+									<Route path='/' element={<Navigate to='/account/signin' replace />} />
+									<Route path='/account/*' element={<Account />} />
+									<Route path='/home/*' element={<Home />} />
+									<Route path='/error/:code/:message' element={<Error />} />
+									<Route path='*' element={<Error />} />
+								</Routes>
+							</Box>
+							<Loading open={loading} />
+						</Router>
+					</ThemeProvider>
+				</LoadingContext.Provider>
+			</SnackbarProvider>
 		</ColorModeContext.Provider>
 	);
 }

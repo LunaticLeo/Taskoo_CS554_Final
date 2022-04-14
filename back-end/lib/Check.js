@@ -1,4 +1,5 @@
 const { validate } = require('uuid');
+const { isType } = require('../utils/helpers');
 const Status = ['Pending', 'Processing', 'Testing', 'Done'];
 
 module.exports = {
@@ -109,27 +110,5 @@ module.exports = {
 		}
 
 		return param;
-	}
-};
-
-/**
- * Check the parameter is the type of [type]
- * @param {string} type The type in JavaScript
- * 	number | string | boolean | object ({}) | array ([])
- * @returns {boolean}
- */
-const isType = (param, type) => {
-	if (type === 'object' || type === 'array') {
-		if (typeof param === 'object') {
-			if (type === 'array') {
-				return Array.isArray(param);
-			} else {
-				return true;
-			}
-		} else {
-			return false;
-		}
-	} else {
-		return typeof param === type;
 	}
 };
