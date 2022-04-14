@@ -75,7 +75,32 @@ const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 	typography: {
 		fontFamily:
 			"Avenir, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;"
+	},
+	statusPalette: {
+		Pending: '#FB6D57',
+		Processing: '#4A6EFC',
+		Testing: '#F5AE42',
+		Done: '#53CC9F'
 	}
 });
+
+declare module '@mui/material/styles' {
+	interface Theme {
+		statusPalette: {
+			Pending: string;
+			Processing: string;
+			Testing: string;
+			Done: string;
+		};
+	}
+	interface ThemeOptions {
+		statusPalette?: {
+			Pending: string;
+			Processing: string;
+			Testing: string;
+			Done: string;
+		};
+	}
+}
 
 export default App;

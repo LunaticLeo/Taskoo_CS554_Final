@@ -53,6 +53,7 @@
 	"detail": "Get Detail",
 	"dueTime": "DUE",
 	"todo": "TO DO",
+	"create": "Create on",
 	"project": {
 		"dialogTitle": "Create New project",
 		"manager": "Manager",

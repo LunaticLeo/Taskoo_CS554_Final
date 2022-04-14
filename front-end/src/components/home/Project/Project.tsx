@@ -141,13 +141,10 @@ const FormDialog: React.FC = () => {
 		http
 			.post('/project/create', formData)
 			.then(res => {
-				console.log(res);
 				enqueueSnackbar(res.message, { variant: 'success' });
 				setOpenDialog(false);
 			})
-			.catch(err => {
-				enqueueSnackbar(err?.message ?? err, { variant: 'error' });
-			})
+			.catch(err => enqueueSnackbar(err?.message ?? err, { variant: 'error' }))
 			.finally(() => setProjectForm(new ProjectFormClass()));
 	};
 

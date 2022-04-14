@@ -36,6 +36,13 @@ interface ContactList extends AccountInfo {
 	position: string;
 }
 
+interface Project extends DBCollections, Omit<ProjectForm, keyof { attachments: string[] }> {
+	manager: AccountInfo & { role: string };
+	task: string[];
+	status: StaticStatus;
+	createTime: number;
+}
+
 interface TaskInfo extends DBCollections {
 	name: string;
 	description?: string;
