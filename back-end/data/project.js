@@ -1,5 +1,6 @@
-const { Project, Bucket } = require('../lib');
+const { Project, Bucket, Check } = require('../lib');
 const { projects, buckets, accounts } = require('../config/mongoCollections');
+const { getFullName } = require('../utils/helpers');
 
 /**
  * create project
@@ -59,8 +60,34 @@ const projectList = async bucket_id => {
 	return data;
 };
 
+/**
+ * get the detail of the project
+ * @param {string} _id project id
+ * @returns {Promise<Project>}
+ */
+const getDetails = async _id => {
+	Check._id(_id);
+	const projectCol = await projects();
+	const projectInfo = await projectCol.findOne({ _id });
+
+	// // get manager info
+	// const accountsCol = await accounts();
+	// const managerInfo = await accountsCol.findOne(
+	// 	{ _id: projectInfo.manager },
+	// 	{ projection: { firstName: 1, lastName: 1, avatar: 1 } }
+	// );
+	// managerInfo.fullName = getFullName(managerInfo.firstName, managerInfo.lastName);
+	// managerInfo.role = 'Manager';
+	// delete managerInfo.firstName;
+	// delete managerInfo.lastName;
+	// projectInfo.manager = managerInfo;
+
+	return projectInfo;
+};
+
 module.exports = {
 	createProject,
 	projectStatistic,
-	projectList
+	projectList,
+	getDetails
 };

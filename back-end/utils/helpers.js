@@ -6,6 +6,10 @@ const toCapitalize = str => {
 	return str?.toLowerCase().replace(/^./, l => l.toUpperCase());
 };
 
+const getFullName = (firstName, lastName) => {
+	return `${toCapitalize(firstName)} ${toCapitalize(lastName)}`;
+};
+
 /**
  * Check the parameter is the type of [type]
  * @param {string} type The type in JavaScript
@@ -30,5 +34,6 @@ const isType = (param, type) => {
 
 module.exports = {
 	toCapitalize,
-	isType
+	isType,
+	getFullName
 };
