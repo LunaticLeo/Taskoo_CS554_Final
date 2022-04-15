@@ -6,8 +6,9 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { toFormData } from '@/utils';
 import http from '@/utils/http';
 import { useNavigate } from 'react-router-dom';
-import { SESSION_KEY } from '@/utils/keys';
 import { LoadingContext } from '@/App';
+import { useAppDispatch } from '@/hooks/useStore';
+import { set } from '@/store/accountInfo';
 
 type SignInForm = {
 	email: string;
@@ -20,6 +21,7 @@ const Signin: React.FC = () => {
 	const [signinForm, setSigninForm] = useState<SignInForm>({ email: '', password: '' });
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const { setLoading } = useContext(LoadingContext);
+	const dispatch = useAppDispatch();
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -28,10 +30,9 @@ const Signin: React.FC = () => {
 		http
 			.post('/account/signin', formData)
 			.then(res => {
-				sessionStorage.setItem(SESSION_KEY, JSON.stringify(res.data));
-
 				setTimeout(() => {
 					setLoading(false);
+					dispatch(set(res.data!));
 					navigate('/home');
 				}, 1000);
 			})

@@ -16,6 +16,8 @@ interface Account extends AccountInfo {
 	bucket: string;
 }
 
+type StoreAccountInfo = Omit<Account & { fullName: string }, keyof { _id: string; bucket: string }>;
+
 interface ProjectList extends DBCollections {
 	name: string;
 	createTime: number;

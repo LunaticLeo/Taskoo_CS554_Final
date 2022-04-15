@@ -4,7 +4,7 @@ import NotificationsNoneRoundedIcon from '@mui/icons-material/NotificationsNoneR
 
 const Notification: React.FC = () => {
 	return (
-		<IconButton color='primary'>
+		<IconButton color='primary' aria-label='notification-btn'>
 			<Badge color='error' variant='dot' invisible={false}>
 				<NotificationsNoneRoundedIcon fontSize='medium' color='inherit' />
 			</Badge>

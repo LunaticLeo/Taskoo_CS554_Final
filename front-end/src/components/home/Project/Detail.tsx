@@ -1,10 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import http from '@/utils/http';
-import { Box, Breadcrumbs, Link, Stack, Typography } from '@mui/material';
+import { Box, Breadcrumbs, IconButton, Link, Stack, Typography } from '@mui/material';
 import { useParams, Link as NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Styled from '@/components/widgets/Styled';
 import dayjs from 'dayjs';
+import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
+import StarRoundedIcon from '@mui/icons-material/StarRounded';
+import { yellow } from '@mui/material/colors';
 
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
@@ -28,9 +31,10 @@ const Detail: React.FC = () => {
 					<Typography component='h2' variant='h3' sx={{ fontWeight: 'bolder' }}>
 						{projectInfo.name}
 					</Typography>
-					<Typography marginLeft='auto' variant='body2' color='text.secondary'>
+					<Typography marginLeft='auto' marginRight={1} variant='body2' color='text.secondary'>
 						{t('create')}: {dayjs(projectInfo.createTime).format('MM/DD/YYYY')}
 					</Typography>
+					<FavoriteButton favorite={false} />
 				</Stack>
 				{projectInfo?.description && (
 					<Typography variant='body1' color='text.secondary'>
@@ -54,6 +58,14 @@ const NavBreadcrumbs: React.FC<{ projectName: string }> = ({ projectName = '' })
 			</Link>
 			<Typography color='text.primary'>{projectName}</Typography>
 		</Breadcrumbs>
+	);
+};
+
+const FavoriteButton: React.FC<{ favorite: boolean; onClick?: () => void }> = ({ favorite = false, onClick }) => {
+	return (
+		<IconButton onClick={onClick} sx={{ color: yellow[700] }}>
+			{favorite ? <StarRoundedIcon color='inherit' /> : <StarOutlineRoundedIcon color='inherit' />}
+		</IconButton>
 	);
 };
 

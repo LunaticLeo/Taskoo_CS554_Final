@@ -8,6 +8,9 @@ import Error from './components/layout/Error';
 import Home from './components/home/Home';
 import Loading from './components/widgets/Loading';
 import { SnackbarProvider } from 'notistack';
+import { indigo } from '@mui/material/colors';
+import { Provider } from 'react-redux';
+import store from '@/store';
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 export const LoadingContext = createContext({ setLoading: (status: boolean) => {} });
@@ -38,18 +41,20 @@ function App() {
 			<SnackbarProvider maxSnack={3}>
 				<LoadingContext.Provider value={setLoadingStatus}>
 					<ThemeProvider theme={theme}>
-						<Router>
-							<Box sx={{ height: '100vh', position: 'relative' }}>
-								<Routes>
-									<Route path='/' element={<Navigate to='/account/signin' replace />} />
-									<Route path='/account/*' element={<Account />} />
-									<Route path='/home/*' element={<Home />} />
-									<Route path='/error/:code/:message' element={<Error />} />
-									<Route path='*' element={<Error />} />
-								</Routes>
-							</Box>
-							<Loading open={loading} />
-						</Router>
+						<Provider store={store}>
+							<Router>
+								<Box sx={{ height: '100vh', position: 'relative' }}>
+									<Routes>
+										<Route path='/' element={<Navigate to='/account/signin' replace />} />
+										<Route path='/account/*' element={<Account />} />
+										<Route path='/home/*' element={<Home />} />
+										<Route path='/error/:code/:message' element={<Error />} />
+										<Route path='*' element={<Error />} />
+									</Routes>
+								</Box>
+								<Loading open={loading} />
+							</Router>
+						</Provider>
 					</ThemeProvider>
 				</LoadingContext.Provider>
 			</SnackbarProvider>
@@ -64,7 +69,7 @@ const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 		...(mode === 'light'
 			? {
 					// light mode
-					primary: { main: '#3f6af6' },
+					primary: { main: indigo[500] },
 					background: { default: '#eef2f5' }
 			  }
 			: {

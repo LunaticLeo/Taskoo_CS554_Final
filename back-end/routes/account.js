@@ -4,7 +4,8 @@ const {
 	getRegisterInfo,
 	getUserData,
 	checkIdentity,
-	getDepartmentMembers
+	getDepartmentMembers,
+	decodeAccountInfo
 } = require('../data/account');
 const Check = require('../lib/Check');
 
@@ -64,7 +65,8 @@ router.post('/signin', async (req, res) => {
 	try {
 		const accountInfo = await checkIdentity(userData, password);
 		req.session.accountInfo = accountInfo;
-		res.json({ code: 200, message: 'Sign in successfully', data: accountInfo });
+		const decodedInfo = await decodeAccountInfo(accountInfo);
+		res.json({ code: 200, message: 'Sign in successfully', data: decodedInfo });
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}

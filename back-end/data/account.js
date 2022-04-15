@@ -104,6 +104,20 @@ const checkIdentity = async (dbUserData, password) => {
 };
 
 /**
+ * query the department and position in account info
+ * @param {Account} accountInfo
+ * @returns {Promise<Account>}
+ */
+const decodeAccountInfo = async accountInfo => {
+	accountInfo.department = (await getStaticData('departments', accountInfo.department)).name;
+	accountInfo.position = (await getStaticData('positions', accountInfo.position)).name;
+	delete accountInfo.bucket;
+	delete accountInfo._id;
+
+	return accountInfo;
+};
+
+/**
  * query all the members in department
  * @param {string} _id department id
  * @returns {Promise<{_id: string, fullName: string, avatar: null | string, position: string, department: string}>}
@@ -133,5 +147,6 @@ module.exports = {
 	getRegisterInfo,
 	getUserData,
 	checkIdentity,
+	decodeAccountInfo,
 	getDepartmentMembers
 };
