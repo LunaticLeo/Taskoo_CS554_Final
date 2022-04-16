@@ -26,7 +26,7 @@ class Project extends DBCollection {
 
 	checkValidation() {
 		Check.name(this.name);
-		Check._id(this.manager._id);
+		Check._id(this.manager);
 		for (const member of this.members) {
 			Check._id(member._id);
 		}

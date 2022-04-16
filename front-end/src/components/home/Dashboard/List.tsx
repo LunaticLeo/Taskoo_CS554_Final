@@ -1,16 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import TableList from '@/components/widgets/TableList';
-import { CardContent, Chip, Link } from '@mui/material';
+import { CardContent } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Link as NavLink } from 'react-router-dom';
-import * as dayjs from 'dayjs';
 import Styled from '@/components/widgets/Styled';
+import useFormatList from '@/hooks/useFormatList';
 
-const header: (keyof ProjectList)[] = ['name', 'createTime', 'status', 'members'];
+const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
 const List: React.FC = () => {
 	const { t } = useTranslation();
-	const [data, setData] = useState<ProjectList[]>([
+	const [data, setData] = useState<ProjectInfo[]>([
 		{
 			_id: '1',
 			name: 'Demo',
@@ -45,31 +44,13 @@ const List: React.FC = () => {
 			]
 		}
 	]);
-
-	const tableData = useMemo(
-		() =>
-			data.map(item => {
-				const { _id, name, createTime, status, members } = item;
-				return {
-					_id,
-					name: (
-						<Link component={NavLink} to='' underline='hover'>
-							{name}
-						</Link>
-					),
-					createTime: dayjs(createTime).format('MM/DD/YYYY'),
-					status: <Chip label={status} color='success' variant='outlined' />,
-					members: <Styled.AvatarGroup data={members} />
-				};
-			}),
-		[data]
-	);
+	const tableData = useFormatList(data);
 
 	return (
 		<Styled.Card>
 			<CardContent>
 				<Styled.Title>{t('overview')}</Styled.Title>
-				<TableList<ProjectList> showHeader size='small' header={header} data={tableData} />
+				<TableList<ProjectInfo> showHeader size='small' header={header} data={tableData} />
 			</CardContent>
 		</Styled.Card>
 	);

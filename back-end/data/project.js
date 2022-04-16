@@ -12,17 +12,17 @@ const createProject = async (projectObj, bucketId) => {
 	const { insertedId } = await projectCol.insertOne(newProject);
 
 	// update bucket for manager
-	await Bucket.updateStatus(bucketId, 'projects', newProject._id, null, newProject.status);
+	await Bucket.updateStatus(bucketId, 'projects', insertedId, null, newProject.status);
 	// update bucket for members
 	const accountsCol = await accounts();
 	const memberId = newProject.members.map(item => item._id);
 	const bucketIds = await accountsCol.find({ _id: { $in: memberId } }, { projection: { _id: 0, bucket: 1 } }).toArray();
 	const updateFunc = bucketIds.map(
-		async item => await Bucket.updateStatus(item.bucket, 'projects', newProject._id, null, newProject.status)
+		async item => await Bucket.updateStatus(item.bucket, 'projects', insertedId, null, newProject.status)
 	);
 	await Promise.all(updateFunc);
 
-	return `Project ${newProject.name} (id: ${insertedId}) create successfully`;
+	return `Project ${newProject.name} create successfully`;
 };
 
 const projectStatistic = async bucketId => {

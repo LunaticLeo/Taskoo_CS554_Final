@@ -1,7 +1,7 @@
 import { createContext, useMemo, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Box, PaletteMode } from '@mui/material';
-import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material/styles';
+import { createTheme, darken, lighten, ThemeOptions, ThemeProvider } from '@mui/material/styles';
 import { getMediaTheme } from './utils';
 import Account from './components/account/Account';
 import Error from './components/layout/Error';
@@ -66,6 +66,10 @@ function App() {
 const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 	palette: {
 		mode,
+		pending: { main: '#FB6D57', contrastText: '#fff', light: lighten('#FB6D57', 1.2), dark: darken('#FB6D57', 1.2) },
+		processing: { main: '#4A6EFC', contrastText: '#fff', light: lighten('#4A6EFC', 1.2), dark: darken('#4A6EFC', 1.2) },
+		testing: { main: '#F5AE42', contrastText: '#fff', light: lighten('#F5AE42', 1.2), dark: darken('#F5AE42', 1.2) },
+		done: { main: '#53CC9F', contrastText: '#fff', light: lighten('#53CC9F', 1.2), dark: darken('#53CC9F', 1.2) },
 		...(mode === 'light'
 			? {
 					// light mode
@@ -80,31 +84,21 @@ const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 	typography: {
 		fontFamily:
 			"Avenir, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;"
-	},
-	statusPalette: {
-		Pending: '#FB6D57',
-		Processing: '#4A6EFC',
-		Testing: '#F5AE42',
-		Done: '#53CC9F'
 	}
 });
 
 declare module '@mui/material/styles' {
-	interface Theme {
-		statusPalette: {
-			Pending: string;
-			Processing: string;
-			Testing: string;
-			Done: string;
-		};
+	interface Palette {
+		pending: Palette['primary'];
+		processing: Palette['primary'];
+		testing: Palette['primary'];
+		done: Palette['primary'];
 	}
-	interface ThemeOptions {
-		statusPalette?: {
-			Pending: string;
-			Processing: string;
-			Testing: string;
-			Done: string;
-		};
+	interface PaletteOptions {
+		pending: Palette['primary'];
+		processing: Palette['primary'];
+		testing: Palette['primary'];
+		done: Palette['primary'];
 	}
 }
 

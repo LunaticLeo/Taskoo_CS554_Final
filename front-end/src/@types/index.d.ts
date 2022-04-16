@@ -18,7 +18,7 @@ interface Account extends AccountInfo {
 
 type StoreAccountInfo = Omit<Account, 'bucket'> & { fullName: string };
 
-interface ProjectList extends DBCollections {
+interface ProjectInfo extends DBCollections {
 	name: string;
 	createTime: number;
 	status: StaticStatus;
@@ -28,7 +28,7 @@ interface ProjectList extends DBCollections {
 type ProjectForm = {
 	name: string;
 	description: string;
-	members: (AccountInfo & { role: string })[];
+	members: { _id: string; role: string }[];
 	attachments: File[];
 };
 type ProjectFormData = Record<keyof ProjectForm, string | string[] | File | File[]>;
@@ -57,9 +57,4 @@ interface Task extends TaskInfo {
 	project: string;
 	createTime: number;
 	attachments?: string[];
-}
-
-interface FavoriteInfo {
-	_id: string;
-	name: string;
 }

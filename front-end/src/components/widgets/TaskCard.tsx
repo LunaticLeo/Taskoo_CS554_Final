@@ -24,7 +24,7 @@ const TaskCard: React.FC<TaskInfo & { sx?: SxProps<Theme> }> = ({
 					<Typography variant='body2' color='text.secondary' className='collapse'>
 						{description}
 					</Typography>
-					<Stack direction='row' justifyContent='space-between'>
+					<Stack direction='row' alignItems='center' justifyContent='space-between'>
 						<Styled.Status label={status} />
 						<Styled.AvatarGroup data={members} />
 					</Stack>

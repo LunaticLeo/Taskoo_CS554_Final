@@ -38,6 +38,9 @@
 			"position": "Position"
 		}
 	},
+	"tabs": {
+		"favorite": "Favorite"
+	},
 	"status": {
 		"pending": "Pending",
 		"processing": "Processing",

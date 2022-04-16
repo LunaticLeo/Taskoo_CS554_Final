@@ -38,6 +38,9 @@
 			"position": "职位"
 		}
 	},
+	"tabs": {
+		"favorite": "我的收藏"
+	},
 	"status": {
 		"pending": "待开始",
 		"processing": "进行中",

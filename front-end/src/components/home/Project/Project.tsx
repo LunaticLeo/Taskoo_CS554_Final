@@ -1,15 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Box,
 	Button,
 	Checkbox,
-	Chip,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
 	Fab,
 	Grid,
-	Link,
 	List,
 	ListItem,
 	ListItemButton,
@@ -22,19 +20,18 @@ import {
 import ToDoList from './ToDoList';
 import { useTranslation } from 'react-i18next';
 import TableList from '@/components/widgets/TableList';
-import dayjs from 'dayjs';
 import Styled from '@/components/widgets/Styled';
-import { Link as NavLink } from 'react-router-dom';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import http from '@/utils/http';
 import { toFormData } from '@/utils';
 import { useSnackbar } from 'notistack';
+import useFormatList from '@/hooks/useFormatList';
 
-const header: (keyof ProjectList)[] = ['name', 'createTime', 'status', 'members'];
+const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
 const Project: React.FC = () => {
-	const [data, setData] = useState<ProjectList[]>([
+	const [data, setData] = useState<ProjectInfo[]>([
 		{
 			_id: '1',
 			name: 'Demo',
@@ -69,25 +66,7 @@ const Project: React.FC = () => {
 			]
 		}
 	]);
-
-	const tableData = useMemo(
-		() =>
-			data.map(item => {
-				const { _id, name, createTime, status, members } = item;
-				return {
-					_id,
-					name: (
-						<Link component={NavLink} to='' underline='hover'>
-							{name}
-						</Link>
-					),
-					createTime: dayjs(createTime).format('MM/DD/YYYY'),
-					status: <Chip label={status} color='success' variant='outlined' />,
-					members: <Styled.AvatarGroup data={members} />
-				};
-			}),
-		[data]
-	);
+	const tableData = useFormatList(data);
 
 	return (
 		<>
@@ -96,7 +75,7 @@ const Project: React.FC = () => {
 					<ToDoList />
 				</Grid>
 				<Grid item xs={12} lg={9}>
-					<TableList<ProjectList> showHeader size='small' header={header} data={tableData} />
+					<TableList<ProjectInfo> showHeader size='small' header={header} data={tableData} />
 				</Grid>
 			</Grid>
 			<FormDialog />
@@ -210,7 +189,7 @@ const FormDialog: React.FC = () => {
 
 const MemberList: React.FC<{
 	data: (AccountInfo & { position: string })[];
-	members: (AccountInfo & { role: string })[];
+	members: { _id: string; role: string }[];
 	setMembers: (value: React.SetStateAction<ProjectForm>) => void;
 }> = ({ data, members, setMembers }) => {
 	const { t } = useTranslation();
@@ -222,7 +201,7 @@ const MemberList: React.FC<{
 
 	useEffect(() => {
 		http.get<StaticData[]>('/static/roles').then(res => {
-			setRoleList(res.data!);
+			setRoleList(res.data!.filter(item => item.name !== 'Manager'));
 		});
 	}, []);
 
@@ -248,13 +227,8 @@ const MemberList: React.FC<{
 	const handleAssignRole = (role: StaticData) => {
 		setMembers(preVal => {
 			const { members } = preVal;
-			const { fullName, _id, avatar } = data[anchorEl.index];
-			members.push({
-				role: role.name,
-				fullName,
-				_id,
-				avatar
-			});
+			const { _id } = data[anchorEl.index];
+			members.push({ role: role.name, _id });
 			return { ...preVal, members };
 		});
 		setAnchorEl({ el: null, index: -1 });

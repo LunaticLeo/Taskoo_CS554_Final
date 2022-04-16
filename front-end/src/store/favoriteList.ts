@@ -1,7 +1,7 @@
 import http from '@/utils/http';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: { data: FavoriteInfo[] } = {
+const initialState: { data: ProjectInfo[] } = {
 	data: []
 };
 
@@ -9,7 +9,7 @@ export const favoriteListSlice = createSlice({
 	name: 'favoriteList',
 	initialState,
 	reducers: {
-		set: (state, { payload }: PayloadAction<FavoriteInfo[]>) => {
+		set: (state, { payload }: PayloadAction<ProjectInfo[]>) => {
 			state.data = payload;
 		}
 	}
@@ -17,7 +17,7 @@ export const favoriteListSlice = createSlice({
 
 export const getFavoriteList = () => {
 	return (dispatch: any) =>
-		http.get<FavoriteInfo[]>('/project/favorite/list').then(res => {
+		http.get<ProjectInfo[]>('/project/favorite/list').then(res => {
 			dispatch(favoriteListSlice.actions.set(res.data!));
 		});
 };

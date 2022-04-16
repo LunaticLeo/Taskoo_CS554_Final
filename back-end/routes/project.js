@@ -1,3 +1,4 @@
+const router = require('express').Router();
 const {
 	createProject,
 	projectStatistic,
@@ -9,17 +10,13 @@ const {
 	removeFromFavorite
 } = require('../data/project');
 const { Project, Check } = require('../lib');
-const { getFullName } = require('../utils/helpers');
-
-const router = require('express').Router();
 
 router.post('/create', async (req, res) => {
-	const { _id, firstName, lastName, avatar, bucket } = req.session.accountInfo;
-	const manager = { _id, fullName: getFullName(firstName, lastName), avatar, role: 'Manager' };
+	const { _id, bucket } = req.session.accountInfo;
 
 	let newProject;
 	try {
-		newProject = new Project({ ...req.body, manager });
+		newProject = new Project({ ...req.body, manager: _id });
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}

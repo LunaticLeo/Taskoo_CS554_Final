@@ -6,6 +6,12 @@ const toCapitalize = str => {
 	return str?.toLowerCase().replace(/^./, l => l.toUpperCase());
 };
 
+/**
+ * composed name
+ * @param {string} firstName
+ * @param {string} lastName
+ * @returns {string} '{firstName} {lastName}'
+ */
 const getFullName = (firstName, lastName) => {
 	return `${toCapitalize(firstName)} ${toCapitalize(lastName)}`;
 };

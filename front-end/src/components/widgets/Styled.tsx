@@ -27,14 +27,7 @@ const StyledTitle: React.FC = ({ children }) => (
 const StyledStatus: React.FC<{ label: string }> = ({ label }) => {
 	const { t } = useTranslation();
 
-	const color: Record<StaticStatus, string> = {
-		Pending: 'error',
-		Processing: 'info',
-		Testing: 'warning',
-		Done: 'success'
-	};
-
-	return <Chip label={t(`status.${label.toLowerCase()}`)} color={(color as any)[label]} />;
+	return <Chip label={t(`status.${label.toLowerCase()}`)} color={label.toLowerCase() as any} />;
 };
 const StyledAccountInfo: React.FC<Partial<Account> & { fullName: string; component?: React.ElementType<any> }> = ({
 	avatar,
