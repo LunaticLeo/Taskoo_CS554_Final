@@ -46,6 +46,8 @@ router.get('/statistic', async (req, res) => {
 router.get('/list', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
 
+	// console.log(req.session.accountInfo)
+
 	try {
 		const data = await projectList(bucket);
 		res.status(200).json({ code: 200, message: '', data: data });
