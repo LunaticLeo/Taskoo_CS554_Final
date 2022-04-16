@@ -43,7 +43,39 @@ const projectStatistic = async bucketId => {
 	return data;
 };
 
-const projectList = async bucket_id => {};
+const projectList = async (bucket_id) => {
+	// console.log(bucket_id)
+	const bucketsCol = await buckets();
+	const data = await bucketsCol.aggregate(
+		[
+			{
+				'$match': {
+					'_id': bucket_id
+				}
+			}, {
+				'$project': {
+					'userProjects': {
+						'$concatArrays': [
+							'$projects.pending', '$projects.processing', '$projects.testing', '$projects.done'
+						]
+					},
+					'_id': 0
+				}
+			}, {
+				'$lookup': {
+					'from': 'projects',
+					'localField': 'userProjects',
+					'foreignField': '_id',
+					'as': 'userProjectsDetails'
+				}
+			}
+		]
+	).toArray();
+
+	// console.log(data)
+	return data[0]["userProjectsDetails"];
+
+};
 
 /**
  * get the detail of the project
