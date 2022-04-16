@@ -43,38 +43,35 @@ const projectStatistic = async bucketId => {
 	return data;
 };
 
-const projectList = async (bucket_id) => {
-	// console.log(bucket_id)
+const projectList = async bucketId => {
 	const bucketsCol = await buckets();
-	const data = await bucketsCol.aggregate(
-		[
+	const data = await bucketsCol
+		.aggregate([
 			{
-				'$match': {
-					'_id': bucket_id
+				$match: {
+					_id: bucketId
 				}
-			}, {
-				'$project': {
-					'userProjects': {
-						'$concatArrays': [
-							'$projects.pending', '$projects.processing', '$projects.testing', '$projects.done'
-						]
+			},
+			{
+				$project: {
+					userProjects: {
+						$concatArrays: ['$projects.pending', '$projects.processing', '$projects.testing', '$projects.done']
 					},
-					'_id': 0
+					_id: 0
 				}
-			}, {
-				'$lookup': {
-					'from': 'projects',
-					'localField': 'userProjects',
-					'foreignField': '_id',
-					'as': 'userProjectsDetails'
+			},
+			{
+				$lookup: {
+					from: 'projects',
+					localField: 'userProjects',
+					foreignField: '_id',
+					as: 'userProjectsDetails'
 				}
 			}
-		]
-	).toArray();
+		])
+		.toArray();
 
-	// console.log(data)
-	return data[0]["userProjectsDetails"];
-
+	return data[0]['userProjectsDetails'];
 };
 
 /**
@@ -113,12 +110,23 @@ const getFavoriteStatus = async (bucketId, projectId) => {
 const getFavoriteList = async bucketId => {
 	Check._id(bucketId);
 	const bucketsCol = await buckets();
-	const { favorites } = await bucketsCol.findOne({ _id: bucketId }, { projection: { _id: 0, favorites: 1 } });
+	const data = await bucketsCol
+		.aggregate([
+			{ $match: { _id: bucketId } },
+			{ $project: { _id: 0, favorites: 1 } },
+			{
+				$lookup: {
+					from: 'projects',
+					localField: 'favorites',
+					foreignField: '_id',
+					as: 'favoriteList',
+					pipeline: [{ $project: { _id: 1, name: 1 } }]
+				}
+			}
+		])
+		.toArray();
 
-	const projectCol = await projects();
-	const projectList = await projectCol.find({ _id: { $in: favorites } }, { projection: { name: 1 } }).toArray();
-
-	return projectList;
+	return data[0].favoriteList;
 };
 
 /**
