@@ -6,7 +6,7 @@ interface ResponseData<T> {
 	message: string;
 	data?: T;
 }
-type AxiosHttp = Record<RequestMethod, <T = {}>(path: string, param: Object) => Promise<ResponseData<T>>>;
+type AxiosHttp = Record<RequestMethod, <T = {}>(path: string, param?: Object) => Promise<ResponseData<T>>>;
 
 const METHODS: RequestMethod[] = ['get', 'post', 'put', 'delete'];
 const DEFAULT_CONFIG: AxiosRequestConfig = {
@@ -25,7 +25,7 @@ instance.interceptors.response.use(
 );
 
 const http: AxiosHttp = METHODS.reduce((pre, key: RequestMethod) => {
-	pre[key] = async <T>(path: string, param: Object) => {
+	pre[key] = async <T = any>(path: string, param?: Object) => {
 		const requestData = {
 			method: key,
 			url: path,

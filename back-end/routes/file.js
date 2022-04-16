@@ -10,7 +10,7 @@ router.post('/upload', async (req, res) => {
 			data: url
 		});
 	} catch (error) {
-		res.status(500).json({ message: error });
+		return res.status(500).json({ message: error });
 	}
 });
 

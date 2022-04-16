@@ -7,5 +7,63 @@
 	"lastname": "Last Name",
 	"department": "Department",
 	"position": "Position",
-	"signupTip": "Already have an account? Go to "
+	"signupTip": "Already have an account? Go to ",
+	"menu": {
+		"studio": "Studio",
+		"dashboard": "Dashboard",
+		"profile": "Profile",
+		"project": "Project",
+		"calendar": "Calendar",
+		"organization": "Organization",
+		"favorite": "Favorite"
+	},
+	"tooltip": {
+		"setting": "Open settings",
+		"avatar": "Upload Avatar"
+	},
+	"button": {
+		"newProject": "New Project",
+		"cancel": "Cancel",
+		"submit": "Submit",
+		"upload": "Select Files"
+	},
+	"table": {
+		"header": {
+			"name": "Name",
+			"createTime": "Create Time",
+			"status": "Status",
+			"members": "Members",
+			"fullName": "Full Name",
+			"email": "Email",
+			"position": "Position"
+		}
+	},
+	"status": {
+		"pending": "Pending",
+		"processing": "Processing",
+		"testing": "Testing",
+		"done": "Done"
+	},
+	"statisticChart": {
+		"statisticData": "Statistic Data"
+	},
+	"overview": "Overview",
+	"statistic": "Statistic",
+	"profile": "Profile",
+	"contacts": "Contacts",
+	"detail": "Get Detail",
+	"dueTime": "DUE",
+	"todo": "TO DO",
+	"create": "Create on",
+	"project": {
+		"dialogTitle": "Create New project",
+		"manager": "Manager",
+		"info": "Project Info",
+		"members": "Members",
+		"attachments": "Attachments",
+		"form": {
+			"name": "Project Name",
+			"description": "Description"
+		}
+	}
 }

@@ -1,7 +1,7 @@
 const Check = require('./Check');
 const { DBCollection } = require('./Collection');
 const bcrypt = require('bcrypt');
-const saltRounds = 16;
+const saltRounds = 5;
 
 class Account extends DBCollection {
 	email = null;
@@ -26,9 +26,9 @@ class Account extends DBCollection {
 		const requiredFields = ['email', 'password', 'firstName', 'lastName', 'department', 'position'];
 		for (const key of requiredFields) {
 			if (this[key] === null || this[key] === undefined) {
-				throw new Error(`${key} is ${this[key]}`);
+				throw Error(`${key} is ${this[key]}`);
 			}
-			// TODO add validation checking
+			Check[key](this[key]);
 		}
 	}
 

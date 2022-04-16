@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
-import { toCapitalize } from '@/utils';
+import { getStaticData, toCapitalize } from '@/utils';
 import Logo from '../widgets/Logo';
 import http from '@/utils/http';
 
@@ -27,20 +27,29 @@ const Signup: React.FC = () => {
 		department: '',
 		position: ''
 	});
-
-	const displayForm = useMemo<SignUpForm>(
-		() => ({
-			...signUpForm,
-			firstName: toCapitalize(signUpForm.firstName),
-			lastName: toCapitalize(signUpForm.lastName)
-		}),
-		[signUpForm]
-	);
+	const [displayForm, setDisplayForm] = useState<FormInfo>({
+		firstName: '',
+		lastName: '',
+		department: '',
+		position: ''
+	});
 
 	useEffect(() => {
 		http
 			.get<SignUpForm>('/account/registerInfo', { registerId })
-			.then(res => setSignUpForm(preVal => ({ ...preVal, ...res.data })))
+			.then(async res => {
+				const data = res.data as SignUpForm;
+				setSignUpForm(preVal => ({ ...preVal, ...data }));
+				const department = ((await getStaticData('departments', data.department)) as StaticData).name;
+				const position = ((await getStaticData('positions', data.position)) as StaticData).name;
+				debugger;
+				setDisplayForm({
+					firstName: toCapitalize(data.firstName),
+					lastName: toCapitalize(data.lastName),
+					department,
+					position
+				});
+			})
 			.catch(err => navigate(`/error/404/${err.message}`));
 	}, []);
 

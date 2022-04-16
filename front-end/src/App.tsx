@@ -2,12 +2,18 @@ import { createContext, useMemo, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Box, PaletteMode } from '@mui/material';
 import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material/styles';
+import { getMediaTheme } from './utils';
 import Account from './components/account/Account';
 import Error from './components/layout/Error';
 import Home from './components/home/Home';
-import { getMediaTheme } from './utils';
+import Loading from './components/widgets/Loading';
+import { SnackbarProvider } from 'notistack';
+import { indigo } from '@mui/material/colors';
+import { Provider } from 'react-redux';
+import store from '@/store';
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
+export const LoadingContext = createContext({ setLoading: (status: boolean) => {} });
 
 function App() {
 	// set default theme mode
@@ -27,21 +33,31 @@ function App() {
 	);
 	const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
 
+	const [loading, setLoading] = useState<boolean>(false);
+	const setLoadingStatus = useMemo(() => ({ setLoading: (status: boolean) => setLoading(status) }), []);
+
 	return (
 		<ColorModeContext.Provider value={colorMode}>
-			<ThemeProvider theme={theme}>
-				<Router>
-					<Box sx={{ height: '100vh', position: 'relative' }}>
-						<Routes>
-							<Route path='/' element={<Navigate to='/account/signin' replace />} />
-							<Route path='/account/*' element={<Account />} />
-							<Route path='/home/*' element={<Home />} />
-							<Route path='/error/:code/:message' element={<Error />} />
-							<Route path='*' element={<Error />} />
-						</Routes>
-					</Box>
-				</Router>
-			</ThemeProvider>
+			<SnackbarProvider maxSnack={3}>
+				<LoadingContext.Provider value={setLoadingStatus}>
+					<ThemeProvider theme={theme}>
+						<Provider store={store}>
+							<Router>
+								<Box sx={{ height: '100vh', position: 'relative' }}>
+									<Routes>
+										<Route path='/' element={<Navigate to='/account/signin' replace />} />
+										<Route path='/account/*' element={<Account />} />
+										<Route path='/home/*' element={<Home />} />
+										<Route path='/error/:code/:message' element={<Error />} />
+										<Route path='*' element={<Error />} />
+									</Routes>
+								</Box>
+								<Loading open={loading} />
+							</Router>
+						</Provider>
+					</ThemeProvider>
+				</LoadingContext.Provider>
+			</SnackbarProvider>
 		</ColorModeContext.Provider>
 	);
 }
@@ -53,7 +69,7 @@ const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 		...(mode === 'light'
 			? {
 					// light mode
-					primary: { main: '#3f6af6' },
+					primary: { main: indigo[500] },
 					background: { default: '#eef2f5' }
 			  }
 			: {
@@ -64,7 +80,32 @@ const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 	typography: {
 		fontFamily:
 			"Avenir, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;"
+	},
+	statusPalette: {
+		Pending: '#FB6D57',
+		Processing: '#4A6EFC',
+		Testing: '#F5AE42',
+		Done: '#53CC9F'
 	}
 });
+
+declare module '@mui/material/styles' {
+	interface Theme {
+		statusPalette: {
+			Pending: string;
+			Processing: string;
+			Testing: string;
+			Done: string;
+		};
+	}
+	interface ThemeOptions {
+		statusPalette?: {
+			Pending: string;
+			Processing: string;
+			Testing: string;
+			Done: string;
+		};
+	}
+}
 
 export default App;

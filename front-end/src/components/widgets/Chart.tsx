@@ -1,7 +1,16 @@
-import React, { forwardRef, RefObject, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, RefObject, useImperativeHandle, useLayoutEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
-import { GraphicComponent, GraphicComponentOption } from 'echarts/components';
+import { PieChart, PieSeriesOption } from 'echarts/charts';
+import {
+	GraphicComponent,
+	GraphicComponentOption,
+	TooltipComponent,
+	TooltipComponentOption,
+	LegendComponent,
+	LegendComponentOption
+} from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
+import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { Box, SxProps } from '@mui/material';
 
 interface ChartProps {
@@ -10,7 +19,9 @@ interface ChartProps {
 	width?: string;
 	sx?: SxProps;
 }
-export type Option = echarts.ComposeOption<GraphicComponentOption>;
+export type Option = echarts.ComposeOption<
+	GraphicComponentOption | PieSeriesOption | TooltipComponentOption | LegendComponentOption
+>;
 
 const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> = (
 	{ option, sx, height = '100%', width = '100%' },
@@ -18,12 +29,14 @@ const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> 
 ) => {
 	const chartRef = useRef<HTMLDivElement>(null);
 
-	useImperativeHandle(ref, () => ({
-		current: chartRef.current
-	}));
+	useImperativeHandle(ref, () => ({ current: chartRef.current }));
 
 	let chart: echarts.ECharts;
-	useEffect(() => {
+	useLayoutEffect(() => {
+		const resize = () => {
+			chart?.resize();
+		};
+
 		if (!chart) {
 			chart = echarts.init(chartRef.current!);
 			chartRef.current?.addEventListener('resize', resize);
@@ -36,11 +49,17 @@ const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> 
 		};
 	}, [option]);
 
-	const resize = () => chart?.resize();
-
 	return <Box sx={{ ...sx, width, height }} ref={chartRef}></Box>;
 };
 
-echarts.use([GraphicComponent, CanvasRenderer]);
+echarts.use([
+	GraphicComponent,
+	CanvasRenderer,
+	PieChart,
+	TooltipComponent,
+	LegendComponent,
+	LabelLayout,
+	UniversalTransition
+]);
 
 export default forwardRef(Chart);

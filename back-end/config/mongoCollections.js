@@ -20,6 +20,7 @@ module.exports = {
 	positions: getCollectionFn('positions'),
 	roles: getCollectionFn('roles'),
 	status: getCollectionFn('status'),
-	account: getCollectionFn('account'),
-	bucket: getCollectionFn('bucket')
+	accounts: getCollectionFn('accounts'),
+	buckets: getCollectionFn('buckets'),
+	projects: getCollectionFn('projects')
 };

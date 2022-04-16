@@ -1,4 +1,6 @@
 const { validate } = require('uuid');
+const { isType } = require('../utils/helpers');
+const Status = ['Pending', 'Processing', 'Testing', 'Done'];
 
 module.exports = {
 	_id(param) {
@@ -28,6 +30,18 @@ module.exports = {
 			throw Error(`level: ${param} is not valid`);
 		}
 		return param;
+	},
+
+	prerequire(param) {
+		if (![...Status, null].includes(param)) {
+			throw Error('prerequire is not valid');
+		}
+
+		return param;
+	},
+
+	permit(param) {
+		return this.level(param);
 	},
 
 	manager(param) {
@@ -68,6 +82,10 @@ module.exports = {
 		return param;
 	},
 
+	password(param) {
+		return param;
+	},
+
 	department(param) {
 		if (!validate(param)) {
 			throw Error(`the id of department: ${param} is not valid`);
@@ -80,27 +98,17 @@ module.exports = {
 			throw Error(`the id of position: ${param} is not valid`);
 		}
 		return param;
-	}
-};
+	},
 
-/**
- * Check the parameter is the type of [type]
- * @param {string} type The type in JavaScript
- * 	number | string | boolean | object ({}) | array ([])
- * @returns {boolean}
- */
-const isType = (param, type) => {
-	if (type === 'object' || type === 'array') {
-		if (typeof param === 'object') {
-			if (type === 'array') {
-				return Array.isArray(param);
-			} else {
-				return true;
-			}
-		} else {
-			return false;
+	status(param) {
+		if (param === null || param === undefined) {
+			throw Error('status is not provided');
 		}
-	} else {
-		return typeof param === type;
+
+		if (!isType(param, 'string') || param.trim() === '' || !Status.includes(param)) {
+			throw Error(`status: ${param} is not valid`);
+		}
+
+		return param;
 	}
 };
