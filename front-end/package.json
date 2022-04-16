@@ -29,7 +29,8 @@
 		"react-i18next": "^11.15.7",
 		"react-redux": "^7.2.8",
 		"react-router-dom": "^6.2.2",
-		"vanilla-tilt": "^1.7.2"
+		"vanilla-tilt": "^1.7.2",
+		"http-proxy-middleware": "^2.0.4"
 	},
 	"devDependencies": {
 		"@types/node": "^17.0.21",

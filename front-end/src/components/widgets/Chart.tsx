@@ -1,6 +1,6 @@
 import React, { forwardRef, RefObject, useImperativeHandle, useLayoutEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
-import { PieChart, PieSeriesOption } from 'echarts/charts';
+import { PieChart, PieSeriesOption,TreemapChart,SunburstChart } from 'echarts/charts';
 import {
 	GraphicComponent,
 	GraphicComponentOption,
@@ -12,6 +12,7 @@ import {
 import { CanvasRenderer } from 'echarts/renderers';
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { Box, SxProps } from '@mui/material';
+import { SunburstSeriesOption, TreemapSeriesOption } from 'echarts';
 
 interface ChartProps {
 	option: Option;
@@ -20,7 +21,7 @@ interface ChartProps {
 	sx?: SxProps;
 }
 export type Option = echarts.ComposeOption<
-	GraphicComponentOption | PieSeriesOption | TooltipComponentOption | LegendComponentOption
+	GraphicComponentOption | PieSeriesOption | TooltipComponentOption | LegendComponentOption | TreemapSeriesOption |SunburstSeriesOption
 >;
 
 const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> = (
@@ -29,14 +30,12 @@ const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> 
 ) => {
 	const chartRef = useRef<HTMLDivElement>(null);
 
-	useImperativeHandle(ref, () => ({ current: chartRef.current }));
+	useImperativeHandle(ref, () => ({
+		current: chartRef.current
+	}));
 
 	let chart: echarts.ECharts;
 	useLayoutEffect(() => {
-		const resize = () => {
-			chart?.resize();
-		};
-
 		if (!chart) {
 			chart = echarts.init(chartRef.current!);
 			chartRef.current?.addEventListener('resize', resize);
@@ -49,6 +48,8 @@ const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> 
 		};
 	}, [option]);
 
+	const resize = () => chart?.resize();
+
 	return <Box sx={{ ...sx, width, height }} ref={chartRef}></Box>;
 };
 
@@ -59,7 +60,9 @@ echarts.use([
 	TooltipComponent,
 	LegendComponent,
 	LabelLayout,
-	UniversalTransition
+	UniversalTransition,
+	TreemapChart,
+	SunburstChart
 ]);
 
 export default forwardRef(Chart);
