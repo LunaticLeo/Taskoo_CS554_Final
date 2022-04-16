@@ -24,8 +24,8 @@ export const accountInfoSlice = createSlice({
 			state.data = { ...state.data, fullName };
 		},
 		set: (state, { payload }: PayloadAction<Partial<StoreAccountInfo>>) => {
-			const fullName = `${toCapitalize(payload.firstName!)} ${toCapitalize(payload.lastName!)}`;
-			const newInfo = { ...state.data, ...payload, fullName };
+			const newInfo = { ...state.data, ...payload };
+			newInfo.fullName = `${toCapitalize(newInfo.firstName!)} ${toCapitalize(newInfo.lastName!)}`;
 
 			state.data = newInfo;
 			sessionStorage.setItem(SESSION_KEY, JSON.stringify(newInfo));

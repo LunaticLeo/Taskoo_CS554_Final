@@ -1,6 +1,5 @@
 const { Project, Bucket, Check } = require('../lib');
 const { projects, buckets, accounts } = require('../config/mongoCollections');
-const { getFullName } = require('../utils/helpers');
 
 /**
  * create project
@@ -120,7 +119,7 @@ const getFavoriteList = async bucketId => {
 					localField: 'favorites',
 					foreignField: '_id',
 					as: 'favoriteList',
-					pipeline: [{ $project: { _id: 1, name: 1 } }]
+					pipeline: [{ $project: { description: 0, tasks: 0, attachments: 0 } }]
 				}
 			}
 		])

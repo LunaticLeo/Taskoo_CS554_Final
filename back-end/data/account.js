@@ -9,6 +9,7 @@ const { toCapitalize } = require('../utils/helpers');
 const { accounts } = require('../config/mongoCollections');
 const bcrypt = require('bcrypt');
 const { getStaticData } = require('./static');
+const { upload } = require('./file');
 
 /**
  * add the account info to register list (waitting for sign up)
@@ -141,11 +142,30 @@ const getDepartmentMembers = async _id => {
 	return members;
 };
 
+/**
+ * upload avatar
+ * @param {string} _id account id
+ * @param {File} file
+ * @returns {Promise<string>} the url of the file
+ */
+const uploadAvatar = async (_id, file) => {
+	Check._id(_id);
+	const url = await upload(file);
+
+	// update account
+	const accountCol = await accounts();
+	const { modifiedCount } = await accountCol.updateOne({ _id }, { $set: { avatar: url } });
+
+	if (!modifiedCount) throw Error('Upload failed, please try again later');
+	return url;
+};
+
 module.exports = {
 	addToRegisterList,
 	getRegisterInfo,
 	getUserData,
 	checkIdentity,
 	decodeAccountInfo,
-	getDepartmentMembers
+	getDepartmentMembers,
+	uploadAvatar
 };

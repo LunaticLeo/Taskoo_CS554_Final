@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Drawer, Stack } from '@mui/material';
 import Menu from './Menu';
 import ThemeSwitch from '../widgets/ThemeSwitch';
 import LangButton from '../widgets/LangButton';
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const Nav: React.FC<NavProps> = ({ openDrawer, setOpenDrawer }) => {
 	return (

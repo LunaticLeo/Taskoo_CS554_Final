@@ -36,9 +36,11 @@ const Home: React.FC = () => {
 					>
 						<MenuRoundedIcon />
 					</IconButton>
-					<Typography component='h1' variant='h4'>
-						{t(`menu.${curView}`)}
-					</Typography>
+					{curView && (
+						<Typography component='h1' variant='h4'>
+							{t(`menu.${curView}`)}
+						</Typography>
+					)}
 
 					<Stack direction='row' spacing={2} sx={{ ml: 'auto' }}>
 						<Notification />

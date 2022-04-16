@@ -5,7 +5,8 @@ const {
 	getUserData,
 	checkIdentity,
 	getDepartmentMembers,
-	decodeAccountInfo
+	decodeAccountInfo,
+	uploadAvatar
 } = require('../data/account');
 const Check = require('../lib/Check');
 
@@ -80,6 +81,17 @@ router.get('/members', async (req, res) => {
 		res.json({ code: 200, message: '', data: members });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.post('/avatar', async (req, res) => {
+	const { _id } = req.session.accountInfo;
+
+	try {
+		const url = await uploadAvatar(_id, req.file);
+		res.json({ code: 200, message: 'Upload was successful', data: url });
+	} catch (error) {
+		return res.status(500).json({ message: error?.message ?? error });
 	}
 });
 
