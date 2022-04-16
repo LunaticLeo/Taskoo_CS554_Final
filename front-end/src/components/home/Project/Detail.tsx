@@ -8,21 +8,53 @@ import dayjs from 'dayjs';
 import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
 import { yellow } from '@mui/material/colors';
+import { useSnackbar } from 'notistack';
+import { useAppDispatch } from '@/hooks/useStore';
+import { getFavoriteList } from '@/store/favoriteList';
 
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
 	const { id } = useParams();
+	const dispatch = useAppDispatch();
+	const { enqueueSnackbar } = useSnackbar();
 	const [projectInfo, setProjectInfo] = useState<Project>({} as Project);
+	const [favoriteStatus, setFavoriteStatus] = useState<boolean>(false);
 	const allMembers = useMemo(() => {
 		return projectInfo.manager && projectInfo?.members?.length ? [projectInfo.manager, ...projectInfo.members] : [];
 	}, [projectInfo.manager, projectInfo.members]);
 
 	useEffect(() => {
+		// get project detail info
 		http.get<Project>('/project/detail', { id }).then(res => {
 			setProjectInfo(res.data!);
 		});
+
+		// check favorite status
+		http.get<boolean>('/project/favorite/status', { id }).then(res => {
+			setFavoriteStatus(res.data!);
+		});
 	}, []);
 
+	const swithFavoriteStatus = () => {
+		const newStatus = !favoriteStatus;
+		const func = newStatus ? addToFavorite : removeFromFavorite;
+		func().then(() => {
+			setFavoriteStatus(newStatus);
+			dispatch(getFavoriteList());
+		});
+	};
+
+	const addToFavorite = () =>
+		http
+			.post('/project/favorite/add', { id })
+			.then(res => enqueueSnackbar(res.message, { variant: 'success' }))
+			.catch(err => enqueueSnackbar(err?.message ?? err, { variant: 'error' }));
+
+	const removeFromFavorite = () =>
+		http
+			.delete('/project/favorite/remove', { id })
+			.then(res => enqueueSnackbar(res.message, { variant: 'success' }))
+			.catch(err => enqueueSnackbar(err?.message ?? err, { variant: 'error' }));
 	return (
 		<Box>
 			<NavBreadcrumbs projectName={projectInfo?.name} />
@@ -34,7 +66,7 @@ const Detail: React.FC = () => {
 					<Typography marginLeft='auto' marginRight={1} variant='body2' color='text.secondary'>
 						{t('create')}: {dayjs(projectInfo.createTime).format('MM/DD/YYYY')}
 					</Typography>
-					<FavoriteButton favorite={false} />
+					<FavoriteButton favorite={favoriteStatus} onClick={swithFavoriteStatus} />
 				</Stack>
 				{projectInfo?.description && (
 					<Typography variant='body1' color='text.secondary'>

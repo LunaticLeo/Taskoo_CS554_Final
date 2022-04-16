@@ -16,7 +16,7 @@ interface Account extends AccountInfo {
 	bucket: string;
 }
 
-type StoreAccountInfo = Omit<Account & { fullName: string }, keyof { _id: string; bucket: string }>;
+type StoreAccountInfo = Omit<Account, 'bucket'> & { fullName: string };
 
 interface ProjectList extends DBCollections {
 	name: string;
@@ -57,4 +57,9 @@ interface Task extends TaskInfo {
 	project: string;
 	createTime: number;
 	attachments?: string[];
+}
+
+interface FavoriteInfo {
+	_id: string;
+	name: string;
 }

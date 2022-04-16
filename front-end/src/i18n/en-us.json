@@ -14,7 +14,8 @@
 		"profile": "Profile",
 		"project": "Project",
 		"calendar": "Calendar",
-		"organization": "Organization"
+		"organization": "Organization",
+		"favorite": "Favorite"
 	},
 	"tooltip": {
 		"setting": "Open settings",

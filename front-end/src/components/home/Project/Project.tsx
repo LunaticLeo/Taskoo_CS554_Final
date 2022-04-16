@@ -28,7 +28,6 @@ import { Link as NavLink } from 'react-router-dom';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import http from '@/utils/http';
-import { useDropzone } from 'react-dropzone';
 import { toFormData } from '@/utils';
 import { useSnackbar } from 'notistack';
 

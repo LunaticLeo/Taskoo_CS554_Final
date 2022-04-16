@@ -1,10 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
 import accountInfo from './accountInfo';
+import favoriteList, { getFavoriteList } from './favoriteList';
 
 const store = configureStore({
 	reducer: {
-		accountInfo
-	}
+		accountInfo,
+		favoriteList
+	},
+	middleware: getDefaultMiddleware =>
+		getDefaultMiddleware({
+			thunk: {
+				extraArgument: getFavoriteList
+			}
+		})
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

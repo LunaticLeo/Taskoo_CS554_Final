@@ -14,7 +14,8 @@
 		"profile": "个人中心",
 		"project": "项目",
 		"calendar": "日程",
-		"organization": "组织"
+		"organization": "组织",
+		"favorite": "我的收藏"
 	},
 	"tooltip": {
 		"setting": "打开设置",
