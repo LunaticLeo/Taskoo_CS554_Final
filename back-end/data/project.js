@@ -43,9 +43,7 @@ const projectStatistic = async bucketId => {
 	return data;
 };
 
-const projectList = async bucket_id => {
-	
-};
+const projectList = async bucket_id => {};
 
 /**
  * get the detail of the project
@@ -57,24 +55,73 @@ const getDetails = async _id => {
 	const projectCol = await projects();
 	const projectInfo = await projectCol.findOne({ _id });
 
-	// // get manager info
-	// const accountsCol = await accounts();
-	// const managerInfo = await accountsCol.findOne(
-	// 	{ _id: projectInfo.manager },
-	// 	{ projection: { firstName: 1, lastName: 1, avatar: 1 } }
-	// );
-	// managerInfo.fullName = getFullName(managerInfo.firstName, managerInfo.lastName);
-	// managerInfo.role = 'Manager';
-	// delete managerInfo.firstName;
-	// delete managerInfo.lastName;
-	// projectInfo.manager = managerInfo;
-
 	return projectInfo;
+};
+
+/**
+ * get a project's favorite status
+ * @param {string} bucketId
+ * @param {string} projectId
+ * @returns {Promise<boolean>}
+ */
+const getFavoriteStatus = async (bucketId, projectId) => {
+	Check._id(bucketId);
+	Check._id(projectId);
+	const bucketsCol = await buckets();
+	const data = await bucketsCol.findOne({ _id: bucketId, favorites: { $elemMatch: { $eq: projectId } } });
+
+	return Boolean(data);
+};
+
+/**
+ * get the favorite list
+ * @param {string} bucketId
+ * @returns {Promise<{_id: string, name: string}[]>}
+ */
+const getFavoriteList = async bucketId => {
+	Check._id(bucketId);
+	const bucketsCol = await buckets();
+	const { favorites } = await bucketsCol.findOne({ _id: bucketId }, { projection: { _id: 0, favorites: 1 } });
+
+	const projectCol = await projects();
+	const projectList = await projectCol.find({ _id: { $in: favorites } }, { projection: { name: 1 } }).toArray();
+
+	return projectList;
+};
+
+/**
+ * add a project to facorite list
+ * @param {string} bucketId
+ * @param {string} projectId
+ */
+const addToFavorite = async (bucketId, projectId) => {
+	Check._id(bucketId);
+	Check._id(projectId);
+	const bucketsCol = await buckets();
+	const { modifiedCount } = await bucketsCol.updateOne({ _id: bucketId }, { $addToSet: { favorites: projectId } });
+	if (!modifiedCount) throw Error('The project is already in favorite list');
+};
+
+/**
+ * remove a project from favorite list
+ * @param {string} bucketId
+ * @param {string} projectId
+ */
+const removeFromFavorite = async (bucketId, projectId) => {
+	Check._id(bucketId);
+	Check._id(projectId);
+	const bucketsCol = await buckets();
+	const { modifiedCount } = await bucketsCol.updateOne({ _id: bucketId }, { $pull: { favorites: projectId } });
+	if (!modifiedCount) throw Error('The project is not exist in favorite list');
 };
 
 module.exports = {
 	createProject,
 	projectStatistic,
 	projectList,
-	getDetails
+	getDetails,
+	getFavoriteStatus,
+	getFavoriteList,
+	addToFavorite,
+	removeFromFavorite
 };

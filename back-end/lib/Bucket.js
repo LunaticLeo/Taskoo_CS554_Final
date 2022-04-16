@@ -56,7 +56,7 @@ class Bucket extends DBCollection {
 		const bucketCol = await buckets();
 		category = category.toLowerCase();
 		from && (await bucketCol.updateOne({ _id: bucketId }, { $pull: { [`${category}.${from.toLowerCase()}`]: id } }));
-		await bucketCol.updateOne({ _id: bucketId }, { $push: { [`${category}.${to.toLowerCase()}`]: id } });
+		await bucketCol.updateOne({ _id: bucketId }, { $addToSet: { [`${category}.${to.toLowerCase()}`]: id } });
 	}
 }
 

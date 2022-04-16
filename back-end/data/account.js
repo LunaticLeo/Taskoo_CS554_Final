@@ -112,7 +112,6 @@ const decodeAccountInfo = async accountInfo => {
 	accountInfo.department = (await getStaticData('departments', accountInfo.department)).name;
 	accountInfo.position = (await getStaticData('positions', accountInfo.position)).name;
 	delete accountInfo.bucket;
-	delete accountInfo._id;
 
 	return accountInfo;
 };
