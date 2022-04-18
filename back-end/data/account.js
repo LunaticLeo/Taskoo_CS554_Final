@@ -10,6 +10,7 @@ const { accounts } = require('../config/mongoCollections');
 const bcrypt = require('bcrypt');
 const { getStaticData } = require('./static');
 const { upload } = require('./file');
+const Account = require('../lib/Account');
 
 /**
  * add the account info to register list (waitting for sign up)
@@ -160,6 +161,14 @@ const uploadAvatar = async (_id, file) => {
 	return url;
 };
 
+const createAccount = async (email, password, firstName, lastName, department, position) => {
+    const accountCollection = await accounts();
+    let newaccount=new Account({'email':email, 'password':password, 'firstName':firstName, 'lastName':lastName, 'department':department, 'position':position})
+	newaccount.hashPwd();
+    const insertInfo = await accountCollection.insertOne(newaccount);
+    if (insertInfo.insertedCount === 0) throw 'Could not add account';
+    return email;
+}
 module.exports = {
 	addToRegisterList,
 	getRegisterInfo,
@@ -167,5 +176,6 @@ module.exports = {
 	checkIdentity,
 	decodeAccountInfo,
 	getDepartmentMembers,
-	uploadAvatar
+	uploadAvatar,
+	createAccount
 };

@@ -6,7 +6,8 @@ const {
 	checkIdentity,
 	getDepartmentMembers,
 	decodeAccountInfo,
-	uploadAvatar
+	uploadAvatar,
+	createAccount
 } = require('../data/account');
 const Check = require('../lib/Check');
 
@@ -95,4 +96,24 @@ router.post('/avatar', async (req, res) => {
 	}
 });
 
+router.post('/signup', async (req, res) => {
+	const { email, password, firstName, lastName, department, position } = req.body;
+	try {
+		Object.keys(req.body).forEach(key => Check[key](req.body[key]));
+	} catch (error) {
+		res.status(400).json({ code: 400, message: error?.message ?? error });
+		return;
+	}
+
+	try {
+		await createAccount(email, password, firstName, lastName, department, position);
+		res.json({
+			code: 200,
+			message: "Sign up successfully",
+			data: email
+		  })
+	} catch (error) {
+		res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
 module.exports = router;
