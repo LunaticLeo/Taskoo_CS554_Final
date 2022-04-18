@@ -28,7 +28,7 @@ interface ProjectInfo extends DBCollections {
 type ProjectForm = {
 	name: string;
 	description: string;
-	members: { _id: string; role: string }[];
+	members: { _id: string; role: string; roleId: string }[];
 	attachments: File[];
 };
 type ProjectFormData = Record<keyof ProjectForm, string | string[] | File | File[]>;

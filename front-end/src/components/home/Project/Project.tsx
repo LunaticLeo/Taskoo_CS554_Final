@@ -228,7 +228,7 @@ const MemberList: React.FC<{
 		setMembers(preVal => {
 			const { members } = preVal;
 			const { _id } = data[anchorEl.index];
-			members.push({ role: role.name, _id });
+			members.push({ role: role.name, roleId: role._id, _id });
 			return { ...preVal, members };
 		});
 		setAnchorEl({ el: null, index: -1 });

@@ -16,7 +16,10 @@ router.post('/create', async (req, res) => {
 
 	let newProject;
 	try {
-		newProject = new Project({ ...req.body, manager: _id });
+		newProject = new Project({
+			...req.body,
+			manager: { _id, role: 'Manager', roleId: '584b21b7-57b5-4394-825c-f488c53c7d51' }
+		});
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}

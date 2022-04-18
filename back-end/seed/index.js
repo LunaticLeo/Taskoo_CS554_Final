@@ -1,8 +1,9 @@
 const dbConnection = require('../config/mongoConnection');
 const mongoCollections = require('../config/mongoCollections');
-const { DBStaticCollection, Account, Bucket } = require('../lib');
+const { DBStaticCollection, Account, Bucket, Project } = require('../lib');
 const { createProject } = require('../data/project');
 const staticData = require('./static.json');
+const Mock = require('mockjs');
 
 const insertStatic = async collectionName => {
 	const collection = await mongoCollections[collectionName]();
@@ -35,43 +36,44 @@ const insertAccounts = async (departmentIds, positionIds) => {
 };
 
 const insertProjects = async () => {
+	const accountsCol = await mongoCollections['accounts']();
+	const accounts = await accountsCol.find().toArray();
+	const managers = accounts.filter(item => item.position === '01bcb711-f5c4-44bc-a0fe-949b1a4e1273');
+	const roles = staticData.roles.filter(item => item._id !== '584b21b7-57b5-4394-825c-f488c53c7d51');
+	const members = accounts.filter(item => item.position !== '01bcb711-f5c4-44bc-a0fe-949b1a4e1273');
 
-	const accountsCol = await mongoCollections["accounts"]();
-
-	const accounts = await accountsCol.find().toArray()
-
-	for (let i = 0; i < accounts.length; i++) {
-
-		let projectObj = {
-
-			"name": `project managed by ${accounts[i].firstName} ${accounts[i].lastName}`,
-			"description": `project managed by ${accounts[i].firstName} ${accounts[i].lastName}`,
-			"manager": {
-				"role": "Manager",
-				"fullName": accounts[i].firstName + accounts[i].lastName,
-				"_id": accounts[i]._id,
-				"avatar": accounts[i].avatar
-			},
-			"members":
-				accounts.slice(0, i).concat(accounts.slice(i + 1, accounts.length)).map(ele => {
-					return {
-						"role": "worker",
-						"fullName": `${ele.firstName} ${ele.lastName}`,
-						"_id": ele._id,
-						"avatar": ele.avatar
-					}
-				})
-			,
-			"status": "Pending",
-			"tasks": [],
-			"attachments": []
+	const Random = Mock.Random;
+	Random.extend({
+		memberRoles: function () {
+			return this.pick(roles);
 		}
-		// console.log(projectObj)
-		await createProject(projectObj, accounts[i].bucket);
+	});
 
-	}
-
-
+	await Promise.all(
+		managers.map(async manager => {
+			const count = ~~(Math.random() * 2) + 1;
+			for (let i = 0; i < count; i++) {
+				await createProject(
+					new Project(
+						{
+							name: Random.title(2, 5),
+							description: Random.sentence(),
+							manager: {
+								_id: manager._id,
+								role: 'Manager',
+								roleName: '584b21b7-57b5-4394-825c-f488c53c7d51'
+							},
+							members: members.map(ele => {
+								const { _id: role, name: roleName } = Random.memberRoles();
+								return { _id: ele._id, role, roleName };
+							})
+						},
+						manager.bucket
+					)
+				);
+			}
+		})
+	);
 };
 
 async function main() {
