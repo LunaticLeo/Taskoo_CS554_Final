@@ -54,22 +54,20 @@ const insertProjects = async () => {
 			const count = ~~(Math.random() * 2) + 1;
 			for (let i = 0; i < count; i++) {
 				await createProject(
-					new Project(
-						{
-							name: Random.title(2, 5),
-							description: Random.sentence(),
-							manager: {
-								_id: manager._id,
-								role: 'Manager',
-								roleName: '584b21b7-57b5-4394-825c-f488c53c7d51'
-							},
-							members: members.map(ele => {
-								const { _id: role, name: roleName } = Random.memberRoles();
-								return { _id: ele._id, role, roleName };
-							})
+					new Project({
+						name: Random.title(2, 5),
+						description: Random.sentence(),
+						manager: {
+							_id: manager._id,
+							role: 'Manager',
+							roleName: '584b21b7-57b5-4394-825c-f488c53c7d51'
 						},
-						manager.bucket
-					)
+						members: members.map(ele => {
+							const { _id: role, name: roleName } = Random.memberRoles();
+							return { _id: ele._id, role, roleName };
+						})
+					}),
+					manager.bucket
 				);
 			}
 		})
