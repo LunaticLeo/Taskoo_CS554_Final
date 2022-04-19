@@ -7,13 +7,6 @@ import Logo from '../widgets/Logo';
 import http from '@/utils/http';
 import { Form } from '@/@types/form';
 
-interface FormInfo {
-	firstName: string;
-	lastName: string;
-	department: string;
-	position: string;
-}
-
 const Signup: React.FC = () => {
 	const { t } = useTranslation();
 	const { registerId } = useParams();
@@ -26,7 +19,7 @@ const Signup: React.FC = () => {
 		department: '',
 		position: ''
 	});
-	const [displayForm, setDisplayForm] = useState<FormInfo>({
+	const [displayForm, setDisplayForm] = useState<Omit<Form.SignUpForm, 'email' | 'password'>>({
 		firstName: '',
 		lastName: '',
 		department: '',
@@ -35,22 +28,30 @@ const Signup: React.FC = () => {
 
 	useEffect(() => {
 		http
-			.get<Form.SignUpForm>('/account/registerInfo', { registerId })
+			.get<Omit<Form.SignUpForm<StaticData>, 'email' | 'password'>>('/account/registerInfo', { registerId })
 			.then(async res => {
-				const data = res.data!;
-				setSignUpForm(preVal => ({ ...preVal, ...data }));
-				const department = ((await getStaticData('departments', data.department)) as StaticData).name;
-				const position = ((await getStaticData('positions', data.position)) as StaticData).name;
-				debugger;
+				const { firstName, lastName, department, position } = res.data!;
+				setSignUpForm(preVal => ({
+					...preVal,
+					firstName,
+					lastName,
+					department: department._id,
+					position: position._id
+				}));
+
 				setDisplayForm({
-					firstName: toCapitalize(data.firstName),
-					lastName: toCapitalize(data.lastName),
-					department,
-					position
+					firstName: toCapitalize(firstName),
+					lastName: toCapitalize(lastName),
+					department: department.name,
+					position: position.name
 				});
 			})
 			.catch(err => navigate(`/error/404/${err.message}`));
 	}, []);
+
+	const handleInputChange = (value: Partial<Form.SignUpForm>) => {
+		setSignUpForm(preVal => ({ ...preVal, ...value }));
+	};
 
 	return (
 		<Stack component='form' autoComplete='off' spacing={1.5}>
@@ -73,8 +74,22 @@ const Signup: React.FC = () => {
 					value={displayForm.lastName}
 				/>
 			</Stack>
-			<TextField id='email' label={t('email')} variant='standard' type='email' />
-			<TextField id='password' label={t('password')} variant='standard' type='password' />
+			<TextField
+				id='email'
+				label={t('email')}
+				variant='standard'
+				type='email'
+				value={signUpForm.email}
+				onChange={e => handleInputChange({ email: e.target.value.trim() })}
+			/>
+			<TextField
+				id='password'
+				label={t('password')}
+				variant='standard'
+				type='password'
+				value={signUpForm.password}
+				onChange={e => handleInputChange({ password: e.target.value.trim() })}
+			/>
 			<TextField id='department' label={t('department')} variant='standard' disabled value={displayForm.department} />
 			<TextField id='position' label={t('position')} variant='standard' disabled value={displayForm.position} />
 

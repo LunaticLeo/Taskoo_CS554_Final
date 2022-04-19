@@ -26,6 +26,9 @@ const addToRegisterList = async (accountInfo, email) => {
 	Check.department(accountInfo.department);
 	Check.position(accountInfo.position);
 
+	accountInfo.department = await getStaticData('departments', accountInfo.department);
+	accountInfo.position = await getStaticData('positions', accountInfo.position);
+
 	const registerId = uuidv4();
 	// TIPS the expire time (default is 1 hour)
 	const expireTime = dayjs().add(1, 'hour').valueOf();
@@ -162,13 +165,20 @@ const uploadAvatar = async (_id, file) => {
 };
 
 const createAccount = async (email, password, firstName, lastName, department, position) => {
-    const accountCollection = await accounts();
-    let newaccount=new Account({'email':email, 'password':password, 'firstName':firstName, 'lastName':lastName, 'department':department, 'position':position})
+	const accountCollection = await accounts();
+	let newaccount = new Account({
+		email: email,
+		password: password,
+		firstName: firstName,
+		lastName: lastName,
+		department: department,
+		position: position
+	});
 	newaccount.hashPwd();
-    const insertInfo = await accountCollection.insertOne(newaccount);
-    if (insertInfo.insertedCount === 0) throw 'Could not add account';
-    return email;
-}
+	const insertInfo = await accountCollection.insertOne(newaccount);
+	if (insertInfo.insertedCount === 0) throw 'Could not add account';
+	return email;
+};
 module.exports = {
 	addToRegisterList,
 	getRegisterInfo,
