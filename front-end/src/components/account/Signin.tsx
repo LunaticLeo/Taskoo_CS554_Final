@@ -9,16 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import { LoadingContext } from '@/App';
 import { useAppDispatch } from '@/hooks/useStore';
 import { set } from '@/store/accountInfo';
-
-type SignInForm = {
-	email: string;
-	password: string;
-};
+import { Form } from '@/@types/form';
 
 const Signin: React.FC = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
-	const [signinForm, setSigninForm] = useState<SignInForm>({ email: '', password: '' });
+	const [signinForm, setSigninForm] = useState<Form.SignInForm>({ email: '', password: '' });
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const { setLoading } = useContext(LoadingContext);
 	const dispatch = useAppDispatch();
@@ -26,7 +22,7 @@ const Signin: React.FC = () => {
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
-		const formData = toFormData<SignInForm>(signinForm);
+		const formData = toFormData<Form.SignInForm>(signinForm);
 		http
 			.post('/account/signin', formData)
 			.then(res => {
@@ -38,7 +34,7 @@ const Signin: React.FC = () => {
 			})
 			.catch(() => setTimeout(() => setLoading(false), 1000));
 	};
-	const handleInputChange = (val: Partial<SignInForm>) => {
+	const handleInputChange = (val: Partial<Form.SignInForm>) => {
 		setSigninForm(preVal => ({ ...preVal, ...val }));
 	};
 
