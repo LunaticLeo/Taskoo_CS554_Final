@@ -45,32 +45,55 @@ const projectStatistic = async bucketId => {
 const projectList = async bucketId => {
 	const bucketsCol = await buckets();
 	const data = await bucketsCol
-		.aggregate([
-			{
-				$match: {
-					_id: bucketId
+		.aggregate(
+			[
+				{
+					'$match': {
+						'_id': bucketId
+					}
+				}, {
+					'$project': {
+						'userProjects': {
+							'$concatArrays': [
+								'$projects.pending', '$projects.processing', '$projects.testing', '$projects.done'
+							]
+						},
+						'_id': 0
+					}
+				}, {
+					'$lookup': {
+						'from': 'projects',
+						'localField': 'userProjects',
+						'foreignField': '_id',
+						'as': 'userProjects'
+					}
+				}, {
+					'$unwind': '$userProjects'
+				}, {
+					'$replaceRoot': {
+						'newRoot': '$userProjects'
+					}
+				}, {
+					'$lookup': {
+						'from': 'accounts',
+						'localField': 'members._id',
+						'foreignField': '_id',
+						'as': 'members'
+					}
+				}, {
+					'$project': {
+						'members.disabled': 0,
+						'members.password': 0,
+						'members.bucket': 0
+					}
 				}
-			},
-			{
-				$project: {
-					userProjects: {
-						$concatArrays: ['$projects.pending', '$projects.processing', '$projects.testing', '$projects.done']
-					},
-					_id: 0
-				}
-			},
-			{
-				$lookup: {
-					from: 'projects',
-					localField: 'userProjects',
-					foreignField: '_id',
-					as: 'userProjectsDetails'
-				}
-			}
-		])
+			]
+		)
 		.toArray();
 
-	return data[0]['userProjectsDetails'];
+	// console.dir(data, { depth: null });
+
+	return data;
 };
 
 /**

@@ -57,15 +57,15 @@ const insertProjects = async () => {
 					new Project({
 						name: Random.title(2, 5),
 						description: Random.sentence(),
-						manager: {
-							_id: manager._id,
-							role: 'Manager',
-							roleName: '584b21b7-57b5-4394-825c-f488c53c7d51'
-						},
-						members: members.map(ele => {
-							const { _id: role, name: roleName } = Random.memberRoles();
-							return { _id: ele._id, role, roleName };
-						})
+						members: [
+							{
+								_id: manager._id,
+								role: { "_id": "584b21b7-57b5-4394-825c-f488c53c7d51", "name": "Manager" }
+							},
+							...members.map(ele => {
+								return { _id: ele._id, role: Random.memberRoles() };
+							})
+						]
 					}),
 					manager.bucket
 				);
