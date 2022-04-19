@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
-import { getStaticData, toCapitalize } from '@/utils';
+import { toCapitalize } from '@/utils';
 import Logo from '../widgets/Logo';
 import http from '@/utils/http';
 import { Form } from '@/@types/form';
@@ -29,7 +29,7 @@ const Signup: React.FC = () => {
 	useEffect(() => {
 		http
 			.get<Omit<Form.SignUpForm<StaticData>, 'email' | 'password'>>('/account/registerInfo', { registerId })
-			.then(async res => {
+			.then(res => {
 				const { firstName, lastName, department, position } = res.data!;
 				setSignUpForm(preVal => ({
 					...preVal,
@@ -99,7 +99,7 @@ const Signup: React.FC = () => {
 
 			<Typography variant='body2' color='text.secondary' sx={{ alignSelf: 'flex-end' }}>
 				{t('signupTip')}
-				<Link component={RouterLink} to='/'>
+				<Link component={RouterLink} to='/account/signin'>
 					{t('signin')}
 				</Link>
 			</Typography>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { Box, useTheme } from '@mui/material';
 
 const DynamicBG: React.FC = () => {
@@ -105,4 +105,4 @@ class RoundSquare {
 	};
 }
 
-export default DynamicBG;
+export default memo(DynamicBG);
