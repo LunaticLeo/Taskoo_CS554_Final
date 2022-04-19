@@ -74,7 +74,7 @@ const Menu: React.FC = () => {
 								))}
 							</List>
 						))}
-						{favoriteList.length && (
+						{Boolean(favoriteList.length) && (
 							<List subheader={<ListSubheader>{t('menu.favorite')}</ListSubheader>}>
 								{favoriteList.map((item, index) => (
 									<ListItemButton to={`/home/project/${item._id}`} component={Link} key={item._id}>

@@ -5,6 +5,7 @@ import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
 import { getStaticData, toCapitalize } from '@/utils';
 import Logo from '../widgets/Logo';
 import http from '@/utils/http';
+import { Form } from '@/@types/form';
 
 interface FormInfo {
 	firstName: string;
@@ -13,13 +14,11 @@ interface FormInfo {
 	position: string;
 }
 
-type SignUpForm = FormInfo & { email: string; password: string };
-
 const Signup: React.FC = () => {
 	const { t } = useTranslation();
 	const { registerId } = useParams();
 	const navigate = useNavigate();
-	const [signUpForm, setSignUpForm] = useState<SignUpForm>({
+	const [signUpForm, setSignUpForm] = useState<Form.SignUpForm>({
 		firstName: '',
 		lastName: '',
 		email: '',
@@ -36,9 +35,9 @@ const Signup: React.FC = () => {
 
 	useEffect(() => {
 		http
-			.get<SignUpForm>('/account/registerInfo', { registerId })
+			.get<Form.SignUpForm>('/account/registerInfo', { registerId })
 			.then(async res => {
-				const data = res.data as SignUpForm;
+				const data = res.data!;
 				setSignUpForm(preVal => ({ ...preVal, ...data }));
 				const department = ((await getStaticData('departments', data.department)) as StaticData).name;
 				const position = ((await getStaticData('positions', data.position)) as StaticData).name;
