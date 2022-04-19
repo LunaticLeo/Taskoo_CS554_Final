@@ -1,60 +1,46 @@
-interface DBCollections {
+/************************************************************* Account *************************************************************/
+interface Account<T = string | StaticData> {
 	_id: string;
-}
-
-interface AccountInfo extends DBCollections {
-	fullName?: string;
-	avatar: string | null;
-}
-
-interface Account extends AccountInfo {
 	email: string;
 	firstName: string;
 	lastName: string;
-	department: string;
-	position: string;
-	bucket: string;
+	department: T;
+	position: T;
+	avatar: string;
 }
 
-type StoreAccountInfo = Omit<Account, 'bucket'> & { fullName: string };
+type WithRole<S> = S & { role: string | StaticData };
+type WithFullName<S> = S & { fullName: string };
 
-interface ProjectInfo extends DBCollections {
-	name: string;
-	createTime: number;
-	status: StaticStatus;
-	members: Required<AccountInfo>[];
-}
-
-type ProjectForm = {
+/************************************************************* Porject *************************************************************/
+interface Project {
+	_id: string;
 	name: string;
 	description: string;
-	members: { _id: string; role: string; roleId: string }[];
-	attachments: File[];
-};
-type ProjectFormData = Record<keyof ProjectForm, string | string[] | File | File[]>;
-
-interface ContactList extends AccountInfo {
-	email: string;
-	position: string;
-}
-
-interface Project extends DBCollections, Omit<ProjectForm, keyof { attachments: string[] }> {
-	manager: AccountInfo & { role: string };
-	task: string[];
+	createTime: number;
+	members: Account[];
 	status: StaticStatus;
-	createTime: number;
+	tasks: string[];
+	attachments: string[];
 }
 
-interface TaskInfo extends DBCollections {
-	name: string;
-	description?: string;
-	dueTime: number;
-	status: string;
-	members: AccountInfo[];
-}
+type ProjectInfo = Pick<Project, 'name' | 'createTime' | 'status' | 'members'>;
 
-interface Task extends TaskInfo {
-	project: string;
-	createTime: number;
-	attachments?: string[];
-}
+// interface ContactList {
+// 	email: string;
+// 	position: string;
+// }
+
+// interface TaskInfo extends DBCollections {
+// 	name: string;
+// 	description?: string;
+// 	dueTime: number;
+// 	status: string;
+// 	members: AccountInfo[];
+// }
+
+// interface Task extends TaskInfo {
+// 	project: string;
+// 	createTime: number;
+// 	attachments?: string[];
+// }

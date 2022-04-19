@@ -19,9 +19,7 @@ const Detail: React.FC = () => {
 	const { enqueueSnackbar } = useSnackbar();
 	const [projectInfo, setProjectInfo] = useState<Project>({} as Project);
 	const [favoriteStatus, setFavoriteStatus] = useState<boolean>(false);
-	const allMembers = useMemo(() => {
-		return projectInfo.manager && projectInfo?.members?.length ? [projectInfo.manager, ...projectInfo.members] : [];
-	}, [projectInfo.manager, projectInfo.members]);
+	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
 
 	useEffect(() => {
 		// get project detail info

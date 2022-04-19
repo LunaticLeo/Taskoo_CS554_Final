@@ -38,7 +38,7 @@ export const getStaticData = async (
  * @param {T} obj
  * @returns {FormData}
  */
-export const toFormData = <T extends Record<string, string | string[] | File | File[]>>(obj: T): FormData => {
+export const toFormData = <T extends Record<string, any>>(obj: T): FormData => {
 	const formData = new FormData();
 	Object.keys(obj).forEach(key => {
 		if (Array.isArray(obj[key])) {
