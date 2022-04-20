@@ -43,7 +43,7 @@ const StyledAccountInfo: React.FC<Partial<Account> & { component?: React.Element
 			<ListItemAvatar>
 				{avatar ? <Avatar alt={fullName} src={avatar} /> : <Avatar alt={fullName} {...stringAvatar(fullName)} />}
 			</ListItemAvatar>
-			<ListItemText primary={fullName} secondary={position} />
+			<ListItemText primary={fullName} secondary={(position as StaticData)?.name ?? position} />
 		</Box>
 	);
 };

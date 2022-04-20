@@ -23,6 +23,7 @@
 	},
 	"button": {
 		"newProject": "New Project",
+		"newTask": "New Task",
 		"cancel": "Cancel",
 		"submit": "Submit",
 		"upload": "Select Files"
@@ -67,6 +68,16 @@
 		"form": {
 			"name": "Project Name",
 			"description": "Description"
+		}
+	},
+	"task": {
+		"dialogTitle": "Create New task",
+		"info": "Task Info",
+		"members": "Members",
+		"form": {
+			"name": "Task Name",
+			"description": "Description",
+			"dueTime": "Due Time"
 		}
 	}
 }

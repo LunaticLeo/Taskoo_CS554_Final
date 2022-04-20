@@ -81,7 +81,7 @@ const FormDialog: React.FC = () => {
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		const members = projectForm.members.map(item => JSON.stringify(item));
-		const formData = toFormData<Form.ProjectForm<string[]>>({ ...projectForm, members });
+		const formData = toFormData<Form.ProjectForm<string>>({ ...projectForm, members });
 		http
 			.post('/project/create', formData)
 			.then(res => {

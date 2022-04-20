@@ -23,6 +23,7 @@
 	},
 	"button": {
 		"newProject": "新建项目",
+		"newTask": "新建任务",
 		"cancel": "取消",
 		"submit": "提交",
 		"upload": "选择文件"
@@ -67,6 +68,16 @@
 		"form": {
 			"name": "项目名称",
 			"description": "项目简介"
+		}
+	},
+	"task": {
+		"dialogTitle": "创建任务",
+		"info": "任务信息",
+		"members": "成员",
+		"form": {
+			"name": "任务名称",
+			"description": "任务简介",
+			"dueTime": "截止日期"
 		}
 	}
 }

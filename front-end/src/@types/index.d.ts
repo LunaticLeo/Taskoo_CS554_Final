@@ -18,7 +18,7 @@ interface Project {
 	name: string;
 	description: string;
 	createTime: number;
-	members: WithRole<Account, StaticData>[];
+	members: WithRole<Account<StaticData>, StaticData>[];
 	status: StaticStatus;
 	tasks: string[];
 	attachments: string[];
@@ -32,7 +32,7 @@ interface Task {
 	name: string;
 	description: string;
 	project: string;
-	members: Account[];
+	members: WithRole<Account<StaticData>, StaticData>[];
 	createTime: number;
 	dueTime: number;
 	status: StaticStatus;

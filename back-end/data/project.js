@@ -106,7 +106,6 @@ const projectList = async bucketId => {
 const getDetails = async _id => {
 	Check._id(_id);
 	const projectCol = await projects();
-	// const projectInfo = await projectCol.findOne({ _id });
 	const projectInfo = await projectCol
 		.aggregate([
 			{ $match: { _id } },
@@ -116,14 +115,31 @@ const getDetails = async _id => {
 					localField: 'members._id',
 					foreignField: '_id',
 					pipeline: [{ $project: { bucket: 0, password: 0, disabled: 0 } }],
-					as: 'temp'
+					as: 'accounts'
+				}
+			},
+			{
+				$lookup: {
+					from: 'departments',
+					localField: 'accounts.department',
+					foreignField: '_id',
+					as: 'departments'
+				}
+			},
+			{
+				$lookup: {
+					from: 'positions',
+					localField: 'accounts.position',
+					foreignField: '_id',
+					pipeline: [{ $project: { level: 0 } }],
+					as: 'positions'
 				}
 			},
 			{
 				$addFields: {
 					members: {
 						$map: {
-							input: '$temp',
+							input: '$accounts',
 							in: {
 								$arrayToObject: {
 									$concatArrays: [
@@ -131,6 +147,16 @@ const getDetails = async _id => {
 										{
 											$objectToArray: {
 												$arrayElemAt: ['$members', { $indexOfArray: ['$members._id', '$$this._id'] }]
+											}
+										},
+										{
+											$objectToArray: {
+												department: {
+													$arrayElemAt: ['$departments', { $indexOfArray: ['$departments._id', '$$this.department'] }]
+												},
+												position: {
+													$arrayElemAt: ['$positions', { $indexOfArray: ['$positions._id', '$$this.position'] }]
+												}
 											}
 										}
 									]
@@ -140,7 +166,7 @@ const getDetails = async _id => {
 					}
 				}
 			},
-			{ $project: { temp: 0 } }
+			{ $project: { accounts: 0, departments: 0, positions: 0, tasks: 0 } }
 		])
 		.toArray();
 
