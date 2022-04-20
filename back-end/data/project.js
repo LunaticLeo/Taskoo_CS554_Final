@@ -45,50 +45,52 @@ const projectStatistic = async bucketId => {
 const projectList = async bucketId => {
 	const bucketsCol = await buckets();
 	const data = await bucketsCol
-		.aggregate(
-			[
-				{
-					'$match': {
-						'_id': bucketId
-					}
-				}, {
-					'$project': {
-						'userProjects': {
-							'$concatArrays': [
-								'$projects.pending', '$projects.processing', '$projects.testing', '$projects.done'
-							]
-						},
-						'_id': 0
-					}
-				}, {
-					'$lookup': {
-						'from': 'projects',
-						'localField': 'userProjects',
-						'foreignField': '_id',
-						'as': 'userProjects'
-					}
-				}, {
-					'$unwind': '$userProjects'
-				}, {
-					'$replaceRoot': {
-						'newRoot': '$userProjects'
-					}
-				}, {
-					'$lookup': {
-						'from': 'accounts',
-						'localField': 'members._id',
-						'foreignField': '_id',
-						'as': 'members'
-					}
-				}, {
-					'$project': {
-						'members.disabled': 0,
-						'members.password': 0,
-						'members.bucket': 0
-					}
+		.aggregate([
+			{
+				$match: {
+					_id: bucketId
 				}
-			]
-		)
+			},
+			{
+				$project: {
+					userProjects: {
+						$concatArrays: ['$projects.pending', '$projects.processing', '$projects.testing', '$projects.done']
+					},
+					_id: 0
+				}
+			},
+			{
+				$lookup: {
+					from: 'projects',
+					localField: 'userProjects',
+					foreignField: '_id',
+					as: 'userProjects'
+				}
+			},
+			{
+				$unwind: '$userProjects'
+			},
+			{
+				$replaceRoot: {
+					newRoot: '$userProjects'
+				}
+			},
+			{
+				$lookup: {
+					from: 'accounts',
+					localField: 'members._id',
+					foreignField: '_id',
+					as: 'members'
+				}
+			},
+			{
+				$project: {
+					'members.disabled': 0,
+					'members.password': 0,
+					'members.bucket': 0
+				}
+			}
+		])
 		.toArray();
 
 	// console.dir(data, { depth: null });
@@ -104,9 +106,45 @@ const projectList = async bucketId => {
 const getDetails = async _id => {
 	Check._id(_id);
 	const projectCol = await projects();
-	const projectInfo = await projectCol.findOne({ _id });
+	// const projectInfo = await projectCol.findOne({ _id });
+	const projectInfo = await projectCol
+		.aggregate([
+			{ $match: { _id } },
+			{
+				$lookup: {
+					from: 'accounts',
+					localField: 'members._id',
+					foreignField: '_id',
+					pipeline: [{ $project: { bucket: 0, password: 0, disabled: 0 } }],
+					as: 'temp'
+				}
+			},
+			{
+				$addFields: {
+					members: {
+						$map: {
+							input: '$temp',
+							in: {
+								$arrayToObject: {
+									$concatArrays: [
+										{ $objectToArray: '$$this' },
+										{
+											$objectToArray: {
+												$arrayElemAt: ['$members', { $indexOfArray: ['$members._id', '$$this._id'] }]
+											}
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			{ $project: { temp: 0 } }
+		])
+		.toArray();
 
-	return projectInfo;
+	return projectInfo[0];
 };
 
 /**

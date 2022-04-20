@@ -9,7 +9,7 @@ interface Account<T = string | StaticData> {
 	avatar: string;
 }
 
-type WithRole<S> = S & { role: string | StaticData };
+type WithRole<S, U = string | StaticData> = S & { role: U };
 type WithFullName<S> = S & { fullName: string };
 
 /************************************************************* Porject *************************************************************/
@@ -18,7 +18,7 @@ interface Project {
 	name: string;
 	description: string;
 	createTime: number;
-	members: Account[];
+	members: WithRole<Account, StaticData>[];
 	status: StaticStatus;
 	tasks: string[];
 	attachments: string[];
