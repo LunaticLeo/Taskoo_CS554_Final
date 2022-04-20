@@ -26,6 +26,21 @@ interface Project {
 
 type ProjectInfo = Pick<Project, 'name' | 'createTime' | 'status' | 'members'>;
 
+/************************************************************* Task *************************************************************/
+interface Task {
+	_id: string;
+	name: string;
+	description: string;
+	project: string;
+	members: Account[];
+	createTime: number;
+	dueTime: number;
+	status: StaticStatus;
+	attachments: string[];
+}
+
+type TaskInfo = Omit<Task, 'project' | 'createTime' | 'attachments'>;
+
 // interface ContactList {
 // 	email: string;
 // 	position: string;

@@ -14,12 +14,10 @@ const { Project, Check } = require('../lib');
 router.post('/create', async (req, res) => {
 	const { _id, bucket } = req.session.accountInfo;
 
+	req.body.members.unshift({ _id, role: { _id: '584b21b7-57b5-4394-825c-f488c53c7d51', name: 'Manager' } });
 	let newProject;
 	try {
-		newProject = new Project({
-			...req.body,
-			manager: { _id, role: 'Manager', roleId: '584b21b7-57b5-4394-825c-f488c53c7d51' }
-		});
+		newProject = new Project(req.body);
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}

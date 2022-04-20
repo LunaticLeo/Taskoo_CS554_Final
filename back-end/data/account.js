@@ -128,20 +128,38 @@ const decodeAccountInfo = async accountInfo => {
  */
 const getDepartmentMembers = async _id => {
 	const collection = await accounts();
-	const allMember = await collection
-		.find({ department: _id }, { projection: { password: 0, disabled: 0, email: 0, bucket: 0 } })
+	const members = await collection
+		.aggregate([
+			{ $match: { department: _id } },
+			{ $project: { password: 0, disabled: 0, bucket: 0 } },
+			{
+				$lookup: {
+					from: 'departments',
+					localField: 'department',
+					foreignField: '_id',
+					as: 'department',
+					pipeline: [{ $project: { _id: 0 } }]
+				}
+			},
+			{
+				$lookup: {
+					from: 'positions',
+					localField: 'position',
+					foreignField: '_id',
+					as: 'position',
+					pipeline: [{ $project: { _id: 0, level: 0 } }]
+				}
+			},
+			{ $unwind: '$department' },
+			{ $unwind: '$position' },
+			{
+				$addFields: {
+					department: '$department.name',
+					position: '$position.name'
+				}
+			}
+		])
 		.toArray();
-	const departmentName = (await getStaticData('departments', _id)).name;
-	const positions = await getStaticData('positions');
-
-	const members = allMember.map(item => {
-		item.fullName = `${toCapitalize(item.firstName)} ${toCapitalize(item.lastName)}`;
-		item.department = departmentName;
-		item.position = positions.find(position => position._id === item.position).name;
-		delete item.firstName;
-		delete item.lastName;
-		return item;
-	});
 
 	return members;
 };

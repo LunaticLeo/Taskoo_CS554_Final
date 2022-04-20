@@ -11,6 +11,15 @@ export const toCapitalize = (str: string): string => {
 };
 
 /**
+ * combind first name and last name to full name
+ * @param {string} firstName
+ * @param {string} lastName
+ * @returns {string} fullName
+ */
+export const toFullName = (firstName: string, lastName: string): string =>
+	`${toCapitalize(firstName)} ${toCapitalize(lastName)}`;
+
+/**
  * get the system theme mode
  * @returns {PaletteMode} 'light' | 'dark'
  */

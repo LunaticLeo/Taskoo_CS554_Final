@@ -204,7 +204,7 @@ const MemberList: React.FC<{
 		const exist = members.find(item => item._id === _id);
 		return exist ? (
 			<Typography variant='body2' component='span' color='text.secondary'>
-				{exist.role}
+				{(exist.role as StaticData).name}
 			</Typography>
 		) : null;
 	};
