@@ -44,7 +44,9 @@ interface Project {
 	attachments: string[];
 }
 
-type ProjectInfo = Pick<Project, '_id' | 'name' | 'createTime' | 'status' | 'members'>;
+type ProjectInfo = Pick<Project, '_id' | 'name' | 'createTime' | 'status'> & {
+	members: WithRole<Omit<Account, 'department' | 'position'>>[];
+};
 
 /************************************************************* Task *************************************************************/
 interface Task {
@@ -59,23 +61,6 @@ interface Task {
 	attachments: string[];
 }
 
-type TaskInfo = Omit<Task, 'project' | 'createTime' | 'attachments'>;
-
-// interface ContactList {
-// 	email: string;
-// 	position: string;
-// }
-
-// interface TaskInfo extends DBCollections {
-// 	name: string;
-// 	description?: string;
-// 	dueTime: number;
-// 	status: string;
-// 	members: AccountInfo[];
-// }
-
-// interface Task extends TaskInfo {
-// 	project: string;
-// 	createTime: number;
-// 	attachments?: string[];
-// }
+type TaskInfo = Omit<Task, 'project' | 'createTime' | 'attachments' | 'members'> & {
+	members: WithRole<Omit<Account, 'department' | 'position'>>[];
+};

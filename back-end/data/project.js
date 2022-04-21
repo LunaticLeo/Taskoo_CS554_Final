@@ -65,14 +65,15 @@ const projectList = async bucketId => {
 					from: 'accounts',
 					localField: 'members._id',
 					foreignField: '_id',
+					pipeline: [{ $project: { disabled: 0, password: 0, bucket: 0 } }],
 					as: 'members'
 				}
 			},
 			{
 				$project: {
-					'members.disabled': 0,
-					'members.password': 0,
-					'members.bucket': 0
+					description: 0,
+					tasks: 0,
+					attachments: 0
 				}
 			}
 		])
