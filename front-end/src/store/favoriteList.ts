@@ -1,8 +1,8 @@
 import http from '@/utils/http';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: { data: ProjectInfo[] } = {
-	data: []
+const initialState: { value: ProjectInfo[] } = {
+	value: []
 };
 
 export const favoriteListSlice = createSlice({
@@ -10,7 +10,7 @@ export const favoriteListSlice = createSlice({
 	initialState,
 	reducers: {
 		set: (state, { payload }: PayloadAction<ProjectInfo[]>) => {
-			state.data = payload;
+			state.value = payload;
 		}
 	}
 });

@@ -6,7 +6,7 @@ import { TabPanelProps } from '@/@types/props';
 
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 export const FavoriteList: React.FC<TabPanelProps> = ({ value, hidden, ...other }) => {
-	const favoriteList = useAppSelector(state => state.favoriteList.data);
+	const favoriteList = useAppSelector(state => state.favoriteList.value);
 	const tableData = useFormatList(favoriteList);
 
 	return (

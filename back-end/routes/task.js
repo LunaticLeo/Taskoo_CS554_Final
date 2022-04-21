@@ -3,8 +3,6 @@ const { createTask } = require('../data/task');
 const Task = require('../lib/Task');
 
 router.post('/create', async (req, res) => {
-	const { bucket } = req.session.accountInfo;
-
 	let newTask;
 	try {
 		newTask = new Task(req.body);

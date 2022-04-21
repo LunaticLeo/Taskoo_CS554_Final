@@ -9,7 +9,7 @@ const useAccountInfo = (): WithFullName<Account> => {
 		dispatch(get());
 	}, []);
 
-	return useAppSelector(state => state.accountInfo.data);
+	return useAppSelector(state => state.accountInfo.value);
 };
 
 export default useAccountInfo;
