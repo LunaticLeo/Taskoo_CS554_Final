@@ -1,27 +1,11 @@
 import React, { forwardRef, RefObject, useImperativeHandle, useLayoutEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
-import { PieChart, PieSeriesOption } from 'echarts/charts';
-import {
-	GraphicComponent,
-	GraphicComponentOption,
-	TooltipComponent,
-	TooltipComponentOption,
-	LegendComponent,
-	LegendComponentOption
-} from 'echarts/components';
+import { PieChart } from 'echarts/charts';
+import { GraphicComponent, TooltipComponent, LegendComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import { LabelLayout, UniversalTransition } from 'echarts/features';
-import { Box, SxProps } from '@mui/material';
-
-interface ChartProps {
-	option: Option;
-	height?: string;
-	width?: string;
-	sx?: SxProps;
-}
-export type Option = echarts.ComposeOption<
-	GraphicComponentOption | PieSeriesOption | TooltipComponentOption | LegendComponentOption
->;
+import { Box } from '@mui/material';
+import { ChartProps } from '@/@types/props';
 
 const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> = (
 	{ option, sx, height = '100%', width = '100%' },

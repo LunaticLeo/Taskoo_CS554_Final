@@ -28,6 +28,7 @@ import { toFormData } from '@/utils';
 import { useSnackbar } from 'notistack';
 import useFormatList from '@/hooks/useFormatList';
 import { Form } from '@/@types/form';
+import { ProjectMemberListProps } from '@/@types/props';
 
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
@@ -153,11 +154,7 @@ const FormDialog: React.FC = () => {
 	);
 };
 
-const MemberList: React.FC<{
-	data: Account<string>[];
-	members: WithRole<{ _id: string }>[];
-	setMembers: (value: React.SetStateAction<Form.ProjectForm>) => void;
-}> = ({ data, members, setMembers }) => {
+const MemberList: React.FC<ProjectMemberListProps> = ({ data, members, setMembers }) => {
 	const { t } = useTranslation();
 	const [roleList, setRoleList] = useState<StaticData[]>([]);
 	const [anchorEl, setAnchorEl] = useState<{ el: null | HTMLDivElement; index: number }>({

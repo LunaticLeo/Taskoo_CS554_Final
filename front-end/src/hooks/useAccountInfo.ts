@@ -2,7 +2,7 @@ import { get } from '@/store/accountInfo';
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './useStore';
 
-const useAccountInfo = (): StoreAccountInfo => {
+const useAccountInfo = (): WithFullName<Account> => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {

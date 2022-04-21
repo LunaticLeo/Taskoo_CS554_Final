@@ -95,15 +95,4 @@ const Menu: React.FC = () => {
 	);
 };
 
-interface Menu {
-	title?: string;
-	id: string | number;
-	children: MenuItem[];
-}
-interface MenuItem {
-	icon: React.ReactElement;
-	text: string;
-	route: string;
-}
-
 export default memo(Menu);

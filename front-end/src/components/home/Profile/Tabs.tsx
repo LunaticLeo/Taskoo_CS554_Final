@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Tab, Tabs as MuiTabs } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import * as TabPanels from './TabPanels';
+import { TabsProps } from '@/@types/props';
 
 const tabs: TabsProps[] = [{ text: 'favorite', value: 0 }];
 
@@ -33,10 +34,5 @@ const Tabs: React.FC = () => {
 		</Box>
 	);
 };
-
-interface TabsProps {
-	text: string;
-	value: string | number;
-}
 
 export default Tabs;

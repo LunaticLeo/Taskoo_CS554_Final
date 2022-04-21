@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Avatar, Box, IconButton, Menu, MenuItem, SxProps, Theme, Tooltip, Typography } from '@mui/material';
+import { Avatar, Box, IconButton, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
 import { stringAvatar } from '@/utils';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import { useTranslation } from 'react-i18next';
+import { AvatarMenuProps } from '@/@types/props';
 
-const AvatarMenu: React.FC<{ sx?: SxProps<Theme> }> = ({ sx }) => {
+const AvatarMenu: React.FC<AvatarMenuProps> = ({ sx }) => {
 	const { t } = useTranslation();
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 	const { avatar, fullName } = useAccountInfo();

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { IconButton, Menu, MenuItem, SxProps, Theme } from '@mui/material';
+import { IconButton, Menu, MenuItem } from '@mui/material';
 import TranslateIcon from '@mui/icons-material/Translate';
 import i18n from '@/i18n';
+import { LangButtonProps } from '@/@types/props';
 
-const LangButton: React.FC<{ sx?: SxProps<Theme> }> = ({ sx }) => {
+const LangButton: React.FC<LangButtonProps> = ({ sx }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 

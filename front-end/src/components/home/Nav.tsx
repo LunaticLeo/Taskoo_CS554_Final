@@ -3,6 +3,7 @@ import { Box, Drawer, Stack } from '@mui/material';
 import Menu from './Menu';
 import ThemeSwitch from '../widgets/ThemeSwitch';
 import LangButton from '../widgets/LangButton';
+import { NavProps } from '@/@types/props';
 
 const drawerWidth = 300;
 
@@ -50,10 +51,5 @@ const Nav: React.FC<NavProps> = ({ openDrawer, setOpenDrawer }) => {
 		</Box>
 	);
 };
-
-interface NavProps {
-	openDrawer: boolean;
-	setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
 export default Nav;

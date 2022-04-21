@@ -8,7 +8,7 @@ const ToDoList: React.FC = () => {
 	return (
 		<Stack direction={{ xs: 'row', lg: 'column' }} spacing={2}>
 			{listData.map(item => (
-				<TaskCard key={item._id} {...item} />
+				<TaskCard key={item._id} data={item} />
 			))}
 		</Stack>
 	);

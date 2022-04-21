@@ -1,13 +1,11 @@
 import React, { forwardRef } from 'react';
-import { Button, Card, CardActions, CardContent, Divider, Stack, SxProps, Theme, Typography } from '@mui/material';
+import { Button, Card, CardActions, CardContent, Divider, Stack, Typography } from '@mui/material';
 import Styled from './Styled';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
+import { TaskCardProps } from '@/@types/props';
 
-const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, { data: TaskInfo; sx?: SxProps<Theme> }> = (
-	{ data, sx },
-	ref
-) => {
+const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = ({ data, sx }, ref) => {
 	const { t } = useTranslation();
 
 	return (

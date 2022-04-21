@@ -1,3 +1,23 @@
+interface Menu {
+	title?: string;
+	id: string | number;
+	children: MenuItem[];
+}
+
+interface MenuItem {
+	icon: React.ReactElement;
+	text: string;
+	route: string;
+}
+
+type RequestMethod = 'get' | 'post' | 'put' | 'delete';
+interface ResponseData<T> {
+	code: number;
+	message: string;
+	data?: T;
+}
+type AxiosHttp = Record<RequestMethod, <T = {}>(path: string, param?: Object) => Promise<ResponseData<T>>>;
+
 /************************************************************* Account *************************************************************/
 interface Account<T = string | StaticData> {
 	_id: string;
@@ -24,7 +44,7 @@ interface Project {
 	attachments: string[];
 }
 
-type ProjectInfo = Pick<Project, 'name' | 'createTime' | 'status' | 'members'>;
+type ProjectInfo = Pick<Project, '_id' | 'name' | 'createTime' | 'status' | 'members'>;
 
 /************************************************************* Task *************************************************************/
 interface Task {

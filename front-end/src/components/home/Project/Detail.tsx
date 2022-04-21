@@ -34,6 +34,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Tasks from './Tasks';
+import { FavoriteButtonProps, NavBreadcrumbsProps, TaskFormDialogProps, TaskMemberListProps } from '@/@types/props';
 
 const tasks: Record<StaticStatus, TaskInfo[]> = {
 	Pending: [],
@@ -111,7 +112,7 @@ const Detail: React.FC = () => {
 	);
 };
 
-const NavBreadcrumbs: React.FC<{ projectName: string }> = ({ projectName = '' }) => {
+const NavBreadcrumbs: React.FC<NavBreadcrumbsProps> = ({ projectName = '' }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -125,7 +126,7 @@ const NavBreadcrumbs: React.FC<{ projectName: string }> = ({ projectName = '' })
 	);
 };
 
-const FavoriteButton: React.FC<{ favorite: boolean; onClick?: () => void }> = ({ favorite = false, onClick }) => {
+const FavoriteButton: React.FC<FavoriteButtonProps> = ({ favorite = false, onClick }) => {
 	return (
 		<IconButton onClick={onClick} sx={{ color: yellow[700] }}>
 			{favorite ? <StarRoundedIcon color='inherit' /> : <StarOutlineRoundedIcon color='inherit' />}
@@ -144,10 +145,7 @@ class TaskFormClass implements Form.TaskForm {
 	}
 }
 
-const FormDialog: React.FC<{ project: string; members: WithRole<Account<StaticData>, StaticData>[] }> = ({
-	project,
-	members
-}) => {
+const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 	const { t } = useTranslation();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [taskForm, setTaskForm] = useState<Form.TaskForm>(new TaskFormClass(project));
@@ -226,10 +224,7 @@ const FormDialog: React.FC<{ project: string; members: WithRole<Account<StaticDa
 	);
 };
 
-const MemberList: React.FC<{
-	data: WithRole<Account<StaticData>, StaticData>[];
-	setMembers: (value: React.SetStateAction<Form.TaskForm>) => void;
-}> = ({ data, setMembers }) => {
+const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const { t } = useTranslation();
 
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {

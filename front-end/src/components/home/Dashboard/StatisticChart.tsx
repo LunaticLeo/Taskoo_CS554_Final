@@ -1,8 +1,9 @@
 import React, { useLayoutEffect, useState } from 'react';
-import Chart, { Option } from '@/components/widgets/Chart';
+import Chart from '@/components/widgets/Chart';
 import { CardContent, useTheme } from '@mui/material';
 import { TFunction, useTranslation } from 'react-i18next';
 import Styled from '@/components/widgets/Styled';
+import { Option } from '@/@types/props';
 
 const StatisticChart: React.FC = () => {
 	const { t } = useTranslation();

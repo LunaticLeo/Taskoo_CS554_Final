@@ -1,13 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
-type RequestMethod = 'get' | 'post' | 'put' | 'delete';
-interface ResponseData<T> {
-	code: number;
-	message: string;
-	data?: T;
-}
-type AxiosHttp = Record<RequestMethod, <T = {}>(path: string, param?: Object) => Promise<ResponseData<T>>>;
-
 const METHODS: RequestMethod[] = ['get', 'post', 'put', 'delete'];
 const DEFAULT_CONFIG: AxiosRequestConfig = {
 	baseURL: '/api'

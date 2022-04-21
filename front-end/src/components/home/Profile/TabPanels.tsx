@@ -2,12 +2,7 @@ import React from 'react';
 import TableList from '@/components/widgets/TableList';
 import { useAppSelector } from '@/hooks/useStore';
 import useFormatList from '@/hooks/useFormatList';
-
-interface TabPanelProps {
-	value: string | number;
-	hidden: boolean;
-	[props: string]: any;
-}
+import { TabPanelProps } from '@/@types/props';
 
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 export const FavoriteList: React.FC<TabPanelProps> = ({ value, hidden, ...other }) => {
