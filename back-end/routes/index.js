@@ -1,6 +1,7 @@
 const static = require('./static');
 const account = require('./account');
 const project = require('./project');
+const task = require('./task');
 
 // the whitelist routes
 const whitelist = ['/account/signin', '/account/signup'];
@@ -17,6 +18,7 @@ module.exports = app => {
 	app.use('/static', static);
 	app.use('/account', account);
 	app.use('/project', project);
+	app.use('/task', task);
 
 	app.use('*', (_, res) => {
 		res.status(404).json({ error: 'API not Found!' });

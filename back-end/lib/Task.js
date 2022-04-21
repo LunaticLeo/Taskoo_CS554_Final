@@ -1,15 +1,15 @@
 const { DBCollection } = require('./Collection');
 const dayjs = require('dayjs');
 const Check = require('./Check');
-const { isType } = require('../utils/helpers');
 
-class Project extends DBCollection {
+class Task extends DBCollection {
 	name = '';
 	description = '';
-	createTime = dayjs().valueOf();
+	project = '';
 	members = [];
+	createTime = dayjs().valueOf();
+	dueTime = '';
 	status = 'Pending';
-	tasks = [];
 	attachments = [];
 
 	constructor(obj) {
@@ -26,6 +26,7 @@ class Project extends DBCollection {
 
 	checkValidation() {
 		Check.name(this.name);
+		Check._id(this.project);
 		for (const member of this.members) {
 			Check._id(member._id);
 			Check._id(member.role._id);
@@ -34,4 +35,4 @@ class Project extends DBCollection {
 	}
 }
 
-module.exports = Project;
+module.exports = Task;

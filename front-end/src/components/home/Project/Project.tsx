@@ -191,7 +191,7 @@ const MemberList: React.FC<ProjectMemberListProps> = ({ data, members, setMember
 		setMembers(preVal => {
 			const { members } = preVal;
 			const { _id } = data[anchorEl.index];
-			members.push({ role, _id });
+			members.push({ _id, role });
 			return { ...preVal, members };
 		});
 		setAnchorEl({ el: null, index: -1 });

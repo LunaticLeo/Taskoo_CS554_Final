@@ -12,7 +12,7 @@ const {
 const { Project, Check } = require('../lib');
 
 router.post('/create', async (req, res) => {
-	const { _id, bucket } = req.session.accountInfo;
+	const { _id } = req.session.accountInfo;
 
 	req.body.members.unshift({ _id, role: { _id: '584b21b7-57b5-4394-825c-f488c53c7d51', name: 'Manager' } });
 	let newProject;
@@ -23,7 +23,7 @@ router.post('/create', async (req, res) => {
 	}
 
 	try {
-		const message = await createProject(newProject, bucket);
+		const message = await createProject(newProject);
 		res.json({ code: 200, message });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
