@@ -1,7 +1,6 @@
 const { DBCollection } = require('./Collection');
 const dayjs = require('dayjs');
 const Check = require('./Check');
-const { isType } = require('../utils/helpers');
 
 class Project extends DBCollection {
 	name = '';
@@ -16,9 +15,13 @@ class Project extends DBCollection {
 		super(obj);
 		obj?._id && delete obj._id;
 
-		try {
-			obj.members = obj.members.map(item => (isType(item, 'string') ? JSON.parse(item) : item));
-		} catch (error) {}
+		obj.members = obj.members.map(item => {
+			try {
+				return JSON.parse(item);
+			} catch {
+				return item;
+			}
+		});
 
 		Object.keys(obj).forEach(key => (this[key] = obj[key]));
 		this.checkValidation();

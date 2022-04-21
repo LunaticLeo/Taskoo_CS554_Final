@@ -29,12 +29,19 @@ import { useSnackbar } from 'notistack';
 import useFormatList from '@/hooks/useFormatList';
 import { Form } from '@/@types/form';
 import { ProjectMemberListProps } from '@/@types/props';
+import useNotification from '@/hooks/useNotification';
 
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
 const Project: React.FC = () => {
 	const [data, setData] = useState<ProjectInfo[]>([]);
-	const tableData = useFormatList(data);
+	const tableData = useFormatList(data, _id => `/home/project/${_id}`);
+
+	useEffect(() => {
+		http.get<ProjectInfo[]>('/project/list').then(res => {
+			setData(res.data!);
+		});
+	}, []);
 
 	return (
 		<>
@@ -61,7 +68,7 @@ const FormDialog: React.FC = () => {
 	const { t } = useTranslation();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [members, setMembers] = useState<Account<string>[]>([]);
-	const { enqueueSnackbar } = useSnackbar();
+	const notificate = useNotification();
 	const [projectForm, setProjectForm] = useState<Form.ProjectForm>(new ProjectFormClass());
 	const accountInfo = useAccountInfo();
 
@@ -85,12 +92,12 @@ const FormDialog: React.FC = () => {
 		const formData = toFormData<Form.ProjectForm<string>>({ ...projectForm, members });
 		http
 			.post('/project/create', formData)
-			.then(res => {
-				enqueueSnackbar(res.message, { variant: 'success' });
+			.then(res => notificate.success(res.message))
+			.catch(err => notificate.error(err?.message ?? err))
+			.finally(() => {
 				setOpenDialog(false);
-			})
-			.catch(err => enqueueSnackbar(err?.message ?? err, { variant: 'error' }))
-			.finally(() => setProjectForm(new ProjectFormClass()));
+				setProjectForm(new ProjectFormClass());
+			});
 	};
 
 	return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import http from '@/utils/http';
 import {
 	Box,
@@ -35,6 +35,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Tasks from './Tasks';
 import { FavoriteButtonProps, NavBreadcrumbsProps, TaskFormDialogProps, TaskMemberListProps } from '@/@types/props';
+import useAccountInfo from '@/hooks/useAccountInfo';
+import { toFormData } from '@/utils';
+import useNotification from '@/hooks/useNotification';
 
 const tasks: Record<StaticStatus, TaskInfo[]> = {
 	Pending: [],
@@ -147,6 +150,8 @@ class TaskFormClass implements Form.TaskForm {
 
 const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 	const { t } = useTranslation();
+	const { _id } = useAccountInfo();
+	const notificate = useNotification();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [taskForm, setTaskForm] = useState<Form.TaskForm>(new TaskFormClass(project));
 
@@ -159,7 +164,28 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 	};
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
+		const members = taskForm.members.map(item => JSON.stringify(item));
+		const formData = toFormData<Form.TaskForm<string>>({ ...taskForm, members });
+		http
+			.post('/task/create', formData)
+			.then(res => notificate.success(res.message))
+			.catch(err => notificate.error(err?.message ?? err))
+			.finally(() => {
+				setOpenDialog(false);
+				setTaskForm(new TaskFormClass(project));
+			});
 	};
+
+	useLayoutEffect(() => {
+		// add the creator to the task member list
+		members &&
+			setTaskForm(preVal => {
+				const { members: memberList } = preVal;
+				const creator = members?.find(item => item._id === _id);
+				memberList.unshift({ _id, role: creator?.role! });
+				return { ...preVal };
+			});
+	}, [members]);
 
 	return (
 		<>
@@ -194,7 +220,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 										<DatePicker
 											label={t('task.form.dueTime')}
 											value={taskForm.dueTime}
-											onChange={value => handleInputChange({ dueTime: value! })}
+											onChange={value => handleInputChange({ dueTime: dayjs(value).valueOf()! })}
 											renderInput={params => <TextField margin='normal' {...params} />}
 										/>
 										<TextField
@@ -226,6 +252,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 
 const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const { t } = useTranslation();
+	const { _id } = useAccountInfo();
 
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
@@ -253,11 +280,17 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 						key={member._id}
 						disablePadding
 						secondaryAction={
-							<Checkbox
-								edge='end'
-								onChange={e => handleToggle(e, member)}
-								inputProps={{ 'aria-labelledby': member._id }}
-							/>
+							<Stack direction='row' alignItems='center'>
+								<Typography variant='body2' component='span' color='text.secondary'>
+									{member.role.name}
+								</Typography>
+								<Checkbox
+									edge='end'
+									{...(member._id === _id ? { checked: true, disabled: true } : {})}
+									onChange={e => handleToggle(e, member)}
+									inputProps={{ 'aria-labelledby': member._id }}
+								/>
+							</Stack>
 						}
 					>
 						<Styled.AccountInfo {...member} component={ListItemButton} />

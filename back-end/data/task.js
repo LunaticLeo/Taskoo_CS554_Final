@@ -1,4 +1,4 @@
-const { tasks } = require('../config/mongoCollections');
+const { tasks, projects } = require('../config/mongoCollections');
 const Task = require('../lib/Task');
 const core = require('./core');
 
@@ -7,7 +7,14 @@ const core = require('./core');
  * @param {Task} taskObj
  */
 const createTask = async taskObj => {
-	return await core.create(taskObj, 'task');
+	return await core.create(taskObj, 'task', async insertedId => {
+		const projectCol = await projects();
+		const { modifiedCount } = await projectCol.updateOne(
+			{ _id: taskObj.project },
+			{ $addToSet: { tasks: insertedId } }
+		);
+		if (!modifiedCount) throw Error('The task is already in task list');
+	});
 };
 
 module.exports = {

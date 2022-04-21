@@ -3,6 +3,9 @@ import { PieSeriesOption } from 'echarts/charts';
 import { GraphicComponentOption, LegendComponentOption, TooltipComponentOption } from 'echarts/components';
 import { ComposeOption } from 'echarts/core';
 import { Form } from './form';
+import { OptionsObject, SnackbarKey, VariantType } from 'notistack';
+
+type Notification = Record<VariantType, (msg: string, options?: OptionsObject) => SnackbarKey>;
 
 type WithSxProp<T> = T & { sx?: SxProps<Theme> };
 
@@ -32,7 +35,10 @@ type LogoProps = { fontSize?: number; color?: string };
 
 type StyledStatusProps = { label: string };
 type StyledAccountInfoProps = Partial<Account> & { component?: React.ElementType<any> };
-type StyledAvatarGroupProps = { data: Account[]; max?: number };
+type StyledAvatarGroupProps = {
+	data: Required<Pick<Account, 'avatar' | 'firstName' | 'lastName'>>[];
+	max?: number;
+};
 type StyledDialogProps = { open: boolean; onClose: React.Dispatch<React.SetStateAction<boolean>> };
 type TableListProps<T extends { _id: string; [prop: string]: any }> = {
 	showHeader?: boolean;

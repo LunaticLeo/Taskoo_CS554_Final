@@ -1,22 +1,28 @@
 import React from 'react';
-import { Box, Divider, Stack, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TaskCard from '@/components/widgets/TaskCard';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import { DraggableTaskCardProps, TaskColumnProps, TasksProps } from '@/@types/props';
 
 const Tasks: React.FC<TasksProps> = ({ data, sx }) => {
+	const theme = useTheme();
+	const hideColumns = useMediaQuery(theme.breakpoints.down('md'));
 	const onDragEnd = (res: DropResult) => {
 		console.log(res);
 	};
 
 	return (
 		<DragDropContext onDragEnd={onDragEnd}>
-			<Stack direction='row' spacing={{ md: 2, lg: 5 }} sx={sx}>
-				{Object.keys(data).map(item => (
-					<TaskColumn key={item} status={item} data={(data as any)[item]} />
-				))}
-			</Stack>
+			{hideColumns ? (
+				<div>hide</div>
+			) : (
+				<Stack direction='row' spacing={{ md: 2, lg: 5 }} sx={sx}>
+					{Object.keys(data).map(item => (
+						<TaskColumn key={item} status={item} data={(data as any)[item]} />
+					))}
+				</Stack>
+			)}
 		</DragDropContext>
 	);
 };

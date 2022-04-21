@@ -4,7 +4,7 @@ import { Link as NavLink } from 'react-router-dom';
 import dayjs from 'dayjs';
 import Styled from '@/components/widgets/Styled';
 
-const useFormatList = (data: ProjectInfo[]) => {
+const useFormatList = (data: ProjectInfo[], cb: (_id: string) => string) => {
 	const tableData = useMemo(
 		() =>
 			data.map(item => {
@@ -12,7 +12,7 @@ const useFormatList = (data: ProjectInfo[]) => {
 				return {
 					_id,
 					name: (
-						<Link component={NavLink} to='' underline='hover'>
+						<Link component={NavLink} to={cb(_id)} underline='hover'>
 							{name}
 						</Link>
 					),

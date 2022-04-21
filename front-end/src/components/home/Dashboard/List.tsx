@@ -10,7 +10,7 @@ const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'
 const List: React.FC = () => {
 	const { t } = useTranslation();
 	const [data, setData] = useState<ProjectInfo[]>([]);
-	const tableData = useFormatList(data);
+	const tableData = useFormatList(data, _id => `/home/project/${_id}`);
 
 	return (
 		<Styled.Card>

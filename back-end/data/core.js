@@ -11,7 +11,7 @@ const { toCapitalize } = require('../utils/helpers');
  * @param {Project | Task} obj
  * @param {string} category project | task
  */
-const create = async (obj, category) => {
+const create = async (obj, category, cb) => {
 	if (!['project', 'task'].includes(category)) throw Error('category is invalid');
 
 	let newObj;
@@ -34,6 +34,8 @@ const create = async (obj, category) => {
 		async item => await Bucket.updateStatus(item.bucket, category + 's', insertedId, null, newObj.status)
 	);
 	await Promise.all(updateFunc);
+
+	cb && (await cb(insertedId));
 
 	return `${toCapitalize(category)} ${newObj.name} create successfully`;
 };

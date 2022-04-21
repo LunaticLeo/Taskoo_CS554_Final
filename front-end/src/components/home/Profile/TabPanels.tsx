@@ -7,7 +7,7 @@ import { TabPanelProps } from '@/@types/props';
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 export const FavoriteList: React.FC<TabPanelProps> = ({ value, hidden, ...other }) => {
 	const favoriteList = useAppSelector(state => state.favoriteList.value);
-	const tableData = useFormatList(favoriteList);
+	const tableData = useFormatList(favoriteList, _id => `/home/project/${_id}`);
 
 	return (
 		<div role='tabpanel' hidden={hidden} id={`tabpanel-${value}`} aria-labelledby={`tab-${value}`} {...other}>
