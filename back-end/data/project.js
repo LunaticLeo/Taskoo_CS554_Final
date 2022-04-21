@@ -226,6 +226,8 @@ const addToFavorite = async (bucketId, projectId) => {
 	const bucketsCol = await buckets();
 	const { modifiedCount } = await bucketsCol.updateOne({ _id: bucketId }, { $addToSet: { favorites: projectId } });
 	if (!modifiedCount) throw Error('The project is already in favorite list');
+
+	return 'Added to favorites';
 };
 
 /**
@@ -239,6 +241,8 @@ const removeFromFavorite = async (bucketId, projectId) => {
 	const bucketsCol = await buckets();
 	const { modifiedCount } = await bucketsCol.updateOne({ _id: bucketId }, { $pull: { favorites: projectId } });
 	if (!modifiedCount) throw Error('The project is not exist in favorite list');
+
+	return 'Removed from favorites';
 };
 
 module.exports = {

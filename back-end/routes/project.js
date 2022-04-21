@@ -111,8 +111,8 @@ router.post('/favorite/add', async (req, res) => {
 	}
 
 	try {
-		await addToFavorite(bucket, projectId);
-		res.json({ code: 200, message: 'Added to favorites' });
+		const message = await addToFavorite(bucket, projectId);
+		res.json({ code: 200, message });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
@@ -129,8 +129,8 @@ router.delete('/favorite/remove', async (req, res) => {
 	}
 
 	try {
-		await removeFromFavorite(bucket, projectId);
-		res.json({ code: 200, message: 'Removed to favorites' });
+		const message = await removeFromFavorite(bucket, projectId);
+		res.json({ code: 200, message });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
