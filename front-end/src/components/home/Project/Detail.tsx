@@ -33,6 +33,14 @@ import { Form } from '@/@types/form';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import Tasks from './Tasks';
+
+const tasks: Record<StaticStatus, TaskInfo[]> = {
+	Pending: [],
+	Processing: [],
+	Testing: [],
+	Done: []
+};
 
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
@@ -96,6 +104,7 @@ const Detail: React.FC = () => {
 					)}
 					<Styled.AvatarGroup data={allMembers} max={5} />
 				</Stack>
+				<Tasks data={tasks} sx={{ mt: 5 }} />
 			</Box>
 			<FormDialog project={id ?? ''} members={projectInfo.members} />
 		</>

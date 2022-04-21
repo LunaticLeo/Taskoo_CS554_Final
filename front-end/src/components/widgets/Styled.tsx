@@ -9,6 +9,7 @@ import {
 	ListItemAvatar,
 	ListItemText,
 	Slide,
+	Tooltip,
 	Typography,
 	useMediaQuery,
 	useTheme
@@ -53,10 +54,14 @@ const StyledAvatarGroup: React.FC<{ data: Account[]; max?: number }> = ({ data, 
 			{data.map(member => {
 				const fullName = toFullName(member.firstName, member.lastName);
 
-				return member.avatar ? (
-					<Avatar key={fullName} alt={fullName} src={member.avatar} />
-				) : (
-					<Avatar key={fullName} alt={fullName} {...stringAvatar(fullName!)} />
+				return (
+					<Tooltip key={fullName} title={fullName} placement='top'>
+						{member.avatar ? (
+							<Avatar alt={fullName} src={member.avatar} />
+						) : (
+							<Avatar alt={fullName} {...stringAvatar(fullName!)} />
+						)}
+					</Tooltip>
 				);
 			})}
 		</AvatarGroup>
