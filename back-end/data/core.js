@@ -2,7 +2,7 @@
  * The functions in this module is used fot projects and tasks
  * It contains common functions which are suit for both projects and tasks
  */
-const { projects, tasks, accounts } = require('../config/mongoCollections');
+const { projects, tasks, accounts, buckets } = require('../config/mongoCollections');
 const { Project, Task, Bucket } = require('../lib');
 const { toCapitalize } = require('../utils/helpers');
 
@@ -40,6 +40,66 @@ const create = async (obj, category, cb) => {
 	return `${toCapitalize(category)} ${newObj.name} create successfully`;
 };
 
+/**
+ * get list data (project | task)
+ * @param {string} category projects | tasks
+ * @param {string} bucketId
+ * @param {object} projection
+ */
+const getListFromBucket = async (category, bucketId, projection) => {
+	const bucketsCol = await buckets();
+	const data = await bucketsCol
+		.aggregate([
+			{
+				$match: { _id: bucketId }
+			},
+			{
+				$project: {
+					list: {
+						$concatArrays: [
+							`$${category}.pending`,
+							`$${category}.processing`,
+							`$${category}.testing`,
+							`$${category}.done`
+						]
+					},
+					_id: 0
+				}
+			},
+			{
+				$lookup: {
+					from: category,
+					localField: 'list',
+					foreignField: '_id',
+					as: 'list'
+				}
+			},
+			{
+				$unwind: '$list'
+			},
+			{
+				$replaceRoot: {
+					newRoot: '$list'
+				}
+			},
+			{
+				$lookup: {
+					from: 'accounts',
+					localField: 'members._id',
+					foreignField: '_id',
+					pipeline: [{ $project: { disabled: 0, password: 0, bucket: 0 } }],
+					as: 'members'
+				}
+			},
+			{
+				$project: projection
+			}
+		])
+		.toArray();
+	return data;
+};
+
 module.exports = {
-	create
+	create,
+	getListFromBucket
 };

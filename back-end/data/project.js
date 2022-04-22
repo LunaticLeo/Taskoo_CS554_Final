@@ -27,61 +27,12 @@ const projectStatistic = async bucketId => {
 	return data;
 };
 
-const projectList = async bucketId => {
-	const bucketsCol = await buckets();
-	const data = await bucketsCol
-		.aggregate([
-			{
-				$match: {
-					_id: bucketId
-				}
-			},
-			{
-				$project: {
-					userProjects: {
-						$concatArrays: ['$projects.pending', '$projects.processing', '$projects.testing', '$projects.done']
-					},
-					_id: 0
-				}
-			},
-			{
-				$lookup: {
-					from: 'projects',
-					localField: 'userProjects',
-					foreignField: '_id',
-					as: 'userProjects'
-				}
-			},
-			{
-				$unwind: '$userProjects'
-			},
-			{
-				$replaceRoot: {
-					newRoot: '$userProjects'
-				}
-			},
-			{
-				$lookup: {
-					from: 'accounts',
-					localField: 'members._id',
-					foreignField: '_id',
-					pipeline: [{ $project: { disabled: 0, password: 0, bucket: 0 } }],
-					as: 'members'
-				}
-			},
-			{
-				$project: {
-					description: 0,
-					tasks: 0,
-					attachments: 0
-				}
-			}
-		])
-		.toArray();
-
-	// console.dir(data, { depth: null });
-
-	return data;
+/**
+ * get project list from bucket
+ * @param {string} bucketId
+ */
+const getProjectList = async bucketId => {
+	return await core.getListFromBucket('projects', bucketId, { description: 0, tasks: 0, attachments: 0 });
 };
 
 /**
@@ -231,13 +182,71 @@ const removeFromFavorite = async (bucketId, projectId) => {
 	return 'Removed from favorites';
 };
 
+/**
+ * get all tasks in specific project
+ * @param {string} projectId
+ */
+const getTasks = async projectId => {
+	Check._id(projectId);
+	const projectCol = await projects();
+	const data = await projectCol
+		.aggregate([
+			{
+				$match: { _id: projectId }
+			},
+			{
+				$project: { _id: 0, tasks: 1 }
+			},
+			{
+				$lookup: {
+					from: 'tasks',
+					localField: 'tasks',
+					foreignField: '_id',
+					as: 'tasks'
+				}
+			},
+			{ $unwind: '$tasks' },
+			{
+				$replaceRoot: { newRoot: '$tasks' }
+			},
+			{
+				$lookup: {
+					from: 'accounts',
+					localField: 'members._id',
+					foreignField: '_id',
+					pipeline: [{ $project: { bucket: 0, disabled: 0, password: 0 } }],
+					as: 'members'
+				}
+			}
+		])
+		.toArray();
+
+	const tasks = data.reduce(
+		(pre, cur) => {
+			const { status } = cur;
+			pre[status.toLowerCase()].push(cur);
+
+			return pre;
+		},
+		{
+			pending: [],
+			processing: [],
+			testing: [],
+			done: []
+		}
+	);
+
+	return tasks;
+};
+
 module.exports = {
 	createProject,
 	projectStatistic,
-	projectList,
+	getProjectList,
 	getDetails,
 	getFavoriteStatus,
 	getFavoriteList,
 	addToFavorite,
-	removeFromFavorite
+	removeFromFavorite,
+	getTasks
 };

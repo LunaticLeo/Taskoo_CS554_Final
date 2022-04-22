@@ -2,12 +2,13 @@ const router = require('express').Router();
 const {
 	createProject,
 	projectStatistic,
-	projectList,
+	getProjectList,
 	getDetails,
 	getFavoriteStatus,
 	getFavoriteList,
 	addToFavorite,
-	removeFromFavorite
+	removeFromFavorite,
+	getTasks
 } = require('../data/project');
 const { Project, Check } = require('../lib');
 
@@ -45,8 +46,8 @@ router.get('/list', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
 
 	try {
-		const data = await projectList(bucket);
-		res.status(200).json({ code: 200, message: '', data: data });
+		const data = await getProjectList(bucket);
+		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
@@ -129,6 +130,23 @@ router.delete('/favorite/remove', async (req, res) => {
 	try {
 		const message = await removeFromFavorite(bucket, projectId);
 		res.json({ code: 200, message });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/tasks', async (req, res) => {
+	const { id } = req.query;
+
+	try {
+		Check._id(id);
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const tasks = await getTasks(id);
+		res.json({ code: 200, message: '', data: tasks });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}

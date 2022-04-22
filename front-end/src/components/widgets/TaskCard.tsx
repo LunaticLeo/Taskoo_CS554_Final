@@ -1,15 +1,15 @@
 import React, { forwardRef } from 'react';
 import { Button, Card, CardActions, CardContent, Divider, Stack, Typography } from '@mui/material';
-import Styled from './Styled';
 import { useTranslation } from 'react-i18next';
-import dayjs from 'dayjs';
 import { TaskCardProps } from '@/@types/props';
+import Styled from './Styled';
+import dayjs from 'dayjs';
 
-const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = ({ data, sx }, ref) => {
+const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = ({ data, sx, ...rest }, ref) => {
 	const { t } = useTranslation();
 
 	return (
-		<Card ref={ref} sx={{ width: '100%', ...sx }}>
+		<Card {...rest} ref={ref} sx={{ width: '100%', ...sx }}>
 			<CardContent>
 				<Stack spacing={1}>
 					<Typography variant='h6' component='h2'>

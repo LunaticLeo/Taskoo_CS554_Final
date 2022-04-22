@@ -17,6 +17,15 @@ const createTask = async taskObj => {
 	});
 };
 
+/**
+ * get task list from bucket
+ * @param {string} bucketId
+ */
+const getTaskList = async bucketId => {
+	return await core.getListFromBucket('tasks', bucketId, { description: 0, attachments: 0 });
+};
+
 module.exports = {
-	createTask
+	createTask,
+	getTaskList
 };

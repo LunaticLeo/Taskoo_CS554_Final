@@ -34,17 +34,16 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Tasks from './Tasks';
-import { FavoriteButtonProps, NavBreadcrumbsProps, TaskFormDialogProps, TaskMemberListProps } from '@/@types/props';
+import {
+	FavoriteButtonProps,
+	NavBreadcrumbsProps,
+	TaskColumnData,
+	TaskFormDialogProps,
+	TaskMemberListProps
+} from '@/@types/props';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import { toFormData } from '@/utils';
 import useNotification from '@/hooks/useNotification';
-
-const tasks: Record<StaticStatus, TaskInfo[]> = {
-	Pending: [],
-	Processing: [],
-	Testing: [],
-	Done: []
-};
 
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
@@ -53,6 +52,12 @@ const Detail: React.FC = () => {
 	const { enqueueSnackbar } = useSnackbar();
 	const [projectInfo, setProjectInfo] = useState<Project>({} as Project);
 	const [favoriteStatus, setFavoriteStatus] = useState<boolean>(false);
+	const [tasks, setTasks] = useState<TaskColumnData>({
+		pending: [],
+		processing: [],
+		testing: [],
+		done: []
+	} as TaskColumnData);
 	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
 
 	useEffect(() => {
@@ -64,6 +69,11 @@ const Detail: React.FC = () => {
 		// check favorite status
 		http.get<boolean>('/project/favorite/status', { id }).then(res => {
 			setFavoriteStatus(res.data!);
+		});
+
+		// get tasks
+		http.get<TaskColumnData>('/project/tasks', { id }).then(res => {
+			setTasks(res.data!);
 		});
 	}, []);
 
@@ -108,7 +118,7 @@ const Detail: React.FC = () => {
 					)}
 					<Styled.AvatarGroup data={allMembers} max={5} />
 				</Stack>
-				<Tasks data={tasks} sx={{ mt: 5 }} />
+				<Tasks data={tasks} setData={setTasks} sx={{ mt: 5 }} />
 			</Box>
 			<FormDialog project={id ?? ''} members={projectInfo.members} />
 		</>
