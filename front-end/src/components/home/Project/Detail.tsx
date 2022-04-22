@@ -93,7 +93,7 @@ const Detail: React.FC = () => {
 				<NavBreadcrumbs projectName={projectInfo?.name} />
 				<Stack spacing={2} mt={2}>
 					<Stack direction='row' alignItems='center'>
-						<Typography component='h2' variant='h3' sx={{ fontWeight: 'bolder' }}>
+						<Typography component='h1' variant='h3' sx={{ fontWeight: 'bolder' }}>
 							{projectInfo.name}
 						</Typography>
 						<Typography marginLeft='auto' marginRight={1} variant='body2' color='text.secondary'>
@@ -131,7 +131,7 @@ const NavBreadcrumbs: React.FC<NavBreadcrumbsProps> = ({ projectName = '' }) => 
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ favorite = false, onClick }) => {
 	return (
-		<IconButton onClick={onClick} sx={{ color: yellow[700] }}>
+		<IconButton onClick={onClick} sx={{ color: yellow[700] }} aria-label='favorite-btn'>
 			{favorite ? <StarRoundedIcon color='inherit' /> : <StarOutlineRoundedIcon color='inherit' />}
 		</IconButton>
 	);

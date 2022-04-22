@@ -17,7 +17,7 @@ const useFormatList = (data: ProjectInfo[], cb: (_id: string) => string) => {
 						</Link>
 					),
 					createTime: dayjs(createTime).format('MM/DD/YYYY'),
-					status: <Chip label={status} color='success' variant='outlined' />,
+					status: <Chip label={status} color={status.toLowerCase() as any} variant='outlined' />,
 					members: <Styled.AvatarGroup data={members} />
 				};
 			}),
