@@ -56,6 +56,7 @@ type DraggableTaskCardProps = { data: TaskInfo; index: number };
 type TabPanelProps = { value: string | number; hidden: boolean; [props: string]: any };
 type TabsProps = { text: string; value: string | number };
 
+type ProjectFormDialogProps = { refresh?: () => void };
 type ProjectMemberListProps = {
 	data: Account<string>[];
 	members: WithRole<{ _id: string }>[];
@@ -64,7 +65,11 @@ type ProjectMemberListProps = {
 
 type NavBreadcrumbsProps = { projectName: string };
 type FavoriteButtonProps = { favorite: boolean; onClick?: () => void };
-type TaskFormDialogProps = { project: string; members: WithRole<Account<StaticData>, StaticData>[] };
+type TaskFormDialogProps = {
+	project: string;
+	members: WithRole<Account<StaticData>, StaticData>[];
+	refresh?: () => void;
+};
 type TaskMemberListProps = {
 	data: WithRole<Account<StaticData>, StaticData>[];
 	setMembers: (value: React.SetStateAction<Form.TaskForm>) => void;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -28,7 +28,7 @@ import { toFormData } from '@/utils';
 import { useSnackbar } from 'notistack';
 import useFormatList from '@/hooks/useFormatList';
 import { Form } from '@/@types/form';
-import { ProjectMemberListProps } from '@/@types/props';
+import { ProjectFormDialogProps, ProjectMemberListProps } from '@/@types/props';
 import useNotification from '@/hooks/useNotification';
 
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
@@ -38,6 +38,10 @@ const Project: React.FC = () => {
 	const tableData = useFormatList(data, _id => `/home/project/${_id}`);
 
 	useEffect(() => {
+		getProjectList();
+	}, []);
+
+	const getProjectList = useCallback(() => {
 		http.get<ProjectInfo[]>('/project/list').then(res => {
 			setData(res.data!);
 		});
@@ -53,7 +57,7 @@ const Project: React.FC = () => {
 					<TableList<ProjectInfo> showHeader size='small' header={header} data={tableData} />
 				</Grid>
 			</Grid>
-			<FormDialog />
+			<FormDialog refresh={getProjectList} />
 		</>
 	);
 };
@@ -64,7 +68,7 @@ class ProjectFormClass implements Form.ProjectForm {
 	members = [];
 }
 
-const FormDialog: React.FC = () => {
+const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 	const { t } = useTranslation();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [members, setMembers] = useState<Account<string>[]>([]);
@@ -92,7 +96,10 @@ const FormDialog: React.FC = () => {
 		const formData = toFormData<Form.ProjectForm<string>>({ ...projectForm, members });
 		http
 			.post('/project/create', formData)
-			.then(res => notificate.success(res.message))
+			.then(res => {
+				refresh && refresh();
+				notificate.success(res.message);
+			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => {
 				setOpenDialog(false);
