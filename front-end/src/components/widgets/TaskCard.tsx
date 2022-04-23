@@ -27,7 +27,7 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 							{t('dueTime')}
 						</Typography>
 						<Typography variant='body2' component='span'>
-							{dayjs(data.dueTime).format('MM/DD/YYYY')}
+							{dayjs(+data.dueTime).format('MM/DD/YYYY')}
 						</Typography>
 					</Stack>
 				</Stack>
