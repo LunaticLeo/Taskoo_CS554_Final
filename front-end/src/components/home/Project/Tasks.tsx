@@ -1,13 +1,27 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, Divider, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TaskCard from '@/components/widgets/TaskCard';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import { TaskColumnProps, TasksProps, TaskColumnData } from '@/@types/props';
+import TableList from '@/components/widgets/TableList';
+import useFormatList from '@/hooks/useFormatList';
+
+const header: (keyof TaskInfo)[] = ['name', 'createTime', 'dueTime', 'status', 'members'];
 
 const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
 	const theme = useTheme();
 	const hideColumns = useMediaQuery(theme.breakpoints.down('md'));
+	const listData = useFormatList(
+		useMemo(
+			() =>
+				Object.values(data).reduce((pre, cur) => {
+					pre.push(...cur);
+					return pre;
+				}, []),
+			[data]
+		)
+	);
 	const onDragEnd = (res: DropResult) => {
 		const { destination, source } = res;
 
@@ -36,7 +50,7 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
 	return (
 		<DragDropContext onDragEnd={onDragEnd}>
 			{hideColumns ? (
-				<div>hide</div>
+				<TableList<TaskInfo> showHeader header={header} data={listData as any} />
 			) : (
 				<Stack direction='row' spacing={{ md: 2, lg: 5 }} sx={sx}>
 					{Object.keys(data).map(item => (

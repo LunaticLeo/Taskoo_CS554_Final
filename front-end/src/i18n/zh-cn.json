@@ -32,6 +32,7 @@
 		"header": {
 			"name": "项目名称",
 			"createTime": "创建时间",
+			"dueTime": "截止时间",
 			"status": "状态",
 			"members": "成员",
 			"fullName": "姓名",
