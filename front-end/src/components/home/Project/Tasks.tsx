@@ -52,7 +52,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ status, data }) => {
 	const { t } = useTranslation();
 
 	return (
-		<Box sx={{ flexGrow: 1 }}>
+		<Box sx={{ flex: 1 }}>
 			<Typography variant='h6' component='div'>
 				{t(`status.${status.toLowerCase()}`).toUpperCase()}
 			</Typography>
