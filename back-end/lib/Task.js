@@ -1,6 +1,8 @@
 const { DBCollection } = require('./Collection');
+const { status, tasks } = require('../config/mongoCollections');
 const dayjs = require('dayjs');
 const Check = require('./Check');
+const Bucket = require('./Bucket');
 
 class Task extends DBCollection {
 	name = '';
@@ -36,6 +38,24 @@ class Task extends DBCollection {
 			Check._id(member.role._id);
 		}
 		Check.status(this.status);
+	}
+
+	async updateStatus(bucketId, to) {
+		Check._id(bucketId);
+		Check.status(to);
+
+		// check the peermission
+		const statusCol = await status();
+		const { prerequire } = await statusCol.findOne({ name: to }, { projection: { prerequire: 1 } });
+		if (prerequire !== this.status) throw Error(`Changing status from ${this.status} to ${to} are not allowed`);
+
+		// update status
+		const taskCol = await tasks();
+		const { modifiedCount } = await taskCol.updateOne({ _id: this._id }, { $set: { status: to } });
+		if (!modifiedCount) throw Error('Update failed, please try again later');
+
+		// update bucket
+		Bucket.updateStatus(bucketId, 'tasks', this._id, this.status, to);
 	}
 }
 
