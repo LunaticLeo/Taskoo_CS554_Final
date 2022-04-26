@@ -112,7 +112,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 			<Fab
 				variant='extended'
 				color='primary'
-				sx={{ position: 'absolute', bottom: 24, right: 24 }}
+				sx={{ position: 'fixed', bottom: 24, right: 24 }}
 				onClick={() => setOpenDialog(true)}
 			>
 				<AddBoxOutlinedIcon sx={{ mr: 1 }} />

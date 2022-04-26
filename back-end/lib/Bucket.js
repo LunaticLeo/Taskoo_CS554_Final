@@ -50,7 +50,7 @@ class Bucket extends DBCollection {
 	static async updateStatus(bucketId, category, id, from, to) {
 		Check._id(bucketId);
 		if (!['projects', 'tasks'].includes(category)) throw Error('Invalid category');
-		Check.status(from);
+		Check.status(from, true);
 		Check.status(to);
 
 		// check the peermission

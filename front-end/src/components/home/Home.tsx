@@ -25,7 +25,7 @@ const Home: React.FC = () => {
 	!sessionStorage.getItem(SESSION_KEY) && navigate('/account/signin');
 
 	return (
-		<Box sx={{ display: 'flex', height: '100vh' }}>
+		<Box sx={{ display: 'flex', minHeight: '100vh' }}>
 			<Nav openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
 			<Paper component='main' square elevation={0} sx={{ flex: 1 }}>
 				<Toolbar>

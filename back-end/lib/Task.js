@@ -18,7 +18,7 @@ class Task extends DBCollection {
 		super(obj);
 		obj?._id && delete obj._id;
 
-		obj.members = obj.members.map(item => {
+		obj.members = (Array.isArray(obj.members) ? obj.members : [obj.members]).map(item => {
 			try {
 				return JSON.parse(item);
 			} catch {

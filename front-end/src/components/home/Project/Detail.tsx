@@ -183,11 +183,16 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 			.finally(() => {
 				setOpenDialog(false);
 				setTaskForm(new TaskFormClass(project));
+				addCreator();
 			});
 	};
 
 	useLayoutEffect(() => {
 		// add the creator to the task member list
+		addCreator();
+	}, [members]);
+
+	const addCreator = () => {
 		members &&
 			setTaskForm(preVal => {
 				const { members: memberList } = preVal;
@@ -195,14 +200,14 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 				memberList.unshift({ _id, role: creator?.role! });
 				return { ...preVal };
 			});
-	}, [members]);
+	};
 
 	return (
 		<>
 			<Fab
 				variant='extended'
 				color='primary'
-				sx={{ position: 'absolute', bottom: 24, right: 24 }}
+				sx={{ position: 'fixed', bottom: 24, right: 24 }}
 				onClick={() => setOpenDialog(true)}
 			>
 				<AddBoxOutlinedIcon sx={{ mr: 1 }} />
