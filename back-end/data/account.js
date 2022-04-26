@@ -184,6 +184,7 @@ const uploadAvatar = async (_id, file) => {
 
 const createAccount = async (email, password, firstName, lastName, department, position) => {
 	const accountCollection = await accounts();
+	if(accountCollection.findOne({email:email})) throw 'the email has been sign up'
 	let newaccount = new Account({
 		email: email,
 		password: password,

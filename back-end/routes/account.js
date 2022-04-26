@@ -116,4 +116,14 @@ router.post('/signup', async (req, res) => {
 		res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
+
+router.post('/signout', async (req, res) => {
+	try{
+		req.session.destroy();
+    	res.json({ code: 200, message: "You have been signed out"});
+	}catch(error){
+		res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
 module.exports = router;
