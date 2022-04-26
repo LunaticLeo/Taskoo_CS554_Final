@@ -47,6 +47,11 @@ type TableListProps<T extends { _id: string; [prop: string]: any }> = {
 	size?: 'small' | 'medium';
 };
 
+type DashboardProps = {
+	category: 'project' | 'task';
+	setCategoty: React.Dispatch<React.SetStateAction<'project' | 'task'>>;
+};
+
 type TaskColumnData = Record<Lowercase<StaticStatus>, TaskInfo[]>;
 type TasksProps = WithSxProp<{
 	data: TaskColumnData;
@@ -54,7 +59,7 @@ type TasksProps = WithSxProp<{
 	[props: string]: any;
 }>;
 type TaskColumnProps = { status: string; data: TaskInfo[] };
-type TaskCardProps = WithSxProp<{ data: TaskInfo }>;
+type TaskCardProps = WithSxProp<{ data: TaskInfo; clickable?: boolean }>;
 type DetailDialogProps = StyledDialogProps & { data: TaskInfo };
 
 type TabPanelProps = { value: string | number; hidden: boolean; [props: string]: any };
