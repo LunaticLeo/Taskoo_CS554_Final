@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Divider, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TaskCard from '@/components/widgets/TaskCard';
@@ -6,11 +6,16 @@ import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautif
 import { TaskColumnProps, TasksProps, TaskColumnData } from '@/@types/props';
 import TableList from '@/components/widgets/TableList';
 import useFormatList from '@/hooks/useFormatList';
+import http from '@/utils/http';
+import useNotification from '@/hooks/useNotification';
+import { toCapitalize } from '@/utils';
 
 const header: (keyof TaskInfo)[] = ['name', 'createTime', 'dueTime', 'status', 'members'];
 
 const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
 	const theme = useTheme();
+	const notification = useNotification();
+	const [STATUS, setSTATUS] = useState<StatusPrerquest>({} as any);
 	const hideColumns = useMediaQuery(theme.breakpoints.down('md'));
 	const listData = useFormatList(
 		useMemo(
@@ -22,14 +27,37 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
 			[data]
 		)
 	);
+
+	useEffect(() => {
+		http.get<StaticData[]>('/static/status').then(res => {
+			setSTATUS(
+				res.data!.reduce((pre, cur) => {
+					pre[cur.name.toLowerCase()] = cur.prerequire?.toLowerCase();
+					return pre;
+				}, {} as any)
+			);
+		});
+	}, []);
+
 	const onDragEnd = (res: DropResult) => {
 		const { destination, source } = res;
 
 		if (!destination) return;
 		if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
+		if (
+			source.droppableId !== destination.droppableId &&
+			STATUS[destination.droppableId as keyof StatusPrerquest] !== source.droppableId
+		) {
+			notification.error(
+				`Cannot update status from ${toCapitalize(source.droppableId)} to ${toCapitalize(destination.droppableId)}`
+			);
+			return;
+		}
+
 		const srcColumn = [...data[source.droppableId as keyof TaskColumnData]];
 		if (source.droppableId === destination.droppableId) {
+			// do the reorder only
 			[srcColumn[source.index], srcColumn[destination.index]] = [srcColumn[destination.index], srcColumn[source.index]];
 			setData(preVal => ({
 				...preVal,

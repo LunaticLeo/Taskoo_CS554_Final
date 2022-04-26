@@ -4,7 +4,6 @@ import { GraphicComponentOption, LegendComponentOption, TooltipComponentOption }
 import { ComposeOption } from 'echarts/core';
 import { Form } from './form';
 import { OptionsObject, SnackbarKey, VariantType } from 'notistack';
-import { DraggableProvided } from 'react-beautiful-dnd';
 
 type Notification = Record<VariantType, (msg: string, options?: OptionsObject) => SnackbarKey>;
 
@@ -56,6 +55,7 @@ type TasksProps = WithSxProp<{
 }>;
 type TaskColumnProps = { status: string; data: TaskInfo[] };
 type TaskCardProps = WithSxProp<{ data: TaskInfo }>;
+type DetailDialogProps = StyledDialogProps & { data: TaskInfo };
 
 type TabPanelProps = { value: string | number; hidden: boolean; [props: string]: any };
 type TabsProps = { text: string; value: string | number };

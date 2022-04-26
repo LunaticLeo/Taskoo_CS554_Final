@@ -1,21 +1,70 @@
-import React, { forwardRef } from 'react';
-import { Button, Card, CardActions, CardContent, Divider, Stack, Typography } from '@mui/material';
+import React, { forwardRef, useState } from 'react';
+import {
+	Button,
+	Card,
+	CardActions,
+	CardContent,
+	DialogContent,
+	DialogTitle,
+	Divider,
+	Stack,
+	Typography
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { TaskCardProps } from '@/@types/props';
+import { DetailDialogProps, TaskCardProps } from '@/@types/props';
 import Styled from './Styled';
 import dayjs from 'dayjs';
 
 const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = ({ data, sx, ...rest }, ref) => {
 	const { t } = useTranslation();
+	const [open, setOpen] = useState<boolean>(false);
 
 	return (
-		<Card {...rest} ref={ref} sx={{ width: '100%', ...sx }}>
-			<CardContent>
-				<Stack spacing={1}>
-					<Typography variant='h6' component='h2'>
-						{data.name}
-					</Typography>
-					<Typography variant='body2' color='text.secondary' className='collapse'>
+		<>
+			<Card {...rest} ref={ref} sx={{ width: '100%', ...sx }}>
+				<CardContent>
+					<Stack spacing={1}>
+						<Typography variant='h6' component='h2'>
+							{data.name}
+						</Typography>
+						<Typography variant='body2' color='text.secondary' className='collapse'>
+							{data.description}
+						</Typography>
+						<Stack direction='row' alignItems='center' justifyContent='space-between'>
+							<Styled.Status label={data.status} />
+							<Styled.AvatarGroup data={data.members} />
+						</Stack>
+						<Stack direction='row' spacing={1}>
+							<Typography color='primary' variant='body2' component='span'>
+								{t('dueTime')}
+							</Typography>
+							<Typography variant='body2' component='span'>
+								{dayjs(+data.dueTime).format('MM/DD/YYYY')}
+							</Typography>
+						</Stack>
+					</Stack>
+				</CardContent>
+				<Divider />
+				<CardActions>
+					<Button color='primary' onClick={() => setOpen(true)}>
+						{t('detail')}
+					</Button>
+				</CardActions>
+			</Card>
+			<DetailDialog open={open} onClose={() => setOpen(false)} data={data} />
+		</>
+	);
+};
+
+const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
+	const { t } = useTranslation();
+
+	return (
+		<Styled.Dialog open={open} onClose={onClose}>
+			<DialogTitle>{data.name}</DialogTitle>
+			<DialogContent>
+				<Stack spacing={2}>
+					<Typography variant='body2' color='text.secondary'>
 						{data.description}
 					</Typography>
 					<Stack direction='row' alignItems='center' justifyContent='space-between'>
@@ -31,12 +80,8 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 						</Typography>
 					</Stack>
 				</Stack>
-			</CardContent>
-			<Divider />
-			<CardActions>
-				<Button color='primary'>{t('detail')}</Button>
-			</CardActions>
-		</Card>
+			</DialogContent>
+		</Styled.Dialog>
 	);
 };
 
