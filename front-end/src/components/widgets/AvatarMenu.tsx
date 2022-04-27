@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, Badge as MuiBadge, Box, IconButton, Menu, MenuItem, styled, Tooltip, Typography } from '@mui/material';
 import { stringAvatar } from '@/utils';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import { useTranslation } from 'react-i18next';
 import { AvatarMenuProps } from '@/@types/props';
+import http from '@/utils/http';
 
 const AvatarMenu: React.FC<AvatarMenuProps> = ({ sx }) => {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 	const { avatar, fullName } = useAccountInfo();
+
+	const logout = () => {
+		http
+			.post('/account/signout')
+			.then(res => {
+				navigate('/account/signin');
+			})
+			.catch(res => { alert(res.message) });
+	};
 
 	return (
 		<Box sx={sx}>
@@ -30,7 +42,7 @@ const AvatarMenu: React.FC<AvatarMenuProps> = ({ sx }) => {
 				onClose={() => setAnchorElUser(null)}
 			>
 				<MenuItem>
-					<Typography textAlign='center'>Log out</Typography>
+					<Typography textAlign='center' onClick={logout}>Log out</Typography>
 				</MenuItem>
 			</Menu>
 		</Box>
