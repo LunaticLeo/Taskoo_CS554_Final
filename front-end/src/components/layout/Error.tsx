@@ -2,11 +2,11 @@ import React from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import error404 from '@/assets/404.svg';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ErrorProps, ImgSrc } from '@/@types/props';
 
-type ImgSrc = 404;
-const imgs: Record<ImgSrc, string> = { 404: error404 };
+const imgs: Record<ImgSrc, string> = { 401: '', 403: '', 404: error404, 500: '' };
 
-const Error: React.FC<{ message?: string; code?: number | string }> = ({ message, code = 404 }) => {
+const Error: React.FC<ErrorProps> = ({ message, code = 404 }) => {
 	const navigate = useNavigate();
 	const { code: _code, message: _message } = useParams();
 	code = _code ?? code;

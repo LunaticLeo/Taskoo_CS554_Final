@@ -5,7 +5,9 @@ const {
 	getUserData,
 	checkIdentity,
 	getDepartmentMembers,
-	decodeAccountInfo
+	decodeAccountInfo,
+	uploadAvatar,
+	createAccount
 } = require('../data/account');
 const Check = require('../lib/Check');
 
@@ -80,6 +82,47 @@ router.get('/members', async (req, res) => {
 		res.json({ code: 200, message: '', data: members });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.post('/avatar', async (req, res) => {
+	const { _id } = req.session.accountInfo;
+
+	try {
+		const url = await uploadAvatar(_id, req.file);
+		res.json({ code: 200, message: 'Upload was successful', data: url });
+	} catch (error) {
+		return res.status(500).json({ message: error?.message ?? error });
+	}
+});
+
+router.post('/signup', async (req, res) => {
+	const { email, password, firstName, lastName, department, position } = req.body;
+	try {
+		Object.keys(req.body).forEach(key => Check[key](req.body[key]));
+	} catch (error) {
+		res.status(400).json({ code: 400, message: error?.message ?? error });
+		return;
+	}
+
+	try {
+		await createAccount(email, password, firstName, lastName, department, position);
+		res.json({
+			code: 200,
+			message: "Sign up successfully",
+			data: email
+		  })
+	} catch (error) {
+		res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.post('/signout', async (req, res) => {
+	try{
+		req.session.destroy();
+    	res.json({ code: 200, message: "You have been signed out"});
+	}catch(error){
+		res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
 

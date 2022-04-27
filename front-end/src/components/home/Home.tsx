@@ -11,6 +11,7 @@ import Notification from '../widgets/Notification';
 import Project from './Project/Project';
 import Profile from './Profile/Profile';
 import Detail from './Project/Detail';
+import Organzation from './Organzation/Organzation';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
@@ -25,7 +26,7 @@ const Home: React.FC = () => {
 	!sessionStorage.getItem(SESSION_KEY) && navigate('/account/signin');
 
 	return (
-		<Box sx={{ display: 'flex', height: '100vh' }}>
+		<Box sx={{ display: 'flex', minHeight: '100vh' }}>
 			<Nav openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
 			<Paper component='main' square elevation={0} sx={{ flex: 1 }}>
 				<Toolbar>
@@ -36,9 +37,11 @@ const Home: React.FC = () => {
 					>
 						<MenuRoundedIcon />
 					</IconButton>
-					<Typography component='h1' variant='h4'>
-						{t(`menu.${curView}`)}
-					</Typography>
+					{curView && (
+						<Typography component='h1' variant='h4'>
+							{t(`menu.${curView}`)}
+						</Typography>
+					)}
 
 					<Stack direction='row' spacing={2} sx={{ ml: 'auto' }}>
 						<Notification />
@@ -52,6 +55,7 @@ const Home: React.FC = () => {
 						<Route path='/profile' element={<Profile />} />
 						<Route path='/project' element={<Project />} />
 						<Route path='/project/:id' element={<Detail />} />
+						<Route path='/organization' element={<Organzation />} />
 					</Routes>
 				</Box>
 			</Paper>

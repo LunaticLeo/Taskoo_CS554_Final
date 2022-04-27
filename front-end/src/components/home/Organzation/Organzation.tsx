@@ -17,7 +17,7 @@ import {
 	TextField,
 	Typography
 } from '@mui/material';
-import ToDoList from './ToDoList';
+
 import { useTranslation } from 'react-i18next';
 import TableList from '@/components/widgets/TableList';
 import Styled from '@/components/widgets/Styled';
@@ -30,10 +30,11 @@ import useFormatList from '@/hooks/useFormatList';
 import { Form } from '@/@types/form';
 import { ProjectFormDialogProps, ProjectMemberListProps } from '@/@types/props';
 import useNotification from '@/hooks/useNotification';
+import OrgChart from './OrgChart';
 
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
-const Project: React.FC = () => {
+const Organzation: React.FC = () => {
 	const [data, setData] = useState<ProjectInfo[]>([]);
 	const tableData = useFormatList(data, _id => `/home/project/${_id}`);
 
@@ -50,11 +51,8 @@ const Project: React.FC = () => {
 	return (
 		<>
 			<Grid container spacing={2} flexDirection={{ xs: 'row', lg: 'row-reverse' }}>
-				<Grid item xs={12} lg={3}>
-					<ToDoList />
-				</Grid>
 				<Grid item xs={12} lg={9}>
-					<TableList<ProjectInfo> showHeader size='small' header={header} data={tableData} />
+					<OrgChart />
 				</Grid>
 			</Grid>
 			<FormDialog refresh={getProjectList} />
@@ -256,29 +254,4 @@ const MemberList: React.FC<ProjectMemberListProps> = ({ data, members, setMember
 	);
 };
 
-// const FileUpload: React.FC<{ setAttachments: (val: Partial<ProjectForm>) => void }> = ({ setAttachments }) => {
-// 	const { t } = useTranslation();
-// 	const { getRootProps, getInputProps, acceptedFiles } = useDropzone({ noKeyboard: true });
-
-// 	useEffect(() => {
-// 		setAttachments({ attachments: acceptedFiles });
-// 	}, [acceptedFiles]);
-
-// 	return (
-// 		<Stack flexGrow={1}>
-// 			<Typography variant='h6' component='h3' sx={{ pb: 1 }}>
-// 				{t('project.attachments')}
-// 			</Typography>
-// 			<Stack>
-// 				<label {...getRootProps()}>
-// 					<input style={{ display: 'none' }} {...getInputProps({ accept: 'pdf/*', multiple: true, type: 'file' })} />
-// 					<Button variant='outlined' component='span' fullWidth>
-// 						{t('button.upload')}
-// 					</Button>
-// 				</label>
-// 			</Stack>
-// 		</Stack>
-// 	);
-// };
-
-export default Project;
+export default Organzation;

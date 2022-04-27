@@ -1,25 +1,27 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import Chart, { Option } from '@/components/widgets/Chart';
+import React, { useEffect,useCallback, useLayoutEffect, useState } from 'react';
+import Chart from '@/components/widgets/Chart';
 import { CardContent, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-
-var orgdata :any;
-async function fetchData() {
-    try {
-        const { data }  = await axios.get('/api1/organzation');
-        orgdata=data.data;
-    } catch (e) {
-        console.log(e);
-    }
-}
+import { Option } from '@/@types/props';
+import http from '@/utils/http';
 
 const OrgChart: React.FC = () => {
 	const { t } = useTranslation();
 	const [option, setOption] = useState<Option>({});
     const [flag,setFlag] = useState(false);
     var timer :any;
-    fetchData();
+    const [data, setData] = useState<ProjectInfo[]>([]);
+    const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
+    useEffect(() => {
+		getProjectList();
+	}, []);
+    const getProjectList = useCallback(() => {
+		http.get<ProjectInfo[]>('/organzation').then(res => {
+			setData(res.data!);
+		});
+	}, []);
+
 	useLayoutEffect(() => {
     clearInterval(timer);
     timer=setInterval(function () {
@@ -29,14 +31,14 @@ const OrgChart: React.FC = () => {
         if(flag){
             setOption(
                 treemapOption({
-                    data: orgdata
+                    data: data
                 })
             );
                 
         }else{
             setOption(
                 sunburstOption({
-                    data: orgdata
+                    data: data
                 })
             );
         }

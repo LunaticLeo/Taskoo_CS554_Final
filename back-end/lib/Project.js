@@ -3,9 +3,8 @@ const dayjs = require('dayjs');
 const Check = require('./Check');
 
 class Project extends DBCollection {
-	name = null;
-	description = null;
-	manager = null;
+	name = '';
+	description = '';
 	createTime = dayjs().valueOf();
 	members = [];
 	status = 'Pending';
@@ -16,9 +15,13 @@ class Project extends DBCollection {
 		super(obj);
 		obj?._id && delete obj._id;
 
-		try {
-			obj.members = obj.members.map(item => JSON.parse(item));
-		} catch (error) {}
+		obj.members = obj.members.map(item => {
+			try {
+				return JSON.parse(item);
+			} catch {
+				return item;
+			}
+		});
 
 		Object.keys(obj).forEach(key => (this[key] = obj[key]));
 		this.checkValidation();
@@ -26,9 +29,9 @@ class Project extends DBCollection {
 
 	checkValidation() {
 		Check.name(this.name);
-		Check._id(this.manager._id);
 		for (const member of this.members) {
 			Check._id(member._id);
+			Check._id(member.role._id);
 		}
 		Check.status(this.status);
 	}

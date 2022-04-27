@@ -1,10 +1,7 @@
 import React from 'react';
 import { Backdrop } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-
-interface LoadingProps {
-	open: boolean;
-}
+import { LoadingProps } from '@/@types/props';
 
 const Loading: React.FC<LoadingProps> = ({ open }) => {
 	return (

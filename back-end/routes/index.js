@@ -1,7 +1,7 @@
-const file = require('./file');
 const static = require('./static');
 const account = require('./account');
 const project = require('./project');
+const task = require('./task');
 const organzation = require('./organzation');
 
 // the whitelist routes
@@ -16,10 +16,10 @@ module.exports = app => {
 		next();
 	});
 
-	app.use('/file', file);
 	app.use('/static', static);
 	app.use('/account', account);
 	app.use('/project', project);
+	app.use('/task', task);
 	app.use('/organzation',organzation);
 
 	app.use('*', (_, res) => {

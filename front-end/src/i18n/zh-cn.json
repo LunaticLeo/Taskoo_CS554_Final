@@ -23,6 +23,7 @@
 	},
 	"button": {
 		"newProject": "新建项目",
+		"newTask": "新建任务",
 		"cancel": "取消",
 		"submit": "提交",
 		"upload": "选择文件"
@@ -31,12 +32,16 @@
 		"header": {
 			"name": "项目名称",
 			"createTime": "创建时间",
+			"dueTime": "截止时间",
 			"status": "状态",
 			"members": "成员",
 			"fullName": "姓名",
 			"email": "电子邮箱",
 			"position": "职位"
 		}
+	},
+	"tabs": {
+		"favorite": "我的收藏"
 	},
 	"status": {
 		"pending": "待开始",
@@ -64,6 +69,16 @@
 		"form": {
 			"name": "项目名称",
 			"description": "项目简介"
+		}
+	},
+	"task": {
+		"dialogTitle": "创建任务",
+		"info": "任务信息",
+		"members": "成员",
+		"form": {
+			"name": "任务名称",
+			"description": "任务简介",
+			"dueTime": "截止日期"
 		}
 	}
 }

@@ -48,6 +48,11 @@ class Bucket extends DBCollection {
 	 * @param {string} to next status
 	 */
 	static async updateStatus(bucketId, category, id, from, to) {
+		Check._id(bucketId);
+		if (!['projects', 'tasks'].includes(category)) throw Error('Invalid category');
+		Check.status(from, true);
+		Check.status(to);
+
 		// check the peermission
 		const statusCol = await status();
 		const { prerequire } = await statusCol.findOne({ name: to }, { projection: { prerequire: 1 } });

@@ -9,6 +9,8 @@ const { toCapitalize } = require('../utils/helpers');
 const { accounts } = require('../config/mongoCollections');
 const bcrypt = require('bcrypt');
 const { getStaticData } = require('./static');
+const { upload } = require('./file');
+const Account = require('../lib/Account');
 
 /**
  * add the account info to register list (waitting for sign up)
@@ -23,6 +25,9 @@ const addToRegisterList = async (accountInfo, email) => {
 	// check the validation of id
 	Check.department(accountInfo.department);
 	Check.position(accountInfo.position);
+
+	accountInfo.department = await getStaticData('departments', accountInfo.department);
+	accountInfo.position = await getStaticData('positions', accountInfo.position);
 
 	const registerId = uuidv4();
 	// TIPS the expire time (default is 1 hour)
@@ -123,29 +128,83 @@ const decodeAccountInfo = async accountInfo => {
  */
 const getDepartmentMembers = async _id => {
 	const collection = await accounts();
-	const allMember = await collection
-		.find({ department: _id }, { projection: { password: 0, disabled: 0, email: 0, bucket: 0 } })
+	const members = await collection
+		.aggregate([
+			{ $match: { department: _id } },
+			{ $project: { password: 0, disabled: 0, bucket: 0 } },
+			{
+				$lookup: {
+					from: 'departments',
+					localField: 'department',
+					foreignField: '_id',
+					as: 'department',
+					pipeline: [{ $project: { _id: 0 } }]
+				}
+			},
+			{
+				$lookup: {
+					from: 'positions',
+					localField: 'position',
+					foreignField: '_id',
+					as: 'position',
+					pipeline: [{ $project: { _id: 0, level: 0 } }]
+				}
+			},
+			{ $unwind: '$department' },
+			{ $unwind: '$position' },
+			{
+				$addFields: {
+					department: '$department.name',
+					position: '$position.name'
+				}
+			}
+		])
 		.toArray();
-	const departmentName = (await getStaticData('departments', _id)).name;
-	const positions = await getStaticData('positions');
-
-	const members = allMember.map(item => {
-		item.fullName = `${toCapitalize(item.firstName)} ${toCapitalize(item.lastName)}`;
-		item.department = departmentName;
-		item.position = positions.find(position => position._id === item.position).name;
-		delete item.firstName;
-		delete item.lastName;
-		return item;
-	});
 
 	return members;
 };
 
+/**
+ * upload avatar
+ * @param {string} _id account id
+ * @param {File} file
+ * @returns {Promise<string>} the url of the file
+ */
+const uploadAvatar = async (_id, file) => {
+	Check._id(_id);
+	const url = await upload(file);
+
+	// update account
+	const accountCol = await accounts();
+	const { modifiedCount } = await accountCol.updateOne({ _id }, { $set: { avatar: url } });
+
+	if (!modifiedCount) throw Error('Upload failed, please try again later');
+	return url;
+};
+
+const createAccount = async (email, password, firstName, lastName, department, position) => {
+	const accountCollection = await accounts();
+	if(accountCollection.findOne({email:email})) throw 'the email has been sign up'
+	let newaccount = new Account({
+		email: email,
+		password: password,
+		firstName: firstName,
+		lastName: lastName,
+		department: department,
+		position: position
+	});
+	newaccount.hashPwd();
+	const insertInfo = await accountCollection.insertOne(newaccount);
+	if (insertInfo.insertedCount === 0) throw 'Could not add account';
+	return email;
+};
 module.exports = {
 	addToRegisterList,
 	getRegisterInfo,
 	getUserData,
 	checkIdentity,
 	decodeAccountInfo,
-	getDepartmentMembers
+	getDepartmentMembers,
+	uploadAvatar,
+	createAccount
 };

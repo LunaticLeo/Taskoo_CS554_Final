@@ -9,14 +9,16 @@ import {
 	ListItemAvatar,
 	ListItemText,
 	Slide,
+	Tooltip,
 	Typography,
 	useMediaQuery,
 	useTheme
 } from '@mui/material';
-import { stringAvatar } from '@/utils';
+import { stringAvatar, toFullName } from '@/utils';
 import { useTranslation } from 'react-i18next';
 import { TransitionProps } from '@mui/material/transitions';
 import { Box } from '@mui/system';
+import { StyledAccountInfoProps, StyledAvatarGroupProps, StyledDialogProps, StyledStatusProps } from '@/@types/props';
 
 const StyledCard: React.FC = ({ children }) => <Card elevation={3}>{children}</Card>;
 const StyledTitle: React.FC = ({ children }) => (
@@ -24,41 +26,43 @@ const StyledTitle: React.FC = ({ children }) => (
 		{children}
 	</Typography>
 );
-const StyledStatus: React.FC<{ label: string }> = ({ label }) => {
+const StyledStatus: React.FC<StyledStatusProps> = ({ label }) => {
 	const { t } = useTranslation();
 
-	const color: Record<StaticStatus, string> = {
-		Pending: 'error',
-		Processing: 'info',
-		Testing: 'warning',
-		Done: 'success'
-	};
-
-	return <Chip label={t(`status.${label.toLowerCase()}`)} color={(color as any)[label]} />;
+	return <Chip label={t(`status.${label.toLowerCase()}`)} color={label.toLowerCase() as any} />;
 };
-const StyledAccountInfo: React.FC<Partial<Account> & { fullName: string; component?: React.ElementType<any> }> = ({
+const StyledAccountInfo: React.FC<StyledAccountInfoProps> = ({
 	avatar,
-	fullName,
+	firstName,
+	lastName,
 	position,
 	component = ListItem
 }) => {
+	const fullName = toFullName(firstName!, lastName!);
+
 	return (
 		<Box component={component}>
 			<ListItemAvatar>
 				{avatar ? <Avatar alt={fullName} src={avatar} /> : <Avatar alt={fullName} {...stringAvatar(fullName)} />}
 			</ListItemAvatar>
-			<ListItemText primary={fullName} secondary={position} />
+			<ListItemText primary={fullName} secondary={(position as StaticData)?.name ?? position} />
 		</Box>
 	);
 };
-const StyledAvatarGroup: React.FC<{ data: AccountInfo[]; max?: number }> = ({ data, max = 4 }) => {
+const StyledAvatarGroup: React.FC<StyledAvatarGroupProps> = ({ data, max = 4 }) => {
 	return (
 		<AvatarGroup max={max} sx={{ justifyContent: 'flex-end' }}>
 			{data.map(member => {
-				return member.avatar ? (
-					<Avatar key={member.fullName} alt={member.fullName} src={member.avatar} />
-				) : (
-					<Avatar key={member.fullName} alt={member.fullName} {...stringAvatar(member.fullName!)} />
+				const fullName = toFullName(member.firstName, member.lastName);
+
+				return (
+					<Tooltip key={fullName} title={fullName} placement='top'>
+						{member.avatar ? (
+							<Avatar alt={fullName} src={member.avatar} />
+						) : (
+							<Avatar alt={fullName} {...stringAvatar(fullName!)} />
+						)}
+					</Tooltip>
 				);
 			})}
 		</AvatarGroup>
@@ -72,11 +76,7 @@ const Transition = React.forwardRef(function Transition(
 ) {
 	return <Slide direction='up' ref={ref} {...props} />;
 });
-const StyledDialog: React.FC<{ open: boolean; onClose: React.Dispatch<React.SetStateAction<boolean>> }> = ({
-	open,
-	onClose,
-	children
-}) => {
+const StyledDialog: React.FC<StyledDialogProps> = ({ open, onClose, children }) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 	return (

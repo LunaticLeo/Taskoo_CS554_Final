@@ -100,13 +100,19 @@ module.exports = {
 		return param;
 	},
 
-	status(param) {
-		if (param === null || param === undefined) {
-			throw Error('status is not provided');
-		}
+	status(param, allowNull = false) {
+		if (allowNull) {
+			if (![...Status, null].includes(param)) {
+				throw Error(`status: ${param} is not valid`);
+			}
+		} else {
+			if (param === null || param === undefined) {
+				throw Error('status is not provided');
+			}
 
-		if (!isType(param, 'string') || param.trim() === '' || !Status.includes(param)) {
-			throw Error(`status: ${param} is not valid`);
+			if (!isType(param, 'string') || param.trim() === '' || !Status.includes(param)) {
+				throw Error(`status: ${param} is not valid`);
+			}
 		}
 
 		return param;

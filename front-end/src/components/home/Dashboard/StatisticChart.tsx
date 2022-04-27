@@ -1,10 +1,12 @@
 import React, { useLayoutEffect, useState } from 'react';
-import Chart, { Option } from '@/components/widgets/Chart';
-import { CardContent, useTheme } from '@mui/material';
+import Chart from '@/components/widgets/Chart';
+import { CardContent, Stack, useTheme } from '@mui/material';
 import { TFunction, useTranslation } from 'react-i18next';
 import Styled from '@/components/widgets/Styled';
+import { DashboardProps, Option } from '@/@types/props';
+import CategorySwitch from './CategorySwitch';
 
-const StatisticChart: React.FC = () => {
+const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 	const { t } = useTranslation();
 	const [option, setOption] = useState<Option>({});
 	const theme = useTheme();
@@ -27,7 +29,10 @@ const StatisticChart: React.FC = () => {
 	return (
 		<Styled.Card>
 			<CardContent>
-				<Styled.Title>{t('statistic')}</Styled.Title>
+				<Stack direction='row' justifyContent='space-between'>
+					<Styled.Title>{t('statistic')}</Styled.Title>
+					<CategorySwitch category={category} setCategoty={setCategoty} />
+				</Stack>
 				<Chart height='230px' option={option} />
 			</CardContent>
 		</Styled.Card>

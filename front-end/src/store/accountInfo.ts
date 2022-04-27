@@ -2,8 +2,8 @@ import { toCapitalize } from '@/utils';
 import { SESSION_KEY } from '@/utils/keys';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: { data: StoreAccountInfo } = {
-	data: JSON.parse(sessionStorage.getItem(SESSION_KEY)!) ?? {
+const initialState: { value: WithFullName<Account> } = {
+	value: JSON.parse(sessionStorage.getItem(SESSION_KEY)!) ?? {
 		email: '',
 		firstName: '',
 		lastName: '',
@@ -19,15 +19,15 @@ export const accountInfoSlice = createSlice({
 	initialState,
 	reducers: {
 		get: state => {
-			const { firstName, lastName } = state.data;
+			const { firstName, lastName } = state.value;
 			const fullName = `${toCapitalize(firstName)} ${toCapitalize(lastName)}`;
-			state.data = { ...state.data, fullName };
+			state.value = { ...state.value, fullName };
 		},
-		set: (state, { payload }: PayloadAction<Partial<StoreAccountInfo>>) => {
-			const fullName = `${toCapitalize(payload.firstName!)} ${toCapitalize(payload.lastName!)}`;
-			const newInfo = { ...state.data, ...payload, fullName };
+		set: (state, { payload }: PayloadAction<Partial<WithFullName<Account>>>) => {
+			const newInfo = { ...state.value, ...payload };
+			newInfo.fullName = `${toCapitalize(newInfo.firstName!)} ${toCapitalize(newInfo.lastName!)}`;
 
-			state.data = newInfo;
+			state.value = newInfo;
 			sessionStorage.setItem(SESSION_KEY, JSON.stringify(newInfo));
 		}
 	}
