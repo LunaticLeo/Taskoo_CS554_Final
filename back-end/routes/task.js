@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { createTask, getTaskList } = require('../data/task');
+const { createTask, getTaskList, uploadAttachments } = require('../data/task');
 const Task = require('../lib/Task');
 
 router.post('/create', async (req, res) => {
@@ -24,6 +24,23 @@ router.get('/list', async (req, res) => {
 	try {
 		const data = await getTaskList(bucket);
 		res.status(200).json({ code: 200, message: '', data });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.post('/attachments', async (req, res) => {
+	const { id } = req.body;
+
+	try {
+		Check._id(id);
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const message = await uploadAttachments(id, req.files);
+		res.json({ code: 200, message });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}

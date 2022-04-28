@@ -26,7 +26,7 @@
 		"newTask": "New Task",
 		"cancel": "Cancel",
 		"submit": "Submit",
-		"upload": "Select Files"
+		"upload": "Upload"
 	},
 	"table": {
 		"header": {
@@ -80,5 +80,9 @@
 			"description": "Description",
 			"dueTime": "Due Time"
 		}
+	},
+	"file": {
+		"upload": "Files Upload",
+		"tip": "Drop files here, or click to select"
 	}
 }

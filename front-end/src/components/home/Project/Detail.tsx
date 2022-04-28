@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import http from '@/utils/http';
 import {
 	Box,
@@ -14,6 +14,9 @@ import {
 	List,
 	ListItem,
 	ListItemButton,
+	ListItemIcon,
+	ListItemText,
+	Popover,
 	Stack,
 	TextField,
 	Typography
@@ -37,6 +40,7 @@ import Tasks from './Tasks';
 import {
 	FavoriteButtonProps,
 	NavBreadcrumbsProps,
+	ProjectFileUploadProps,
 	TaskColumnData,
 	TaskFormDialogProps,
 	TaskMemberListProps
@@ -44,6 +48,12 @@ import {
 import useAccountInfo from '@/hooks/useAccountInfo';
 import { toFormData } from '@/utils';
 import useNotification from '@/hooks/useNotification';
+import Folder from '@/components/widgets/Folder';
+import FileUploader from '@/components/widgets/FileUploader';
+import FolderIcon from '@mui/icons-material/Folder';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { setLoading } from '@/store/loading';
+import FilePresentRoundedIcon from '@mui/icons-material/FilePresentRounded';
 
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
@@ -110,6 +120,7 @@ const Detail: React.FC = () => {
 							{t('create')}: {dayjs(projectInfo.createTime).format('MM/DD/YYYY')}
 						</Typography>
 						<FavoriteButton favorite={favoriteStatus} onClick={swithFavoriteStatus} />
+						<FileUplaod project={id ?? ''} />
 					</Stack>
 					{projectInfo?.description && (
 						<Typography variant='body1' color='text.secondary'>
@@ -144,6 +155,118 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ favorite = false, onCli
 		<IconButton onClick={onClick} sx={{ color: yellow[700] }} aria-label='favorite-btn'>
 			{favorite ? <StarRoundedIcon color='inherit' /> : <StarOutlineRoundedIcon color='inherit' />}
 		</IconButton>
+	);
+};
+
+const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
+	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+	const notificate = useNotification();
+	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+	const [openDialog, setOpenDialog] = useState<boolean>(false);
+	const [files, setFiles] = useState<File[]>([]);
+	const [existFiles, setExistFiles] = useState<string[]>([]);
+
+	useEffect(() => {
+		http.get<string[]>('/project/attachments/list', { id: project }).then(res => {
+			setExistFiles(res.data!);
+		});
+	}, []);
+
+	const handleDialogClose = () => {
+		setOpenDialog(false);
+		setFiles([]);
+	};
+
+	const handleFileSelected = (files: File[]) => {
+		setFiles(preVal => [...preVal, ...files]);
+	};
+
+	const handleDeleteFile = (index: number) => {
+		setFiles(preVal => {
+			preVal.splice(index, 1);
+			return [...preVal];
+		});
+	};
+
+	const handleUpload = () => {
+		const formData = toFormData({ id: project });
+		files.map(file => formData.append('file', file));
+		dispatch(setLoading(true));
+		http
+			.post('/project/attachments', formData)
+			.then(res => {
+				notificate.success(res.message);
+				handleDialogClose();
+			})
+			.catch(err => notificate.error(err?.message ?? err))
+			.finally(() => setTimeout(() => dispatch(setLoading(false)), 1000));
+	};
+
+	const open = Boolean(anchorEl);
+	const id = open ? 'folder-popover' : undefined;
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+
+	return (
+		<>
+			<IconButton
+				color='primary'
+				aria-describedby={id}
+				aria-label='upload-btn'
+				onClick={e => setAnchorEl(e.currentTarget)}
+			>
+				<FilePresentRoundedIcon color='inherit' />
+			</IconButton>
+			<Popover
+				id={id}
+				open={open}
+				anchorEl={anchorEl}
+				onClose={handleClose}
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'left'
+				}}
+			>
+				<Stack sx={{ p: 3 }}>
+					<Folder filesUrl={existFiles} />
+					<Button variant='outlined' onClick={() => setOpenDialog(true)}>
+						{t('button.upload')}
+					</Button>
+				</Stack>
+			</Popover>
+			<Styled.Dialog open={openDialog} onClose={handleDialogClose}>
+				<DialogTitle>{t('file.upload')}</DialogTitle>
+				<DialogContent>
+					<FileUploader onFileSelected={handleFileSelected} />
+					<List dense>
+						{files.map((file, index) => (
+							<ListItem
+								key={file.name}
+								secondaryAction={
+									<IconButton edge='end' aria-label='delete' onClick={() => handleDeleteFile(index)}>
+										<DeleteIcon />
+									</IconButton>
+								}
+							>
+								<ListItemIcon>
+									<FolderIcon />
+								</ListItemIcon>
+								<ListItemText primary={file.name} />
+							</ListItem>
+						))}
+					</List>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleDialogClose}>{t('button.cancel')}</Button>
+					<Button variant='contained' onClick={handleUpload}>
+						{t('button.upload')}
+					</Button>
+				</DialogActions>
+			</Styled.Dialog>
+		</>
 	);
 };
 

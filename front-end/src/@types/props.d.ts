@@ -65,6 +65,7 @@ type DetailDialogProps = StyledDialogProps & { data: TaskInfo };
 type TabPanelProps = { value: string | number; hidden: boolean; [props: string]: any };
 type TabsProps = { text: string; value: string | number };
 
+type ProjectFileUploadProps = { project: string };
 type ProjectFormDialogProps = { refresh?: () => void };
 type ProjectMemberListProps = {
 	data: Account<string>[];
@@ -83,3 +84,7 @@ type TaskMemberListProps = {
 	data: WithRole<Account<StaticData>, StaticData>[];
 	setMembers: (value: React.SetStateAction<Form.TaskForm>) => void;
 };
+
+type FileUploaderProps = { onFileSelected: (files: File[]) => void };
+type FolderProps = { filesUrl: string[] };
+type FileItemProps = { fileUrl: string };

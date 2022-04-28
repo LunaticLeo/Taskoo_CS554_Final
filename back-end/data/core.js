@@ -5,6 +5,7 @@
 const { projects, tasks, accounts, buckets } = require('../config/mongoCollections');
 const { Project, Task, Bucket } = require('../lib');
 const { toCapitalize } = require('../utils/helpers');
+const { upload } = require('./file');
 
 /**
  * create function
@@ -99,7 +100,37 @@ const getListFromBucket = async (category, bucketId, projection) => {
 	return data;
 };
 
+/**
+ * upload attachments
+ * @param {string} category projects | tasks
+ * @param {string} _id project id | task id
+ * @param {File[]} files
+ */
+const uploadAttachments = async (category, _id, files) => {
+	const urls = await Promise.all(files.map(async file => await upload(file)));
+
+	const collection = await eval(`${category}()`);
+	const { modifiedCount } = await collection.updateOne({ _id }, { $addToSet: { attachments: { $each: urls } } });
+	if (!modifiedCount) throw Error('Upload failed, please try again later');
+
+	return 'Upload successfully';
+};
+
+/**
+ * get attachments
+ * @param {string} category projects | tasks
+ * @param {string} _id project id | task id
+ */
+const getAttachments = async (category, _id) => {
+	const collection = await eval(`${category}()`);
+	const { attachments } = await collection.findOne({ _id }, { projection: { _id: 0, attachments: 1 } });
+
+	return attachments;
+};
+
 module.exports = {
 	create,
-	getListFromBucket
+	getListFromBucket,
+	uploadAttachments,
+	getAttachments
 };

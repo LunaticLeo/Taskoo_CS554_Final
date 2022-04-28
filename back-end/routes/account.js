@@ -89,7 +89,7 @@ router.post('/avatar', async (req, res) => {
 	const { _id } = req.session.accountInfo;
 
 	try {
-		const url = await uploadAvatar(_id, req.file);
+		const url = await uploadAvatar(_id, req.files[0]);
 		res.json({ code: 200, message: 'Upload was successful', data: url });
 	} catch (error) {
 		return res.status(500).json({ message: error?.message ?? error });
@@ -109,9 +109,9 @@ router.post('/signup', async (req, res) => {
 		await createAccount(email, password, firstName, lastName, department, position);
 		res.json({
 			code: 200,
-			message: "Sign up successfully",
+			message: 'Sign up successfully',
 			data: email
-		  })
+		});
 	} catch (error) {
 		res.status(500).json({ code: 500, message: error?.message ?? error });
 	}

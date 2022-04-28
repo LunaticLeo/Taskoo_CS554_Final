@@ -26,7 +26,7 @@
 		"newTask": "新建任务",
 		"cancel": "取消",
 		"submit": "提交",
-		"upload": "选择文件"
+		"upload": "上传"
 	},
 	"table": {
 		"header": {
@@ -80,5 +80,9 @@
 			"description": "任务简介",
 			"dueTime": "截止日期"
 		}
+	},
+	"file": {
+		"upload": "文件上传",
+		"tip": "拖拽文件到此处，或点击选择文件"
 	}
 }

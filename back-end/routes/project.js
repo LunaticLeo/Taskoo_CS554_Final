@@ -8,7 +8,9 @@ const {
 	getFavoriteList,
 	addToFavorite,
 	removeFromFavorite,
-	getTasks
+	getTasks,
+	uploadAttachments,
+	getAttachments
 } = require('../data/project');
 const { Project, Check } = require('../lib');
 
@@ -147,6 +149,40 @@ router.get('/tasks', async (req, res) => {
 	try {
 		const tasks = await getTasks(id);
 		res.json({ code: 200, message: '', data: tasks });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.post('/attachments', async (req, res) => {
+	const { id } = req.body;
+
+	try {
+		Check._id(id);
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const message = await uploadAttachments(id, req.files);
+		res.json({ code: 200, message });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/attachments/list', async (req, res) => {
+	const { id } = req.query;
+
+	try {
+		Check._id(id);
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const attachments = await getAttachments(id);
+		res.json({ code: 200, message: '', data: attachments });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}

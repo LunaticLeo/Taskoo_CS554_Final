@@ -25,7 +25,18 @@ const getTaskList = async bucketId => {
 	return await core.getListFromBucket('tasks', bucketId, { description: 0, attachments: 0 });
 };
 
+/**
+ * upload attachments to task
+ * @param {string} _id project id | task id
+ * @param {File[]} files
+ */
+const uploadAttachments = async (_id, files) => {
+	Check._id(_id);
+	return await core.uploadAttachments('tasks', _id, files);
+};
+
 module.exports = {
 	createTask,
-	getTaskList
+	getTaskList,
+	uploadAttachments
 };

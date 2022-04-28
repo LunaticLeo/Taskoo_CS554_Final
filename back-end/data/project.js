@@ -239,6 +239,24 @@ const getTasks = async projectId => {
 	return tasks;
 };
 
+/**
+ * upload attachments to project
+ * @param {string} _id project id | task id
+ * @param {File[]} files
+ */
+const uploadAttachments = async (_id, files) => {
+	Check._id(_id);
+	return await core.uploadAttachments('projects', _id, files);
+};
+
+/**
+ * get attachments
+ * @param {string} _id project id | task id
+ */
+const getAttachments = async _id => {
+	return await core.getAttachments('projects', _id);
+};
+
 module.exports = {
 	createProject,
 	projectStatistic,
@@ -248,5 +266,7 @@ module.exports = {
 	getFavoriteList,
 	addToFavorite,
 	removeFromFavorite,
-	getTasks
+	getTasks,
+	uploadAttachments,
+	getAttachments
 };

@@ -17,7 +17,6 @@ const Signin: React.FC = () => {
 	const navigate = useNavigate();
 	const [signinForm, setSigninForm] = useState<Form.SignInForm>({ email: '', password: '' });
 	const [showPassword, setShowPassword] = useState<boolean>(false);
-	// const { setLoading } = useContext(LoadingContext);
 	const dispatch = useAppDispatch();
 
 	const handleSubmit = (e: React.FormEvent) => {
