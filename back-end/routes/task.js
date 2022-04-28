@@ -46,4 +46,20 @@ router.post('/attachments', async (req, res) => {
 	}
 });
 
+router.get('/todo', async (req, res) => {
+	const { bucket } = req.session.accountInfo;
+
+	try {
+		const data = await getTaskList(bucket);
+		const todoList = data.map(x => {
+			if (x.status !== 'done') {
+				return x;
+			}
+		});
+		res.status(200).json({ code: 200, message: '', todoList });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
 module.exports = router;
