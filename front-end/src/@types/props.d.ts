@@ -34,7 +34,7 @@ type LangButtonProps = WithSxProp<{}>;
 type LoadingProps = { open: boolean };
 type LogoProps = { fontSize?: number; color?: string };
 
-type StyledStatusProps = { label: string };
+type StyledStatusProps = WithSxProp<{ label: string }>;
 type StyledAccountInfoProps = Partial<Account> & { component?: React.ElementType<any> };
 type StyledAvatarGroupProps = {
 	data: Required<Pick<Account, 'avatar' | 'firstName' | 'lastName'>>[];
@@ -53,15 +53,15 @@ type DashboardProps = {
 	setCategoty: React.Dispatch<React.SetStateAction<'project' | 'task'>>;
 };
 
-type TaskColumnData = Record<Lowercase<StaticStatus>, TaskInfo[]>;
+type TaskColumnData = Record<Lowercase<StaticStatus>, Task[]>;
 type TasksProps = WithSxProp<{
 	data: TaskColumnData;
 	setData: (value: React.SetStateAction<TaskColumnData>) => void;
 	[props: string]: any;
 }>;
-type TaskColumnProps = { status: string; data: TaskInfo[] };
-type TaskCardProps = WithSxProp<{ data: TaskInfo; clickable?: boolean }>;
-type DetailDialogProps = StyledDialogProps & { data: TaskInfo };
+type TaskColumnProps = { status: string; data: Task[] };
+type TaskCardProps = WithSxProp<{ data: Task; clickable?: boolean }>;
+type DetailDialogProps = StyledDialogProps & { data: Task };
 
 type TabPanelProps = { value: string | number; hidden: boolean; [props: string]: any };
 type TabsProps = { text: string; value: string | number };
@@ -86,7 +86,7 @@ type TaskMemberListProps = {
 	setMembers: (value: React.SetStateAction<Form.TaskForm>) => void;
 };
 
-type FileUploaderProps = { onFileSelected: (files: File[]) => void; size?: number; sx?: SxProps<Theme> };
+type FileUploaderProps = WithSxProp<{ onFileSelected: (files: File[]) => void; size?: number }>;
 type FolderProps = { filesUrl: string[] };
 type FileItemProps = { fileUrl: string };
-type FileListProps = { files: File[]; onDelete: (index: number) => void; sx?: SxProps<Theme> };
+type FileListProps = WithSxProp<{ files: File[]; onDelete: (index: number) => void }>;

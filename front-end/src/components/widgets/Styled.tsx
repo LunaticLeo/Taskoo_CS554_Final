@@ -26,10 +26,10 @@ const StyledTitle: React.FC = ({ children }) => (
 		{children}
 	</Typography>
 );
-const StyledStatus: React.FC<StyledStatusProps> = ({ label }) => {
+const StyledStatus: React.FC<StyledStatusProps> = ({ label, sx }) => {
 	const { t } = useTranslation();
 
-	return <Chip label={t(`status.${label.toLowerCase()}`)} color={label.toLowerCase() as any} />;
+	return <Chip sx={sx} label={t(`status.${label.toLowerCase()}`)} color={label.toLowerCase() as any} />;
 };
 const StyledAccountInfo: React.FC<StyledAccountInfoProps> = ({
 	avatar,

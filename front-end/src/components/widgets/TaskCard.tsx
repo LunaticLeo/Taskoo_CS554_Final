@@ -5,9 +5,13 @@ import {
 	CardActionArea,
 	CardActions,
 	CardContent,
+	DialogActions,
 	DialogContent,
 	DialogTitle,
 	Divider,
+	List,
+	ListItem,
+	ListItemButton,
 	Stack,
 	Typography
 } from '@mui/material';
@@ -16,6 +20,12 @@ import { DetailDialogProps, TaskCardProps } from '@/@types/props';
 import Styled from './Styled';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import Folder from './Folder';
+import FileUploader from './FileUploader';
+import { FileList } from '../home/Project/Detail';
+import { toFormData } from '@/utils';
+import http from '@/utils/http';
+import useNotification from '@/hooks/useNotification';
 
 const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = (
 	{ data, sx, clickable = false, ...rest },
@@ -72,29 +82,75 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 
 const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 	const { t } = useTranslation();
+	const notificate = useNotification();
+	const [selectedFile, setSelectedFile] = useState<File[]>([]);
+
+	const handleFileSelect = (files: File[]) => {
+		setSelectedFile(preVal => [...preVal, ...files]);
+	};
+
+	const handleDelete = (index: number) => {
+		setSelectedFile(preVal => {
+			preVal.splice(index, 1);
+			return [...preVal];
+		});
+	};
+
+	const handleUpload = () => {
+		const formData = toFormData({ id: data._id });
+		selectedFile.forEach(item => formData.append('file', item));
+		http
+			.post('/task/attachments', formData)
+			.then(res => {
+				notificate.success(res.message);
+			})
+			.catch(err => notificate.error(err?.message ?? err));
+	};
 
 	return (
 		<Styled.Dialog open={open} onClose={onClose}>
-			<DialogTitle>{data.name}</DialogTitle>
+			<DialogTitle>
+				<Stack direction='row'>
+					<Styled.Status sx={{ mr: 1 }} label={data.status} />
+					{data.name}
+				</Stack>
+			</DialogTitle>
 			<DialogContent>
 				<Stack spacing={2}>
 					<Typography variant='body2' color='text.secondary'>
 						{data.description}
 					</Typography>
-					<Stack direction='row' alignItems='center' justifyContent='space-between'>
-						<Styled.Status label={data.status} />
-						<Styled.AvatarGroup data={data.members} />
+					<List dense sx={{ height: '100%', overflow: 'auto' }}>
+						{data.members.map(member => (
+							<ListItem key={member._id} disablePadding>
+								<Styled.AccountInfo {...member} component={ListItemButton} />
+							</ListItem>
+						))}
+					</List>
+					<Stack>
+						{['createTime', 'dueTime'].map(item => (
+							<Stack key={item} direction='row' spacing={1}>
+								<Typography color='primary' variant='body2' component='span'>
+									{t(item)}
+								</Typography>
+								<Typography variant='body2' component='span'>
+									{dayjs(+(data as any)[item]).format('MM/DD/YYYY')}
+								</Typography>
+							</Stack>
+						))}
 					</Stack>
-					<Stack direction='row' spacing={1}>
-						<Typography color='primary' variant='body2' component='span'>
-							{t('dueTime')}
-						</Typography>
-						<Typography variant='body2' component='span'>
-							{dayjs(+data.dueTime).format('MM/DD/YYYY')}
-						</Typography>
-					</Stack>
+					{Boolean(data.attachments?.length) && <Folder filesUrl={data.attachments} />}
+					<FileUploader size={2} onFileSelected={handleFileSelect} />
+					<FileList files={selectedFile} onDelete={handleDelete} />
 				</Stack>
 			</DialogContent>
+			{Boolean(selectedFile.length) && (
+				<DialogActions>
+					<Button onClick={handleUpload} variant='contained'>
+						{t('button.upload')}
+					</Button>
+				</DialogActions>
+			)}
 		</Styled.Dialog>
 	);
 };

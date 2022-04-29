@@ -61,6 +61,6 @@ interface Task {
 	attachments: string[];
 }
 
-type TaskInfo = Omit<Task, 'attachments' | 'members'> & {
+type TaskInfo = Omit<Task, 'attachments'> & {
 	members: WithRole<Omit<Account, 'department' | 'position'>>[];
 };

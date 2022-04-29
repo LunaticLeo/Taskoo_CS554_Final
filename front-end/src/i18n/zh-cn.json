@@ -57,6 +57,7 @@
 	"profile": "个人信息",
 	"contacts": "联系人",
 	"detail": "查看更多",
+	"createTime": "创建日期",
 	"dueTime": "截止日期",
 	"todo": "待完成",
 	"create": "创建于",

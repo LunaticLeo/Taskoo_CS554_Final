@@ -255,9 +255,9 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
 	);
 };
 
-const FileList: React.FC<FileListProps> = ({ files, onDelete, sx }) => {
+export const FileList: React.FC<FileListProps> = ({ files, onDelete, sx }) => {
 	return (
-		<List dense sx={sx}>
+		<List dense sx={{ maxHeight: 200, overflow: 'auto', ...sx }}>
 			{files.map((file, index) => (
 				<ListItem
 					key={file.name}
@@ -294,7 +294,6 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 	const notificate = useNotification();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [taskForm, setTaskForm] = useState<Form.TaskForm>(new TaskFormClass(project));
-	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
 	const handleInputChange = (val: Partial<Form.TaskForm>) => {
 		setTaskForm(preVal => ({ ...preVal, ...val }));
@@ -331,17 +330,6 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 				memberList.unshift({ _id, role: creator?.role! });
 				return { ...preVal };
 			});
-	};
-
-	const handleSelecteFile = (files: File[]) => {
-		setSelectedFiles(preVal => [...preVal, ...files]);
-	};
-
-	const handleDeleteFile = (index: number) => {
-		setSelectedFiles(preVal => {
-			preVal.splice(index, 1);
-			return [...preVal];
-		});
 	};
 
 	return (
@@ -391,10 +379,6 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 								</LocalizationProvider>
 							</Stack>
 							<MemberList data={members} setMembers={setTaskForm} />
-						</Stack>
-						<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
-							<FileUploader sx={{ flex: 0.72 }} size={2} onFileSelected={handleSelecteFile} />
-							<FileList sx={{ flex: 1 }} files={selectedFiles} onDelete={handleDeleteFile} />
 						</Stack>
 					</DialogContent>
 					<DialogActions>

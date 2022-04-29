@@ -78,7 +78,7 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
 	return (
 		<DragDropContext onDragEnd={onDragEnd}>
 			{hideColumns ? (
-				<TableList<TaskInfo> showHeader header={header} data={listData as any} />
+				<TableList<Task> showHeader header={header} data={listData as any} />
 			) : (
 				<Stack direction='row' spacing={{ md: 2, lg: 5 }} sx={sx}>
 					{Object.keys(data).map(item => (

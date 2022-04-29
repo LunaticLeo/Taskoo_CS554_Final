@@ -19,8 +19,6 @@ const Signin: React.FC = () => {
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
 
-	console.log(state);
-
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		dispatch(setLoading(true));

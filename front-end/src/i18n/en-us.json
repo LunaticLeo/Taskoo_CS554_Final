@@ -57,6 +57,7 @@
 	"profile": "Profile",
 	"contacts": "Contacts",
 	"detail": "Get Detail",
+	"createTime": "CREATE",
 	"dueTime": "DUE",
 	"todo": "TO DO",
 	"create": "Create on",

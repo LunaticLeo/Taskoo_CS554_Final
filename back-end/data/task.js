@@ -1,4 +1,5 @@
 const { tasks, projects } = require('../config/mongoCollections');
+const { Check } = require('../lib');
 const Task = require('../lib/Task');
 const core = require('./core');
 
