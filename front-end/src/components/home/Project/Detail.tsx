@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import http from '@/utils/http';
 import {
 	Box,
@@ -168,10 +168,14 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
 	const [files, setFiles] = useState<File[]>([]);
 	const [existFiles, setExistFiles] = useState<string[]>([]);
 
-	useEffect(() => {
+	const getFileList = useCallback(() => {
 		http.get<string[]>('/project/attachments/list', { id: project }).then(res => {
 			setExistFiles(res.data!);
 		});
+	}, []);
+
+	useEffect(() => {
+		getFileList();
 	}, []);
 
 	const handleDialogClose = () => {
@@ -199,6 +203,7 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
 			.then(res => {
 				notificate.success(res.message);
 				handleDialogClose();
+				getFileList();
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => setTimeout(() => dispatch(setLoading(false)), 1000));
