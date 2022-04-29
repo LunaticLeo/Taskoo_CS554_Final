@@ -10,10 +10,12 @@ import { useAppDispatch } from '@/hooks/useStore';
 import { set } from '@/store/accountInfo';
 import { Form } from '@/@types/form';
 import { setLoading } from '@/store/loading';
+import useNotification from '@/hooks/useNotification';
 
 const Signin: React.FC = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const notificate = useNotification();
 	const { state } = useLocation();
 	const [signinForm, setSigninForm] = useState<Form.SignInForm>({ email: '', password: '' });
 	const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -32,7 +34,10 @@ const Signin: React.FC = () => {
 					navigate('/home');
 				}, 1000);
 			})
-			.catch(() => setTimeout(() => dispatch(setLoading(false)), 1000));
+			.catch(err => {
+				notificate.error(err?.message ?? err);
+				setTimeout(() => dispatch(setLoading(false)), 1000);
+			});
 	};
 
 	const handleInputChange = (val: Partial<Form.SignInForm>) => {
