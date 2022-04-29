@@ -97,7 +97,6 @@ router.post('/avatar', async (req, res) => {
 });
 
 router.post('/signup', async (req, res) => {
-	const { email, password, firstName, lastName, department, position } = req.body;
 	try {
 		Object.keys(req.body).forEach(key => Check[key](req.body[key]));
 	} catch (error) {
@@ -106,7 +105,7 @@ router.post('/signup', async (req, res) => {
 	}
 
 	try {
-		await createAccount(email, password, firstName, lastName, department, position);
+		const email = await createAccount(req.body);
 		res.json({
 			code: 200,
 			message: 'Sign up successfully',

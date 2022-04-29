@@ -17,7 +17,7 @@ const Uploader = styled(Box)(({ theme }) => ({
 	textAlign: 'center'
 }));
 
-const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelected }) => {
+const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelected, size = 5, sx }) => {
 	const { t } = useTranslation();
 	const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
@@ -26,7 +26,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelected }) => {
 	}, [acceptedFiles]);
 
 	return (
-		<Uploader sx={{ p: 8 }} {...getRootProps()}>
+		<Uploader sx={{ p: size, ...sx }} {...getRootProps()}>
 			<input {...getInputProps()} />
 			<CloudUploadRoundedIcon sx={{ fontSize: 60 }} />
 			<Typography>{t('file.tip')}</Typography>

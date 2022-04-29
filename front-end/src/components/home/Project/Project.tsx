@@ -256,29 +256,4 @@ const MemberList: React.FC<ProjectMemberListProps> = ({ data, members, setMember
 	);
 };
 
-// const FileUpload: React.FC<{ setAttachments: (val: Partial<ProjectForm>) => void }> = ({ setAttachments }) => {
-// 	const { t } = useTranslation();
-// 	const { getRootProps, getInputProps, acceptedFiles } = useDropzone({ noKeyboard: true });
-
-// 	useEffect(() => {
-// 		setAttachments({ attachments: acceptedFiles });
-// 	}, [acceptedFiles]);
-
-// 	return (
-// 		<Stack flexGrow={1}>
-// 			<Typography variant='h6' component='h3' sx={{ pb: 1 }}>
-// 				{t('project.attachments')}
-// 			</Typography>
-// 			<Stack>
-// 				<label {...getRootProps()}>
-// 					<input style={{ display: 'none' }} {...getInputProps({ accept: 'pdf/*', multiple: true, type: 'file' })} />
-// 					<Button variant='outlined' component='span' fullWidth>
-// 						{t('button.upload')}
-// 					</Button>
-// 				</label>
-// 			</Stack>
-// 		</Stack>
-// 	);
-// };
-
 export default Project;

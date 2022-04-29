@@ -4,6 +4,7 @@ import { GraphicComponentOption, LegendComponentOption, TooltipComponentOption }
 import { ComposeOption } from 'echarts/core';
 import { Form } from './form';
 import { OptionsObject, SnackbarKey, VariantType } from 'notistack';
+import React from 'react';
 
 type Notification = Record<VariantType, (msg: string, options?: OptionsObject) => SnackbarKey>;
 
@@ -85,6 +86,7 @@ type TaskMemberListProps = {
 	setMembers: (value: React.SetStateAction<Form.TaskForm>) => void;
 };
 
-type FileUploaderProps = { onFileSelected: (files: File[]) => void };
+type FileUploaderProps = { onFileSelected: (files: File[]) => void; size?: number; sx?: SxProps<Theme> };
 type FolderProps = { filesUrl: string[] };
 type FileItemProps = { fileUrl: string };
+type FileListProps = { files: File[]; onDelete: (index: number) => void; sx?: SxProps<Theme> };

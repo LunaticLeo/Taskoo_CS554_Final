@@ -6,11 +6,12 @@ const nodemailer = require('nodemailer');
 const Mail = require('nodemailer/lib/mailer');
 const mailConfig = require('../utils/mail.json');
 const { toCapitalize } = require('../utils/helpers');
-const { accounts } = require('../config/mongoCollections');
+const { accounts, buckets } = require('../config/mongoCollections');
 const bcrypt = require('bcrypt');
 const { getStaticData } = require('./static');
 const { upload } = require('./file');
 const Account = require('../lib/Account');
+const { Bucket } = require('../lib');
 
 /**
  * add the account info to register list (waitting for sign up)
@@ -182,22 +183,45 @@ const uploadAvatar = async (_id, file) => {
 	return url;
 };
 
-const createAccount = async (email, password, firstName, lastName, department, position) => {
-	const accountCollection = await accounts();
-	if(accountCollection.findOne({email:email})) throw 'the email has been sign up'
-	let newaccount = new Account({
-		email: email,
-		password: password,
-		firstName: firstName,
-		lastName: lastName,
-		department: department,
-		position: position
+/**
+ * create account
+ * @param {object} obj {email, password, firstName, lastName, department, position}
+ * @returns {string} email
+ */
+const createAccount = async ({ email, password, firstName, lastName, department, position }) => {
+	const accountCol = await accounts();
+	if (await accountCol.findOne({ email })) throw Error(`The email (${email}) has been sign up`);
+	let newAccount = new Account({
+		email,
+		password,
+		firstName,
+		lastName,
+		department,
+		position
 	});
-	newaccount.hashPwd();
-	const insertInfo = await accountCollection.insertOne(newaccount);
-	if (insertInfo.insertedCount === 0) throw 'Could not add account';
+	await newAccount.hashPwd();
+	const { insertedId: accountId } = await accountCol.insertOne(newAccount);
+	if (!accountId) throw 'Sign up failed, please try again later';
+
+	// create bucket for account
+	const bucket = new Bucket({ owner: accountId });
+	const bucketCol = await buckets();
+	const { insertedId: bucketId } = await bucketCol.insertOne(bucket);
+	if (!bucketId) {
+		await accountCol.deleteOne({ _id: accountId });
+		throw 'Sign up failed, please try again later';
+	}
+	// update account
+	const { modifiedCount } = await accountCol.updateOne({ _id: accountId }, { $set: { bucket: bucketId } });
+	if (!modifiedCount) {
+		await accountCol.deleteOne({ _id: accountId });
+		await bucketCol.deleteOne({ _id: bucketId });
+		throw 'Sign up failed, please try again later';
+	}
+
 	return email;
 };
+
 module.exports = {
 	addToRegisterList,
 	getRegisterInfo,

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Link, styled, Typography } from '@mui/material';
 import { FolderProps, FileItemProps } from '@/@types/props';
 
 const Folder: React.FC<FolderProps> = ({ filesUrl }) => {
@@ -12,6 +12,15 @@ const Folder: React.FC<FolderProps> = ({ filesUrl }) => {
 	);
 };
 
+const StyledItem = styled(Grid)(({ theme }) => ({
+	textAlign: 'center',
+	cursor: 'pointer',
+	borderRadius: theme.shape.borderRadius,
+	'&:hover': {
+		background: theme.palette.primary.light
+	}
+}));
+
 const FileItem: React.FC<FileItemProps> = ({ fileUrl }) => {
 	const fileInfo = useMemo(() => {
 		const res = fileUrl.match(/.+\/(.+)\.([a-zA-Z]+)$/)!;
@@ -23,14 +32,17 @@ const FileItem: React.FC<FileItemProps> = ({ fileUrl }) => {
 
 	return (
 		<Grid item xs={4} flex={1} sx={{ textAlign: 'center' }}>
-			<Box
-				component='img'
-				sx={{ width: 50 }}
-				src={`https://storage.cloud.google.com/taskoo_bucket/file_${fileInfo.fileType}.svg`}
-			/>
-			<Typography variant='subtitle2' noWrap>
-				{fileInfo.fileName}
-			</Typography>
+			<Link href={fileUrl} target='__blank' download={fileInfo.fileName}>
+				<Box
+					component='img'
+					sx={{ width: 50 }}
+					src={`https://storage.cloud.google.com/taskoo_bucket/file_${fileInfo.fileType}.svg`}
+					alt='file-icon'
+				/>
+				<Typography variant='subtitle2' component='div' noWrap>
+					{fileInfo.fileName}
+				</Typography>
+			</Link>
 		</Grid>
 	);
 };

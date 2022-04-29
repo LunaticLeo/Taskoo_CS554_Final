@@ -39,6 +39,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Tasks from './Tasks';
 import {
 	FavoriteButtonProps,
+	FileListProps,
 	NavBreadcrumbsProps,
 	ProjectFileUploadProps,
 	TaskColumnData,
@@ -230,7 +231,7 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
 					horizontal: 'left'
 				}}
 			>
-				<Stack sx={{ p: 3 }}>
+				<Stack spacing={2} sx={{ p: 3 }}>
 					<Folder filesUrl={existFiles} />
 					<Button variant='outlined' onClick={() => setOpenDialog(true)}>
 						{t('button.upload')}
@@ -241,23 +242,7 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
 				<DialogTitle>{t('file.upload')}</DialogTitle>
 				<DialogContent>
 					<FileUploader onFileSelected={handleFileSelected} />
-					<List dense>
-						{files.map((file, index) => (
-							<ListItem
-								key={file.name}
-								secondaryAction={
-									<IconButton edge='end' aria-label='delete' onClick={() => handleDeleteFile(index)}>
-										<DeleteIcon />
-									</IconButton>
-								}
-							>
-								<ListItemIcon>
-									<FolderIcon />
-								</ListItemIcon>
-								<ListItemText primary={file.name} />
-							</ListItem>
-						))}
-					</List>
+					<FileList files={files} onDelete={handleDeleteFile} />
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleDialogClose}>{t('button.cancel')}</Button>
@@ -267,6 +252,28 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
 				</DialogActions>
 			</Styled.Dialog>
 		</>
+	);
+};
+
+const FileList: React.FC<FileListProps> = ({ files, onDelete, sx }) => {
+	return (
+		<List dense sx={sx}>
+			{files.map((file, index) => (
+				<ListItem
+					key={file.name}
+					secondaryAction={
+						<IconButton edge='end' aria-label='delete' onClick={() => onDelete(index)}>
+							<DeleteIcon />
+						</IconButton>
+					}
+				>
+					<ListItemIcon>
+						<FolderIcon />
+					</ListItemIcon>
+					<ListItemText primary={file.name} />
+				</ListItem>
+			))}
+		</List>
 	);
 };
 
@@ -287,6 +294,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 	const notificate = useNotification();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [taskForm, setTaskForm] = useState<Form.TaskForm>(new TaskFormClass(project));
+	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
 	const handleInputChange = (val: Partial<Form.TaskForm>) => {
 		setTaskForm(preVal => ({ ...preVal, ...val }));
@@ -325,6 +333,17 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 			});
 	};
 
+	const handleSelecteFile = (files: File[]) => {
+		setSelectedFiles(preVal => [...preVal, ...files]);
+	};
+
+	const handleDeleteFile = (index: number) => {
+		setSelectedFiles(preVal => {
+			preVal.splice(index, 1);
+			return [...preVal];
+		});
+	};
+
 	return (
 		<>
 			<Fab
@@ -340,40 +359,42 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 				<DialogTitle>{t('project.dialogTitle')}</DialogTitle>
 				<form onSubmit={handleSubmit}>
 					<DialogContent>
-						<Stack spacing={2}>
-							<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
-								<Stack flexGrow={1}>
-									<LocalizationProvider dateAdapter={AdapterDayjs}>
-										<Typography variant='h6' component='h3'>
-											{t('task.info')}
-										</Typography>
-										<TextField
-											id='name'
-											value={taskForm.name}
-											label={t('task.form.name')}
-											variant='outlined'
-											margin='normal'
-											onChange={e => handleInputChange({ name: e.target.value })}
-										/>
-										<DatePicker
-											label={t('task.form.dueTime')}
-											value={taskForm.dueTime}
-											onChange={value => handleInputChange({ dueTime: dayjs(value).valueOf()! })}
-											renderInput={params => <TextField margin='normal' {...params} />}
-										/>
-										<TextField
-											id='description'
-											value={taskForm.description}
-											label={t('task.form.description')}
-											multiline
-											rows={5}
-											margin='normal'
-											onChange={e => handleInputChange({ description: e.target.value })}
-										/>
-									</LocalizationProvider>
-								</Stack>
-								<MemberList data={members} setMembers={setTaskForm} />
+						<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
+							<Stack flexGrow={1}>
+								<LocalizationProvider dateAdapter={AdapterDayjs}>
+									<Typography variant='h6' component='h3'>
+										{t('task.info')}
+									</Typography>
+									<TextField
+										id='name'
+										value={taskForm.name}
+										label={t('task.form.name')}
+										variant='outlined'
+										margin='normal'
+										onChange={e => handleInputChange({ name: e.target.value })}
+									/>
+									<DatePicker
+										label={t('task.form.dueTime')}
+										value={taskForm.dueTime}
+										onChange={value => handleInputChange({ dueTime: dayjs(value).valueOf()! })}
+										renderInput={params => <TextField margin='normal' {...params} />}
+									/>
+									<TextField
+										id='description'
+										value={taskForm.description}
+										label={t('task.form.description')}
+										multiline
+										rows={5}
+										margin='normal'
+										onChange={e => handleInputChange({ description: e.target.value })}
+									/>
+								</LocalizationProvider>
 							</Stack>
+							<MemberList data={members} setMembers={setTaskForm} />
+						</Stack>
+						<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
+							<FileUploader sx={{ flex: 0.72 }} size={2} onFileSelected={handleSelecteFile} />
+							<FileList sx={{ flex: 1 }} files={selectedFiles} onDelete={handleDeleteFile} />
 						</Stack>
 					</DialogContent>
 					<DialogActions>
