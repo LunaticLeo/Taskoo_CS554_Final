@@ -19,7 +19,6 @@ import {
 } from '@mui/material';
 
 import { useTranslation } from 'react-i18next';
-import TableList from '@/components/widgets/TableList';
 import Styled from '@/components/widgets/Styled';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import useAccountInfo from '@/hooks/useAccountInfo';
@@ -31,8 +30,8 @@ import { Form } from '@/@types/form';
 import { ProjectFormDialogProps, ProjectMemberListProps } from '@/@types/props';
 import useNotification from '@/hooks/useNotification';
 import OrgChart from './OrgChart';
+import OrgList from './OrgList';
 
-const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
 const Organzation: React.FC = () => {
 	const [data, setData] = useState<ProjectInfo[]>([]);
@@ -50,9 +49,12 @@ const Organzation: React.FC = () => {
 	
 	return (
 		<>
-			<Grid container spacing={2} flexDirection={{ xs: 'row', lg: 'row-reverse' }}>
-				<Grid item xs={12} lg={9}>
+			<Grid container spacing={3} >
+				<Grid item xs={12} lg={5}>
 					<OrgChart />
+				</Grid>
+				<Grid item xs={12} lg={6}>
+					<OrgList />
 				</Grid>
 			</Grid>
 			<FormDialog refresh={getProjectList} />

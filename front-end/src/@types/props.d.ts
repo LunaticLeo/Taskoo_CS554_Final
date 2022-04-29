@@ -83,3 +83,10 @@ type TaskMemberListProps = {
 	data: WithRole<Account<StaticData>, StaticData>[];
 	setMembers: (value: React.SetStateAction<Form.TaskForm>) => void;
 };
+
+type OrgListProps<T extends { _id: string; [prop: string]: any }> = {
+	showHeader?: boolean;
+	header: (keyof T)[];
+	data: T[] | Record<keyof T, any>[];
+	size?: 'small' | 'medium';
+};

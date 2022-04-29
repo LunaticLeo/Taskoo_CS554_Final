@@ -64,3 +64,13 @@ interface Task {
 type TaskInfo = Omit<Task, 'attachments' | 'members'> & {
 	members: WithRole<Omit<Account, 'department' | 'position'>>[];
 };
+
+/************************************************************* Organzation *************************************************************/
+interface Organzation {
+	_id: string;
+	name: string;
+	department: string;
+	position: string;
+}
+
+type OrgInfo = Pick<Organzation, '_id' | 'name' | 'department' | 'position'>;

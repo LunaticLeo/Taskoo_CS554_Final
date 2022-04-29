@@ -46,7 +46,7 @@ const Project: React.FC = () => {
 			setData(res.data!);
 		});
 	}, []);
-	
+
 	return (
 		<>
 			<Grid container spacing={2} flexDirection={{ xs: 'row', lg: 'row-reverse' }}>

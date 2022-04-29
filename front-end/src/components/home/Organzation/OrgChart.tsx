@@ -1,10 +1,11 @@
 import React, { useEffect,useCallback, useLayoutEffect, useState } from 'react';
 import Chart from '@/components/widgets/Chart';
-import { CardContent, useTheme } from '@mui/material';
+import { CardContent, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import Styled from '@/components/widgets/Styled';
 import { Option } from '@/@types/props';
 import http from '@/utils/http';
+
 
 const OrgChart: React.FC = () => {
 	const { t } = useTranslation();
@@ -27,7 +28,7 @@ const OrgChart: React.FC = () => {
     timer=setInterval(function () {
         clearInterval(timer);
         setFlag(!flag);
-    }, 5000);
+    }, 3000);
         if(flag){
             setOption(
                 treemapOption({
@@ -44,13 +45,30 @@ const OrgChart: React.FC = () => {
         }
 	}, [flag]);
 	return (
-		<Chart height='230px' width='400px' option={option} />
+    <Styled.Card>
+    <CardContent>
+      <Stack direction='row' justifyContent='space-between'>
+        <Styled.Title>{t('statistic')}</Styled.Title>
+      </Stack>
+      <Chart height='500px'width='600px' option={option} />
+    </CardContent>
+  </Styled.Card>
 	);
 };
 
 const treemapOption = ({data}: treemapOption): Option => {
-      console.log("treemap");
       return {
+        tooltip: {
+          formatter: function (info) {
+            var value:any = info;
+            console.log(value);
+            return [
+              'Name: '+ value.data.name+'<br>',
+              'Department: ' +value.data.department+'<br>',
+              'Position: ' +value.data.position
+            ].join('');
+          }
+        },
         series: [
             {
               type: 'treemap',
@@ -74,6 +92,17 @@ const treemapOption = ({data}: treemapOption): Option => {
 
 const sunburstOption = ({data}: sunburstOption): Option => {
       return {
+        tooltip: {
+          formatter: function (info) {
+            var value:any = info;
+            console.log(value);
+            return [
+              'Name: '+ value.data.name+'<br>',
+              'Department: ' +value.data.department+'<br>',
+              'Position: ' +value.data.position
+            ].join('');
+          }
+        },
         series: [
             {
               type: 'sunburst',

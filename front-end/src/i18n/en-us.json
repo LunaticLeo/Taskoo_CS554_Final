@@ -37,7 +37,8 @@
 			"members": "Members",
 			"fullName": "Full Name",
 			"email": "Email",
-			"position": "Position"
+			"position": "Position",
+			"department":"Department"
 		}
 	},
 	"tabs": {

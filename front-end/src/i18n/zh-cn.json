@@ -37,7 +37,8 @@
 			"members": "成员",
 			"fullName": "姓名",
 			"email": "电子邮箱",
-			"position": "职位"
+			"position": "职位",
+			"department":"部门"
 		}
 	},
 	"tabs": {
