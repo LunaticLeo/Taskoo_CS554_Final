@@ -12,6 +12,7 @@ const {
 	uploadAttachments,
 	getAttachments
 } = require('../data/project');
+const { search } = require('../data/core');
 const { Project, Check } = require('../lib');
 
 router.post('/create', async (req, res) => {
@@ -183,6 +184,17 @@ router.get('/attachments/list', async (req, res) => {
 	try {
 		const attachments = await getAttachments(id);
 		res.json({ code: 200, message: '', data: attachments });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/search', async (req, res) => {
+	const { _id} = req.session.accountInfo;
+	
+	try {
+		const data = await search(req.query.searchTerm,_id);
+		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
