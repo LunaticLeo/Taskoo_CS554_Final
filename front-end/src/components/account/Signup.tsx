@@ -2,15 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
-import { toCapitalize } from '@/utils';
+import { toCapitalize, toFormData } from '@/utils';
 import Logo from '../widgets/Logo';
 import http from '@/utils/http';
 import { Form } from '@/@types/form';
+import { useAppDispatch } from '@/hooks/useStore';
+import { setLoading } from '@/store/loading';
+import useNotification from '@/hooks/useNotification';
 
 const Signup: React.FC = () => {
 	const { t } = useTranslation();
 	const { registerId } = useParams();
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
+	const notificate = useNotification();
 	const [signUpForm, setSignUpForm] = useState<Form.SignUpForm>({
 		firstName: '',
 		lastName: '',
@@ -53,8 +58,27 @@ const Signup: React.FC = () => {
 		setSignUpForm(preVal => ({ ...preVal, ...value }));
 	};
 
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		dispatch(setLoading(true));
+		const formData = toFormData<Form.SignUpForm>(signUpForm);
+		http
+			.post('/account/signup', formData)
+			.then(res => {
+				notificate.success(res.message);
+				setTimeout(() => {
+					dispatch(setLoading(false));
+					navigate('/account/signin', { replace: true, state: { email: res.data! } });
+				}, 1000);
+			})
+			.catch(err => {
+				notificate.error(err?.message ?? err);
+				setTimeout(() => dispatch(setLoading(false)), 1000);
+			});
+	};
+
 	return (
-		<Stack component='form' autoComplete='off' spacing={1.5}>
+		<Stack component='form' autoComplete='off' spacing={1.5} onSubmit={handleSubmit}>
 			<Logo />
 			<Stack direction='row' justifyContent='space-between' spacing={1.5}>
 				<TextField
@@ -93,7 +117,7 @@ const Signup: React.FC = () => {
 			<TextField id='department' label={t('department')} variant='standard' disabled value={displayForm.department} />
 			<TextField id='position' label={t('position')} variant='standard' disabled value={displayForm.position} />
 
-			<Button size='large' variant='contained'>
+			<Button size='large' variant='contained' type='submit'>
 				{t('signup')}
 			</Button>
 
