@@ -190,10 +190,10 @@ router.get('/attachments/list', async (req, res) => {
 });
 
 router.get('/search', async (req, res) => {
-	const { _id} = req.session.accountInfo;
-	
+	const { _id } = req.session.accountInfo;
+
 	try {
-		const data = await search(req.query.searchTerm,_id);
+		const data = await search(req.query.searchTerm, _id);
 		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });

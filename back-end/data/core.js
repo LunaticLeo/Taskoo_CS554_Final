@@ -43,14 +43,18 @@ const create = async (obj, category, cb) => {
 
 /**
  * search function
- * @param {string} searchTerm 
- * @param {string} accountId 
+ * @param {string} searchTerm
+ * @param {string} accountId
  */
-const search = async (searchTerm,accountId) =>{
+const search = async (searchTerm, accountId) => {
 	let collection = await tasks();
-	let task=await collection.find({ members: { $elemMatch: { _id: accountId} } ,name:{$regex:searchTerm,$options:"$i"} }).toArray();
+	let task = await collection
+		.find(
+			{ members: { $elemMatch: { _id: accountId } }, name: { $regex: searchTerm, $options: '$i' } },
+			{ projection: { _id: 0, name: 1, project: 1, status: 1 } }
+		)
+		.toArray();
 	return task;
-	// let projects=await getListFromBucket('projects', bucketId, { description: 0, tasks: 0, attachments: 0 });
 };
 
 /**

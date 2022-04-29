@@ -64,3 +64,5 @@ interface Task {
 type TaskInfo = Omit<Task, 'attachments'> & {
 	members: WithRole<Omit<Account, 'department' | 'position'>>[];
 };
+
+type SearchOptions = { name: string; project: string; status: StaticStatus };

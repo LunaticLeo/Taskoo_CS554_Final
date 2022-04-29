@@ -34,7 +34,7 @@ type LangButtonProps = WithSxProp<{}>;
 type LoadingProps = { open: boolean };
 type LogoProps = { fontSize?: number; color?: string };
 
-type StyledStatusProps = WithSxProp<{ label: string }>;
+type StyledStatusProps = WithSxProp<{ label: string; variant?: 'filled' | 'outlined' }>;
 type StyledAccountInfoProps = Partial<Account> & { component?: React.ElementType<any> };
 type StyledAvatarGroupProps = {
 	data: Required<Pick<Account, 'avatar' | 'firstName' | 'lastName'>>[];

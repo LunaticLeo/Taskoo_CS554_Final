@@ -11,6 +11,7 @@ import Notification from '../widgets/Notification';
 import Project from './Project/Project';
 import Profile from './Profile/Profile';
 import Detail from './Project/Detail';
+import Search from '../widgets/Search';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
@@ -37,10 +38,11 @@ const Home: React.FC = () => {
 						<MenuRoundedIcon />
 					</IconButton>
 					{curView && (
-						<Typography component='h1' variant='h4'>
+						<Typography component='h1' variant='h4' mr={2}>
 							{t(`menu.${curView}`)}
 						</Typography>
 					)}
+					<Search />
 
 					<Stack direction='row' spacing={2} sx={{ ml: 'auto' }}>
 						<Notification />
