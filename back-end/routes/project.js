@@ -46,9 +46,14 @@ router.get('/statistic', async (req, res) => {
 
 router.get('/list', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
-
+	let pageNum,pageSize;
+	if(req.query.pageNum) pageNum=req.query.pageNum;
+	else pageNum=1
+	if(req.query.pageSize) pageSize=req.query.pageSize;
+	else pageSize=10
 	try {
-		const data = await getProjectList(bucket);
+		const projectdata = await getProjectList(bucket);
+		const data=projectdata.slice((pageNum-1)*pageSize,pageNum*pageSize)
 		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
@@ -92,10 +97,15 @@ router.get('/favorite/status', async (req, res) => {
 
 router.get('/favorite/list', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
-
+	let pageNum,pageSize;
+	if(req.query.pageNum) pageNum=req.query.pageNum;
+	else pageNum=1
+	if(req.query.pageSize) pageSize=req.query.pageSize;
+	else pageSize=10
 	try {
 		const favoriteList = await getFavoriteList(bucket);
-		res.json({ code: 200, message: '', data: favoriteList });
+		const favoritedata=favoriteList.slice((pageNum-1)*pageSize,pageNum*pageSize)
+		res.json({ code: 200, message: '', data: favoritedata });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
@@ -173,7 +183,11 @@ router.post('/attachments', async (req, res) => {
 
 router.get('/attachments/list', async (req, res) => {
 	const { id } = req.query;
-
+	let pageNum,pageSize;
+	if(req.query.pageNum) pageNum=req.query.pageNum;
+	else pageNum=1
+	if(req.query.pageSize) pageSize=req.query.pageSize;
+	else pageSize=10
 	try {
 		Check._id(id);
 	} catch (error) {
@@ -182,7 +196,8 @@ router.get('/attachments/list', async (req, res) => {
 
 	try {
 		const attachments = await getAttachments(id);
-		res.json({ code: 200, message: '', data: attachments });
+		const attachmentdata=attachments.slice((pageNum-1)*pageSize,pageNum*pageSize)
+		res.json({ code: 200, message: '', data: attachmentdata });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
