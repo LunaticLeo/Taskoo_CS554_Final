@@ -21,9 +21,14 @@ router.post('/create', async (req, res) => {
 
 router.get('/list', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
-
+	let pageNum,pageSize;
+	if(req.query.pageNum) pageNum=req.query.pageNum;
+	else pageNum=1
+	if(req.query.pageSize) pageSize=req.query.pageSize;
+	else pageSize=10
 	try {
-		const data = await getTaskList(bucket);
+		const taskdata = await getTaskList(bucket);
+		const data=taskdata.slice((pageNum-1)*pageSize,pageNum*pageSize)
 		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
