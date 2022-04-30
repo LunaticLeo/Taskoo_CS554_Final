@@ -50,7 +50,7 @@ const OrgChart: React.FC = () => {
       <Stack direction='row' justifyContent='space-between'>
         <Styled.Title>{t('statistic')}</Styled.Title>
       </Stack>
-      <Chart height='500px'width='600px' option={option} />
+      <Chart height='300px'width='400px' option={option} />
     </CardContent>
   </Styled.Card>
 	);
