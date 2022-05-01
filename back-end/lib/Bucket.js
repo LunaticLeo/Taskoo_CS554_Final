@@ -63,6 +63,21 @@ class Bucket extends DBCollection {
 		from && (await bucketCol.updateOne({ _id: bucketId }, { $pull: { [`${category}.${from.toLowerCase()}`]: id } }));
 		await bucketCol.updateOne({ _id: bucketId }, { $addToSet: { [`${category}.${to.toLowerCase()}`]: id } });
 	}
+	/**
+	 * update the status
+	 * @param {string} bucketId
+	 * @param {object} category 'projects' | 'tasks'
+	 * @param {string} id project id | task id
+	 * @param {string} status source status
+	 */
+	static async deleteObj(bucketId, category, id,status) {
+		Check._id(bucketId);
+		if (!['projects', 'tasks'].includes(category)) throw Error('Invalid category');
+
+		const bucketCol = await buckets();
+		category = category.toLowerCase();
+		await bucketCol.updateOne({ _id: bucketId }, { $pull: { [`${category}.${status.toLowerCase()}`]: id } });
+	}
 }
 
 module.exports = Bucket;
