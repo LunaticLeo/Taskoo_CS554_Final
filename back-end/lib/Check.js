@@ -79,10 +79,16 @@ module.exports = {
 
 	// TODO
 	email(param) {
-		return param;
+		var reg = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+([.][a-zA-Z]+){1,2}$/;
+    	if (reg.test(this.value)) {
+			return param;
+    	} else {
+			throw Error(`the email ${param} is not valid`);
+    	}
 	},
 
 	password(param) {
+		
 		return param;
 	},
 
