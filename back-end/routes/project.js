@@ -34,7 +34,7 @@ router.post('/create', async (req, res) => {
 	}
 });
 
-router.get('/statistic', async (req, res) => {
+router.get('/status/statistic', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
 
 	try {

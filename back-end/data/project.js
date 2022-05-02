@@ -10,6 +10,10 @@ const createProject = async projectObj => {
 	return await core.create(projectObj, 'project');
 };
 
+/**
+ * get project statistic data by status
+ * @param {string} bucketId
+ */
 const getStatusStatistic = async bucketId => {
 	return await core.getStatusStatistic('projects', bucketId);
 };

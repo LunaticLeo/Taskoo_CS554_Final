@@ -24,17 +24,13 @@ const createTask = async taskObj => {
  * delete task
  * @param {string} objid
  */
- const deleteTask = async objid => {
+const deleteTask = async objid => {
 	return await core.deleteobj(objid, 'task', async deleteobj => {
 		const projectCol = await projects();
-		const { modifiedCount } = await projectCol.updateOne(
-			{ _id: deleteobj.project },
-			{ $pull: { tasks: objid } }
-		);
+		const { modifiedCount } = await projectCol.updateOne({ _id: deleteobj.project }, { $pull: { tasks: objid } });
 		if (!modifiedCount) throw Error('The task is not exists');
 	});
 };
-
 
 /**
  * get task list from bucket
@@ -55,9 +51,18 @@ const uploadAttachments = async (_id, files) => {
 	return await core.uploadAttachments('tasks', _id, files);
 };
 
+/**
+ * get project statistic data by status
+ * @param {string} bucketId
+ */
+const getStatusStatistic = async bucketId => {
+	return await core.getStatusStatistic('tasks', bucketId);
+};
+
 module.exports = {
 	createTask,
 	getTaskList,
 	deleteTask,
-	uploadAttachments
+	uploadAttachments,
+	getStatusStatistic
 };

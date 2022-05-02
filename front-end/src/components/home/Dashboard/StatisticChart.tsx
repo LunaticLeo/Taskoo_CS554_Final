@@ -5,6 +5,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import Styled from '@/components/widgets/Styled';
 import { DashboardProps, Option } from '@/@types/props';
 import CategorySwitch from './CategorySwitch';
+import http from '@/utils/http';
 
 const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 	const { t } = useTranslation();
@@ -12,19 +13,10 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 	const theme = useTheme();
 
 	useLayoutEffect(() => {
-		setOption(
-			statisticChartOption(
-				{
-					pending: 5,
-					processing: 10,
-					testing: 3,
-					done: 7,
-					borderColor: theme.palette.background.paper
-				},
-				t
-			)
-		);
-	}, []);
+		http.get<Record<Lowercase<StaticStatus>, number>>(`/${category}/status/statistic`).then(res => {
+			setOption(statisticChartOption({ ...res.data!, borderColor: theme.palette.background.paper }, t));
+		});
+	}, [category]);
 
 	return (
 		<Styled.Card>
@@ -40,7 +32,7 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 };
 
 const statisticChartOption = (
-	{ pending, processing, testing, done, borderColor }: StatisticChartOption,
+	{ pending, processing, testing, done, borderColor }: StaticPieChartOptions,
 	t: TFunction<'translation', undefined>
 ): Option => {
 	return {
@@ -80,13 +72,5 @@ const statisticChartOption = (
 		]
 	};
 };
-
-interface StatisticChartOption {
-	pending: number;
-	processing: number;
-	testing: number;
-	done: number;
-	borderColor?: string;
-}
 
 export default StatisticChart;

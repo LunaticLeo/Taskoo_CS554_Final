@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { createTask, getTaskList, uploadAttachments,deleteTask } = require('../data/task');
+const { createTask, getTaskList, uploadAttachments, deleteTask, getStatusStatistic } = require('../data/task');
 const { Check } = require('../lib');
 const Task = require('../lib/Task');
 
@@ -59,6 +59,17 @@ router.get('/todo', async (req, res) => {
 			}
 		});
 		res.status(200).json({ code: 200, message: '', todoList });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/status/statistic', async (req, res) => {
+	const { bucket } = req.session.accountInfo;
+
+	try {
+		const data = await getStatusStatistic(bucket);
+		res.status(200).json({ code: 200, message: '', data: data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
