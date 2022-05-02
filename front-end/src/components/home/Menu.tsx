@@ -47,7 +47,7 @@ const len = palette.length;
 const Menu: React.FC = () => {
 	const { pathname } = useLocation();
 	const dispatch = useAppDispatch();
-	const favoriteList = useAppSelector(state => state.favoriteList.value);
+	const favoriteList = useAppSelector(state => state.favoriteList.value.list);
 
 	useEffect(() => {
 		dispatch(getFavoriteList());

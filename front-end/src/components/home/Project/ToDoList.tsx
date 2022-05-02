@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Stack } from '@mui/material';
+import { WithPage } from '@/@types/props';
 import TaskCard from '@/components/widgets/TaskCard';
 import http from '@/utils/http';
 
 const ToDoList: React.FC = () => {
-	const [listData, setListData] = useState<TaskInfo[]>([]);
+	const [listData, setListData] = useState<Task[]>([]);
 
 	useEffect(() => {
-		http.get<TaskInfo[]>('/task/list').then(res => {
-			setListData(res.data!);
+		http.get<WithPage<Task[]>>('/task/list').then(res => {
+			setListData(res.data!.list);
 		});
 	}, []);
 

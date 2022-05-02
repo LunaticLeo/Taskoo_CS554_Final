@@ -46,6 +46,14 @@ type TableListProps<T extends { _id: string; [prop: string]: any }> = {
 	header: (keyof T)[];
 	data: T[] | Record<keyof T, any>[];
 	size?: 'small' | 'medium';
+	pageConfig?: PageConfig;
+	onPageChange?: (event: React.ChangeEvent<unknown>, value: number) => void;
+};
+type WithPage<T> = { count: number; list: T };
+type PageConfig = {
+	pageSize: number;
+	pageNum: number;
+	count?: number;
 };
 
 type DashboardProps = {

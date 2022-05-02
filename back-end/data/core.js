@@ -63,9 +63,9 @@ const search = async (searchTerm, accountId) => {
  * @param {string} bucketId
  * @param {object} projection
  */
-const getListFromBucket = async (category, bucketId, projection) => {
+const getListFromBucket = async (category, bucketId, { pageNum = 1, pageSize = 10 }, projection) => {
 	const bucketsCol = await buckets();
-	const data = await bucketsCol
+	const list = await bucketsCol
 		.aggregate([
 			{
 				$match: { _id: bucketId }
@@ -91,13 +91,11 @@ const getListFromBucket = async (category, bucketId, projection) => {
 					as: 'list'
 				}
 			},
+			{ $unwind: '$list' },
+			{ $skip: (+pageNum - 1) * +pageSize },
+			{ $limit: +pageSize },
 			{
-				$unwind: '$list'
-			},
-			{
-				$replaceRoot: {
-					newRoot: '$list'
-				}
+				$replaceRoot: { newRoot: '$list' }
 			},
 			{
 				$lookup: {
@@ -113,7 +111,21 @@ const getListFromBucket = async (category, bucketId, projection) => {
 			}
 		])
 		.toArray();
-	return data;
+
+	const counts = await bucketsCol.findOne(
+		{ _id: bucketId },
+		{
+			projection: {
+				_id: 0,
+				pending: { $size: `$${category}.pending` },
+				processing: { $size: `$${category}.processing` },
+				testing: { $size: `$${category}.testing` },
+				done: { $size: `$${category}.done` }
+			}
+		}
+	);
+	const count = Object.values(counts).reduce((pre, cur) => pre + cur, 0);
+	return { count, list };
 };
 
 /**
@@ -144,10 +156,33 @@ const getAttachments = async (category, _id) => {
 	return attachments;
 };
 
+/**
+ * get the statistic data by status
+ * @param {string} category projects | tasks
+ * @param {string} bucketId
+ */
+const getStatusStatistic = async (category, bucketId) => {
+	const bucketsCol = await buckets();
+	const data = await bucketsCol.findOne(
+		{ _id: bucketId },
+		{
+			projection: {
+				_id: 0,
+				pending: { $size: `$${category}.pending` },
+				processing: { $size: `$${category}.processing` },
+				testing: { $size: `$${category}.testing` },
+				done: { $size: `$${category}.done` }
+			}
+		}
+	);
+	return data;
+};
+
 module.exports = {
 	create,
 	search,
 	getListFromBucket,
 	uploadAttachments,
-	getAttachments
+	getAttachments,
+	getStatusStatistic
 };

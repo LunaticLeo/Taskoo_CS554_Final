@@ -16,14 +16,17 @@ const createTask = async taskObj => {
 		);
 		if (!modifiedCount) throw Error('The task is already in task list');
 	});
+
+	// TODO update project status from Pending to Processing
 };
 
 /**
  * get task list from bucket
  * @param {string} bucketId
+ * @param {object} pageConfig {pageNum: number, pageSize: number}
  */
-const getTaskList = async bucketId => {
-	return await core.getListFromBucket('tasks', bucketId, { description: 0, attachments: 0 });
+const getTaskList = async (bucketId, pageConfig) => {
+	return await core.getListFromBucket('tasks', bucketId, pageConfig, { description: 0, attachments: 0 });
 };
 
 /**

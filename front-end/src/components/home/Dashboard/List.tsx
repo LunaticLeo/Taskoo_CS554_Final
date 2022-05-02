@@ -1,16 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import TableList from '@/components/widgets/TableList';
 import { CardContent, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { DashboardProps, PageConfig, WithPage } from '@/@types/props';
+import { Page } from '@/utils';
 import Styled from '@/components/widgets/Styled';
+import TableList from '@/components/widgets/TableList';
 import useFormatList from '@/hooks/useFormatList';
 import http from '@/utils/http';
-import { DashboardProps } from '@/@types/props';
 import CategorySwitch from './CategorySwitch';
 
 const List: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 	const { t } = useTranslation();
 	const [data, setData] = useState<ProjectInfo[] | TaskInfo[]>([]);
+	const [pageConfig, setPageConfig] = useState<PageConfig>(new Page({ pageSize: 5 }));
 	const header: (keyof ProjectInfo)[] | (keyof TaskInfo)[] = useMemo(() => {
 		return category === 'project'
 			? ['name', 'createTime', 'status', 'members']
@@ -19,10 +21,16 @@ const List: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 	const tableData = category === 'project' ? useFormatList(data, _id => `/home/project/${_id}`) : useFormatList(data);
 
 	useEffect(() => {
-		http.get<ProjectInfo[] | TaskInfo[]>(`/${category}/list`).then(res => {
-			setData(res.data!);
+		const { pageNum, pageSize } = pageConfig;
+		http.get<WithPage<ProjectInfo[] | TaskInfo[]>>(`/${category}/list`, { pageNum, pageSize }).then(res => {
+			setData(res.data!.list);
+			setPageConfig(preVal => ({ ...preVal, count: res.data!.count }));
 		});
-	}, [category]);
+	}, [category, pageConfig.pageNum]);
+
+	const handlePageChange = (_: unknown, value: number) => {
+		setPageConfig(preVal => ({ ...preVal, pageNum: value }));
+	};
 
 	return (
 		<Styled.Card>
@@ -31,7 +39,14 @@ const List: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 					<Styled.Title>{t('overview')}</Styled.Title>
 					<CategorySwitch category={category} setCategoty={setCategoty} />
 				</Stack>
-				<TableList<ProjectInfo | TaskInfo> showHeader size='small' header={header as any} data={tableData} />
+				<TableList<ProjectInfo | TaskInfo>
+					showHeader
+					size='small'
+					header={header as any}
+					data={tableData}
+					pageConfig={pageConfig}
+					onPageChange={handlePageChange}
+				/>
 			</CardContent>
 		</Styled.Card>
 	);

@@ -24,28 +24,35 @@ import Styled from '@/components/widgets/Styled';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import http from '@/utils/http';
-import { toFormData } from '@/utils';
+import { Page, toFormData } from '@/utils';
 import { useSnackbar } from 'notistack';
 import useFormatList from '@/hooks/useFormatList';
 import { Form } from '@/@types/form';
-import { ProjectFormDialogProps, ProjectMemberListProps } from '@/@types/props';
+import { PageConfig, ProjectFormDialogProps, ProjectMemberListProps, WithPage } from '@/@types/props';
 import useNotification from '@/hooks/useNotification';
 
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
 const Project: React.FC = () => {
 	const [data, setData] = useState<ProjectInfo[]>([]);
+	const [pageConfig, setPageConfig] = useState<PageConfig>(new Page({ pageSize: 15 }));
 	const tableData = useFormatList(data, _id => `/home/project/${_id}`);
 
 	useEffect(() => {
 		getProjectList();
-	}, []);
+	}, [pageConfig.pageNum]);
 
 	const getProjectList = useCallback(() => {
-		http.get<ProjectInfo[]>('/project/list').then(res => {
-			setData(res.data!);
+		const { pageNum, pageSize } = pageConfig;
+		http.get<WithPage<ProjectInfo[]>>('/project/list', { pageNum, pageSize }).then(res => {
+			setData(res.data!.list);
+			setPageConfig(preVal => ({ ...preVal, count: res.data!.count }));
 		});
-	}, []);
+	}, [pageConfig.pageNum]);
+
+	const handlePageChange = (_: unknown, value: number) => {
+		setPageConfig(preVal => ({ ...preVal, pageNum: value }));
+	};
 
 	return (
 		<>
@@ -54,7 +61,14 @@ const Project: React.FC = () => {
 					<ToDoList />
 				</Grid>
 				<Grid item xs={12} lg={9}>
-					<TableList<ProjectInfo> showHeader size='small' header={header} data={tableData} />
+					<TableList<ProjectInfo>
+						showHeader
+						size='small'
+						header={header}
+						data={tableData}
+						pageConfig={pageConfig}
+						onPageChange={handlePageChange}
+					/>
 				</Grid>
 			</Grid>
 			<FormDialog refresh={getProjectList} />

@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const {
 	createProject,
-	projectStatistic,
+	getStatusStatistic,
 	getProjectList,
 	getDetails,
 	getFavoriteStatus,
@@ -38,7 +38,7 @@ router.get('/statistic', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
 
 	try {
-		const data = await projectStatistic(bucket);
+		const data = await getStatusStatistic(bucket);
 		res.status(200).json({ code: 200, message: '', data: data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
@@ -47,14 +47,10 @@ router.get('/statistic', async (req, res) => {
 
 router.get('/list', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
-	let pageNum,pageSize;
-	if(req.query.pageNum) pageNum=req.query.pageNum;
-	else pageNum=1
-	if(req.query.pageSize) pageSize=req.query.pageSize;
-	else pageSize=10
+	const { pageNum, pageSize } = req.query;
+
 	try {
-		const projectdata = await getProjectList(bucket);
-		const data=projectdata.slice((pageNum-1)*pageSize,pageNum*pageSize)
+		const data = await getProjectList(bucket, { pageNum, pageSize });
 		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
@@ -98,15 +94,11 @@ router.get('/favorite/status', async (req, res) => {
 
 router.get('/favorite/list', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
-	let pageNum,pageSize;
-	if(req.query.pageNum) pageNum=req.query.pageNum;
-	else pageNum=1
-	if(req.query.pageSize) pageSize=req.query.pageSize;
-	else pageSize=10
+	const { pageNum, pageSize } = req.query;
+
 	try {
-		const favoriteList = await getFavoriteList(bucket);
-		const favoritedata=favoriteList.slice((pageNum-1)*pageSize,pageNum*pageSize)
-		res.json({ code: 200, message: '', data: favoritedata });
+		const data = await getFavoriteList(bucket, { pageNum, pageSize });
+		res.json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
@@ -184,11 +176,11 @@ router.post('/attachments', async (req, res) => {
 
 router.get('/attachments/list', async (req, res) => {
 	const { id } = req.query;
-	let pageNum,pageSize;
-	if(req.query.pageNum) pageNum=req.query.pageNum;
-	else pageNum=1
-	if(req.query.pageSize) pageSize=req.query.pageSize;
-	else pageSize=10
+	let pageNum, pageSize;
+	if (req.query.pageNum) pageNum = req.query.pageNum;
+	else pageNum = 1;
+	if (req.query.pageSize) pageSize = req.query.pageSize;
+	else pageSize = 10;
 	try {
 		Check._id(id);
 	} catch (error) {
@@ -197,7 +189,7 @@ router.get('/attachments/list', async (req, res) => {
 
 	try {
 		const attachments = await getAttachments(id);
-		const attachmentdata=attachments.slice((pageNum-1)*pageSize,pageNum*pageSize)
+		const attachmentdata = attachments.slice((pageNum - 1) * pageSize, pageNum * pageSize);
 		res.json({ code: 200, message: '', data: attachmentdata });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });

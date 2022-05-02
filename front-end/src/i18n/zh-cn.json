@@ -61,6 +61,7 @@
 	"dueTime": "截止日期",
 	"todo": "待完成",
 	"create": "创建于",
+	"noData": "暂无数据",
 	"project": {
 		"dialogTitle": "创建项目",
 		"manager": "项目经理",

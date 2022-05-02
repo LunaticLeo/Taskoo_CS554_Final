@@ -61,6 +61,7 @@
 	"dueTime": "DUE",
 	"todo": "TO DO",
 	"create": "Create on",
+	"noData": "No Data",
 	"project": {
 		"dialogTitle": "Create New project",
 		"manager": "Manager",

@@ -10,29 +10,17 @@ const createProject = async projectObj => {
 	return await core.create(projectObj, 'project');
 };
 
-const projectStatistic = async bucketId => {
-	const bucketsCol = await buckets();
-	const data = await bucketsCol.findOne(
-		{ _id: bucketId },
-		{
-			projection: {
-				_id: 0,
-				pending: { $size: '$projects.pending' },
-				processing: { $size: '$projects.processing' },
-				testing: { $size: '$projects.testing' },
-				done: { $size: '$projects.done' }
-			}
-		}
-	);
-	return data;
+const getStatusStatistic = async bucketId => {
+	return await core.getStatusStatistic('projects', bucketId);
 };
 
 /**
  * get project list from bucket
  * @param {string} bucketId
+ * @param {object} pageConfig {pageNum: number, pageSize: number}
  */
-const getProjectList = async bucketId => {
-	return await core.getListFromBucket('projects', bucketId, { description: 0, tasks: 0, attachments: 0 });
+const getProjectList = async (bucketId, pageConfig) => {
+	return await core.getListFromBucket('projects', bucketId, pageConfig, { description: 0, tasks: 0, attachments: 0 });
 };
 
 /**
@@ -128,12 +116,13 @@ const getFavoriteStatus = async (bucketId, projectId) => {
 /**
  * get the favorite list
  * @param {string} bucketId
+ * @param {object} pageConfig {pageNum: number, pageSize: number}
  * @returns {Promise<{_id: string, name: string}[]>}
  */
-const getFavoriteList = async bucketId => {
+const getFavoriteList = async (bucketId, { pageNum = 1, pageSize = 10 }) => {
 	Check._id(bucketId);
 	const bucketsCol = await buckets();
-	const data = await bucketsCol
+	const list = await bucketsCol
 		.aggregate([
 			{ $match: { _id: bucketId } },
 			{ $project: { _id: 0, favorites: 1 } },
@@ -142,14 +131,29 @@ const getFavoriteList = async bucketId => {
 					from: 'projects',
 					localField: 'favorites',
 					foreignField: '_id',
-					as: 'favoriteList',
+					as: 'favorites',
 					pipeline: [{ $project: { description: 0, tasks: 0, attachments: 0 } }]
+				}
+			},
+			{ $unwind: '$favorites' },
+			{ $replaceRoot: { newRoot: '$favorites' } },
+			{ $skip: (+pageNum - 1) * +pageSize },
+			{ $limit: +pageSize },
+			{
+				$lookup: {
+					from: 'accounts',
+					localField: 'members._id',
+					foreignField: '_id',
+					pipeline: [{ $project: { disabled: 0, password: 0, bucket: 0 } }],
+					as: 'members'
 				}
 			}
 		])
 		.toArray();
 
-	return data[0].favoriteList;
+	const { count } = await bucketsCol.findOne({ _id: bucketId }, { projection: { count: { $size: '$favorites' } } });
+
+	return { count, list };
 };
 
 /**
@@ -259,7 +263,7 @@ const getAttachments = async _id => {
 
 module.exports = {
 	createProject,
-	projectStatistic,
+	getStatusStatistic,
 	getProjectList,
 	getDetails,
 	getFavoriteStatus,

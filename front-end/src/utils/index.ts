@@ -1,3 +1,4 @@
+import { PageConfig } from '@/@types/props';
 import { PaletteMode, SxProps } from '@mui/material';
 import React from 'react';
 import http from './http';
@@ -104,3 +105,14 @@ export const stringAvatar = (
 		children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
 	};
 };
+
+export class Page implements PageConfig {
+	pageNum = 1;
+	pageSize = 10;
+	count = 0;
+
+	constructor(obj?: Partial<PageConfig>) {
+		this.pageNum = obj?.pageNum ?? 1;
+		this.pageSize = obj?.pageSize ?? 10;
+	}
+}

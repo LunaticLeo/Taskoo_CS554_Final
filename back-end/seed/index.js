@@ -51,7 +51,7 @@ const insertProjects = async () => {
 
 	await Promise.all(
 		managers.map(async manager => {
-			const count = ~~(Math.random() * 2) + 1;
+			const count = ~~(Math.random() * 10) + 20;
 			for (let i = 0; i < count; i++) {
 				await createProject(
 					new Project({
@@ -60,7 +60,7 @@ const insertProjects = async () => {
 						members: [
 							{
 								_id: manager._id,
-								role: { "_id": "584b21b7-57b5-4394-825c-f488c53c7d51", "name": "Manager" }
+								role: { _id: '584b21b7-57b5-4394-825c-f488c53c7d51', name: 'Manager' }
 							},
 							...members.map(ele => {
 								return { _id: ele._id, role: Random.memberRoles() };
