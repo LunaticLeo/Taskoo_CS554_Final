@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, IconButton, Paper, Stack, Toolbar, Typography } from '@mui/material';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -23,13 +23,20 @@ const Home: React.FC = () => {
 		return title ? title[1] : '';
 	}, [pathname]);
 
+	const [toolbarHeight, setToolbarHeight] = useState<number>(0);
+
+	const toolbar = useRef<HTMLDivElement | null>(null);
+	useEffect(() => {
+		setToolbarHeight(toolbar.current?.clientHeight ?? 64);
+	}, [toolbar]);
+
 	!sessionStorage.getItem(SESSION_KEY) && navigate('/account/signin');
 
 	return (
 		<Box sx={{ display: 'flex', minHeight: '100vh' }}>
 			<Nav openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
 			<Paper component='main' square elevation={0} sx={{ flex: 1 }}>
-				<Toolbar>
+				<Toolbar component='div' ref={toolbar}>
 					<IconButton
 						aria-label='drawer-control'
 						sx={{ mr: 2, display: { lg: 'none' } }}
@@ -49,7 +56,7 @@ const Home: React.FC = () => {
 						<AvatarMenu />
 					</Stack>
 				</Toolbar>
-				<Box sx={{ p: 3 }}>
+				<Box sx={{ p: 3, height: `calc(100% - ${toolbarHeight}px)` }}>
 					<Routes>
 						<Route path='/' element={<Navigate to='/home/dashboard' replace />} />
 						<Route path='/dashboard' element={<Dashboard />} />

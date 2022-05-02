@@ -18,9 +18,19 @@ import { stringAvatar, toFullName } from '@/utils';
 import { useTranslation } from 'react-i18next';
 import { TransitionProps } from '@mui/material/transitions';
 import { Box } from '@mui/system';
-import { StyledAccountInfoProps, StyledAvatarGroupProps, StyledDialogProps, StyledStatusProps } from '@/@types/props';
+import {
+	StyledAccountInfoProps,
+	StyledAvatarGroupProps,
+	StyledDialogProps,
+	StyledStatusProps,
+	WithSxProp
+} from '@/@types/props';
 
-const StyledCard: React.FC = ({ children }) => <Card elevation={3}>{children}</Card>;
+const StyledCard: React.FC<WithSxProp<{}>> = ({ children, sx }) => (
+	<Card sx={sx} elevation={3}>
+		{children}
+	</Card>
+);
 const StyledTitle: React.FC = ({ children }) => (
 	<Typography component='h2' variant='h5'>
 		{children}
