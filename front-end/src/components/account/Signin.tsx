@@ -11,6 +11,9 @@ import { set } from '@/store/accountInfo';
 import { Form } from '@/@types/form';
 import { setLoading } from '@/store/loading';
 import useNotification from '@/hooks/useNotification';
+import useValidation from '@/hooks/useValidation';
+
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Signin: React.FC = () => {
 	const { t } = useTranslation();
@@ -20,6 +23,7 @@ const Signin: React.FC = () => {
 	const [signinForm, setSigninForm] = useState<Form.SignInForm>({ email: '', password: '' });
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
+	const { email, password } = useValidation();
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -57,7 +61,7 @@ const Signin: React.FC = () => {
 				variant='standard'
 				type='email'
 				value={signinForm.email}
-				onChange={e => handleInputChange({ email: e.target.value })}
+				{...email((e: ChangeEvent) => handleInputChange({ email: e.target.value }))}
 			/>
 			<TextField
 				id='password'
@@ -65,7 +69,7 @@ const Signin: React.FC = () => {
 				variant='standard'
 				type={showPassword ? 'text' : 'password'}
 				value={signinForm.password}
-				onChange={e => handleInputChange({ password: e.target.value })}
+				{...password((e: ChangeEvent) => handleInputChange({ password: e.target.value }))}
 				InputProps={{
 					endAdornment: (
 						<InputAdornment position='end'>
