@@ -27,6 +27,15 @@ app.use(
 
 configRoutes(app);
 
-app.listen(4000, () => {
-	console.log('🚀 Server ready at http://localhost:4000 🚀');
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+const configServer = require('./socket');
+configServer(io);
+
+server.listen(4000, () => {
+    console.log("We've now got a server with socket!");
+    console.log('Your routes will be running on http://localhost:4000');
 });
