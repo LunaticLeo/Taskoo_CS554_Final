@@ -36,7 +36,15 @@ const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'
 const Project: React.FC = () => {
 	const [data, setData] = useState<ProjectInfo[]>([]);
 	const [pageConfig, setPageConfig] = useState<PageConfig>(new Page({ pageSize: 15 }));
+	const [permission, setPermission] = useState<boolean>(false);
 	const tableData = useFormatList(data, _id => `/home/project/${_id}`);
+
+	useEffect(() => {
+		// check create permission
+		http.get<boolean>('/account/permission', { category: 'projects' }).then(res => {
+			setPermission(res.data!);
+		});
+	}, []);
 
 	useEffect(() => {
 		getProjectList();
@@ -71,7 +79,7 @@ const Project: React.FC = () => {
 					/>
 				</Grid>
 			</Grid>
-			<FormDialog refresh={getProjectList} />
+			{permission && <FormDialog refresh={getProjectList} />}
 		</>
 	);
 };

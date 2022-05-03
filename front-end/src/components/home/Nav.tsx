@@ -24,19 +24,7 @@ const Nav: React.FC<NavProps> = ({ openDrawer, setOpenDrawer }) => {
 					open
 				>
 					<Menu />
-					<Stack
-						sx={{
-							position: 'absolute',
-							bottom: 15,
-							left: 15,
-							zIndex: theme => theme.zIndex.appBar
-						}}
-						direction='row'
-						spacing={2}
-					>
-						<ThemeSwitch />
-						<LangButton />
-					</Stack>
+					<ToolBox />
 				</Drawer>
 			) : (
 				<Drawer
@@ -52,10 +40,27 @@ const Nav: React.FC<NavProps> = ({ openDrawer, setOpenDrawer }) => {
 					}}
 				>
 					<Menu />
+					<ToolBox />
 				</Drawer>
 			)}
 		</Box>
 	);
 };
+
+const ToolBox: React.FC = () => (
+	<Stack
+		sx={{
+			position: 'absolute',
+			bottom: 15,
+			left: 15,
+			zIndex: theme => theme.zIndex.appBar
+		}}
+		direction='row'
+		spacing={2}
+	>
+		<ThemeSwitch />
+		<LangButton />
+	</Stack>
+);
 
 export default Nav;

@@ -3,6 +3,7 @@
 	"password": "Password",
 	"signin": "Sign In",
 	"signup": "Sign Up",
+	"signout": "Sign Out",
 	"firstname": "First Name",
 	"lastname": "Last Name",
 	"department": "Department",

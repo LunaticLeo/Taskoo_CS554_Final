@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Avatar, Badge as MuiBadge, Box, IconButton, Menu, MenuItem, styled, Tooltip, Typography } from '@mui/material';
 import { stringAvatar } from '@/utils';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import { useTranslation } from 'react-i18next';
 import { AvatarMenuProps } from '@/@types/props';
 import http from '@/utils/http';
+import { useAppDispatch } from '@/hooks/useStore';
+import { clear } from '@/store/accountInfo';
+import useNotification from '@/hooks/useNotification';
+import Styled from './Styled';
+import { useNavigate } from 'react-router-dom';
 
 const AvatarMenu: React.FC<AvatarMenuProps> = ({ sx }) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const accountInfo = useAccountInfo();
+	const dispatch = useAppDispatch();
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 	const { avatar, fullName } = useAccountInfo();
+	const notificate = useNotification();
 
-	const logout = () => {
+	const signOut = () => {
 		http
 			.post('/account/signout')
-			.then(res => {
-				navigate('/account/signin');
-			})
-			.catch(res => { alert(res.message) });
+			.then(_ => dispatch(clear()))
+			.catch(err => notificate.error(err?.message ?? err));
 	};
 
 	return (
@@ -35,14 +40,17 @@ const AvatarMenu: React.FC<AvatarMenuProps> = ({ sx }) => {
 				sx={{ mt: '45px' }}
 				id='menu-appbar'
 				anchorEl={anchorElUser}
-				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
 				keepMounted
+				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
 				transformOrigin={{ vertical: 'top', horizontal: 'right' }}
 				open={Boolean(anchorElUser)}
 				onClose={() => setAnchorElUser(null)}
 			>
+				<Styled.AccountInfo component={MenuItem} {...accountInfo} onClick={() => navigate('/home/profile')} />
 				<MenuItem>
-					<Typography textAlign='center' onClick={logout}>Log out</Typography>
+					<Typography textAlign='center' onClick={signOut}>
+						{t('signout')}
+					</Typography>
 				</MenuItem>
 			</Menu>
 		</Box>

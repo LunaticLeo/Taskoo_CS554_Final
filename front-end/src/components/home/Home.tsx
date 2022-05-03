@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, IconButton, Paper, Stack, Toolbar, Typography } from '@mui/material';
-import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { SESSION_KEY } from '@/utils/keys';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
@@ -15,7 +15,6 @@ import Search from '../widgets/Search';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 	const { pathname } = useLocation();
 	const curView = useMemo(() => {
@@ -30,9 +29,7 @@ const Home: React.FC = () => {
 		setToolbarHeight(toolbar.current?.clientHeight ?? 64);
 	}, [toolbar]);
 
-	!sessionStorage.getItem(SESSION_KEY) && navigate('/account/signin');
-
-	return (
+	return sessionStorage.getItem(SESSION_KEY) ? (
 		<Box sx={{ display: 'flex', minHeight: '100vh' }}>
 			<Nav openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
 			<Paper component='main' square elevation={0} sx={{ flex: 1 }}>
@@ -67,6 +64,8 @@ const Home: React.FC = () => {
 				</Box>
 			</Paper>
 		</Box>
+	) : (
+		<Navigate to='/account/signin' replace />
 	);
 };
 

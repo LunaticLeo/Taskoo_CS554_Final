@@ -7,7 +7,8 @@ const {
 	getDepartmentMembers,
 	decodeAccountInfo,
 	uploadAvatar,
-	createAccount
+	createAccount,
+	getPermission
 } = require('../data/account');
 const Check = require('../lib/Check');
 
@@ -120,6 +121,24 @@ router.post('/signout', async (req, res) => {
 	try {
 		req.session.destroy();
 		res.json({ code: 200, message: 'You have been signed out' });
+	} catch (error) {
+		res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/permission', async (req, res) => {
+	const { position } = req.session.accountInfo;
+	const { category } = req.query;
+
+	try {
+		if (!['projects', 'tasks'].includes(category)) throw Error('Invalid category');
+	} catch (error) {
+		res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const data = await getPermission(position, category);
+		res.json({ code: 200, message: '', data });
 	} catch (error) {
 		res.status(500).json({ code: 500, message: error?.message ?? error });
 	}

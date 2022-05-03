@@ -3,6 +3,7 @@
 	"password": "密码",
 	"signin": "登录",
 	"signup": "注册",
+	"signout": "退出登录",
 	"firstname": "名称",
 	"lastname": "姓氏",
 	"department": "部门",

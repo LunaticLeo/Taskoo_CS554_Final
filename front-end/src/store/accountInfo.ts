@@ -29,10 +29,15 @@ export const accountInfoSlice = createSlice({
 
 			state.value = newInfo;
 			sessionStorage.setItem(SESSION_KEY, JSON.stringify(newInfo));
+		},
+		clear: () => {
+			sessionStorage.removeItem(SESSION_KEY);
+			// refresh the page
+			location.reload();
 		}
 	}
 });
 
-export const { get, set } = accountInfoSlice.actions;
+export const { get, set, clear } = accountInfoSlice.actions;
 
 export default accountInfoSlice.reducer;

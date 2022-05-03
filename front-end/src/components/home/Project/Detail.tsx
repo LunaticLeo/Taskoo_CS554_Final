@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import http from '@/utils/http';
 import {
 	Box,
@@ -63,6 +63,7 @@ const Detail: React.FC = () => {
 	const { enqueueSnackbar } = useSnackbar();
 	const [projectInfo, setProjectInfo] = useState<Project>({} as Project);
 	const [favoriteStatus, setFavoriteStatus] = useState<boolean>(false);
+	const [permission, setPermission] = useState<boolean>(false);
 	const [tasks, setTasks] = useState<TaskColumnData>({
 		pending: [],
 		processing: [],
@@ -86,7 +87,12 @@ const Detail: React.FC = () => {
 		http.get<TaskColumnData>('/project/tasks', { id }).then(res => {
 			setTasks(res.data!);
 		});
-	}, []);
+
+		// check create permission
+		http.get<boolean>('/account/permission', { category: 'tasks' }).then(res => {
+			setPermission(res.data!);
+		});
+	}, [id]);
 
 	const swithFavoriteStatus = () => {
 		const newStatus = !favoriteStatus;
@@ -132,7 +138,7 @@ const Detail: React.FC = () => {
 				</Stack>
 				<Tasks data={tasks} setData={setTasks} sx={{ mt: 5 }} />
 			</Box>
-			<FormDialog project={id ?? ''} members={projectInfo.members} />
+			{permission && <FormDialog project={id ?? ''} members={projectInfo.members} />}
 		</>
 	);
 };

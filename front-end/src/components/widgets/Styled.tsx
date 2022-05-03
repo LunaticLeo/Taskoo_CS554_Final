@@ -43,17 +43,12 @@ const StyledStatus: React.FC<StyledStatusProps> = ({ label, sx, variant = 'fille
 		<Chip sx={sx} label={t(`status.${label.toLowerCase()}`)} color={label.toLowerCase() as any} variant={variant} />
 	);
 };
-const StyledAccountInfo: React.FC<StyledAccountInfoProps> = ({
-	avatar,
-	firstName,
-	lastName,
-	position,
-	component = ListItem
-}) => {
+const StyledAccountInfo: React.FC<StyledAccountInfoProps> = ({ component = ListItem, onClick, ...accountInfo }) => {
+	const { firstName, lastName, avatar, position } = accountInfo;
 	const fullName = toFullName(firstName!, lastName!);
 
 	return (
-		<Box component={component}>
+		<Box component={component} onClick={onClick}>
 			<ListItemAvatar>
 				{avatar ? <Avatar alt={fullName} src={avatar} /> : <Avatar alt={fullName} {...stringAvatar(fullName)} />}
 			</ListItemAvatar>

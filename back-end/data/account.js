@@ -222,6 +222,27 @@ const createAccount = async ({ email, password, firstName, lastName, department,
 	return email;
 };
 
+/**
+ * get permission by categoty
+ * @param {string} position potision id
+ * @param {string} category 'projects' | 'tasks'
+ * @returns {Promise<boolean>}
+ */
+const getPermission = async (position, category) => {
+	Check.position(position);
+
+	const positionInfo = await getStaticData('positions', position);
+	const status = (await getStaticData('status')).find(item => item.name === 'Pending');
+	switch (category) {
+		case 'projects':
+			return positionInfo.level <= 0;
+		case 'tasks':
+			return positionInfo.level <= status.permit;
+		default:
+			throw Error('Invalid category, should be "projects" or "tasks"');
+	}
+};
+
 module.exports = {
 	addToRegisterList,
 	getRegisterInfo,
@@ -230,5 +251,6 @@ module.exports = {
 	decodeAccountInfo,
 	getDepartmentMembers,
 	uploadAvatar,
-	createAccount
+	createAccount,
+	getPermission
 };
