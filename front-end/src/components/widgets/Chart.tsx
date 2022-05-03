@@ -1,7 +1,13 @@
 import React, { forwardRef, RefObject, useImperativeHandle, useLayoutEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
-import { PieChart } from 'echarts/charts';
-import { GraphicComponent, TooltipComponent, LegendComponent } from 'echarts/components';
+import { BarChart, PieChart } from 'echarts/charts';
+import {
+	GraphicComponent,
+	TooltipComponent,
+	LegendComponent,
+	GridComponent,
+	DataZoomComponent
+} from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { Box } from '@mui/material';
@@ -40,10 +46,13 @@ echarts.use([
 	GraphicComponent,
 	CanvasRenderer,
 	PieChart,
+	BarChart,
 	TooltipComponent,
 	LegendComponent,
 	LabelLayout,
-	UniversalTransition
+	UniversalTransition,
+	GridComponent,
+	DataZoomComponent
 ]);
 
 export default forwardRef(Chart);

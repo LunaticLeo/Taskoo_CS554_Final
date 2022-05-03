@@ -3,6 +3,7 @@ import { Grid } from '@mui/material';
 import List from './List';
 import StatisticChart from './StatisticChart';
 import Contacts from './Contacts';
+import Summary from './Summary';
 
 const Dashboard: React.FC = () => {
 	const [category, setCategory] = useState<'project' | 'task'>('project');
@@ -15,7 +16,9 @@ const Dashboard: React.FC = () => {
 			<Grid item xs={12} lg={4}>
 				<StatisticChart category={category} setCategoty={setCategory} />
 			</Grid>
-			<Grid item xs={12} lg={6}></Grid>
+			<Grid item xs={12} lg={6}>
+				<Summary />
+			</Grid>
 			<Grid item xs={12} lg={6}>
 				<Contacts />
 			</Grid>

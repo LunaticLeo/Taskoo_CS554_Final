@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react';
 import Chart from '@/components/widgets/Chart';
-import { CardContent, Stack, useTheme } from '@mui/material';
+import { CardContent, Stack, Theme, useTheme } from '@mui/material';
 import { TFunction, useTranslation } from 'react-i18next';
 import Styled from '@/components/widgets/Styled';
 import { DashboardProps, Option } from '@/@types/props';
@@ -14,7 +14,7 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 
 	useLayoutEffect(() => {
 		http.get<Record<Lowercase<StaticStatus>, number>>(`/${category}/status/statistic`).then(res => {
-			setOption(statisticChartOption({ ...res.data!, borderColor: theme.palette.background.paper }, t));
+			setOption(statisticChartOption({ ...res.data!, borderColor: theme.palette.background.paper }, t, theme));
 		});
 	}, [category]);
 
@@ -32,8 +32,9 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 };
 
 const statisticChartOption = (
-	{ pending, processing, testing, done, borderColor }: StaticPieChartOptions,
-	t: TFunction<'translation', undefined>
+	{ pending, processing, testing, done, borderColor }: StatisticPieChartOptions,
+	t: TFunction<'translation', undefined>,
+	theme: Theme
 ): Option => {
 	return {
 		tooltip: { trigger: 'item' },
@@ -63,10 +64,10 @@ const statisticChartOption = (
 				},
 				labelLine: { show: false },
 				data: [
-					{ name: t('status.pending') as any, value: pending },
-					{ name: t('status.processing'), value: processing },
-					{ name: t('status.testing'), value: testing },
-					{ name: t('status.done'), value: done }
+					{ name: t('status.pending') as any, value: pending, itemStyle: { color: theme.palette.pending.main } },
+					{ name: t('status.processing'), value: processing, itemStyle: { color: theme.palette.processing.main } },
+					{ name: t('status.testing'), value: testing, itemStyle: { color: theme.palette.testing.main } },
+					{ name: t('status.done'), value: done, itemStyle: { color: theme.palette.done.main } }
 				]
 			}
 		]

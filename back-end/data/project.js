@@ -15,7 +15,71 @@ const createProject = async projectObj => {
  * @param {string} bucketId
  */
 const getStatusStatistic = async bucketId => {
+	Check._id(bucketId);
 	return await core.getStatusStatistic('projects', bucketId);
+};
+
+/**
+ * get task statistic data in projects
+ */
+const getTaskStatistic = async bucketId => {
+	Check._id(bucketId);
+	const bucketsCol = await buckets();
+	const { projects, tasks } = (
+		await bucketsCol
+			.aggregate([
+				{
+					$match: { _id: bucketId }
+				},
+				{
+					$project: {
+						_id: 0,
+						projects: {
+							$concatArrays: ['$projects.pending', '$projects.processing', '$projects.testing', '$projects.done']
+						}
+					}
+				},
+				{
+					$lookup: {
+						from: 'projects',
+						localField: 'projects',
+						foreignField: '_id',
+						as: 'projects',
+						pipeline: [{ $project: { tasks: 1, name: 1 } }]
+					}
+				},
+				{
+					$lookup: {
+						from: 'tasks',
+						localField: 'projects.tasks',
+						foreignField: '_id',
+						as: 'tasks',
+						pipeline: [{ $project: { status: 1, name: 1 } }]
+					}
+				}
+			])
+			.toArray()
+	)[0];
+
+	const data = projects.map(project => {
+		const { _id, name, tasks: _tasks } = project;
+		const statistic = _tasks.reduce(
+			(pre, cur) => {
+				const task = tasks.find(item => item._id === cur);
+				pre[task.status.toLowerCase()]++;
+				return pre;
+			},
+			{
+				pending: 0,
+				processing: 0,
+				testing: 0,
+				done: 0
+			}
+		);
+		return { _id, name, statistic };
+	});
+
+	return data;
 };
 
 /**
@@ -276,5 +340,6 @@ module.exports = {
 	removeFromFavorite,
 	getTasks,
 	uploadAttachments,
-	getAttachments
+	getAttachments,
+	getTaskStatistic
 };

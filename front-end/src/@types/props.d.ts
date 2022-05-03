@@ -1,6 +1,12 @@
 import { SxProps, Theme } from '@mui/material';
-import { PieSeriesOption } from 'echarts/charts';
-import { GraphicComponentOption, LegendComponentOption, TooltipComponentOption } from 'echarts/components';
+import { BarSeriesOption, PieSeriesOption } from 'echarts/charts';
+import {
+	DataZoomComponentOption,
+	GraphicComponentOption,
+	GridComponentOption,
+	LegendComponentOption,
+	TooltipComponentOption
+} from 'echarts/components';
 import { ComposeOption } from 'echarts/core';
 import { Form } from './form';
 import { OptionsObject, SnackbarKey, VariantType } from 'notistack';
@@ -27,7 +33,15 @@ type ChartProps = WithSxProp<{
 	height?: string;
 	width?: string;
 }>;
-type Option = ComposeOption<GraphicComponentOption | PieSeriesOption | TooltipComponentOption | LegendComponentOption>;
+type Option = ComposeOption<
+	| GraphicComponentOption
+	| PieSeriesOption
+	| BarSeriesOption
+	| TooltipComponentOption
+	| LegendComponentOption
+	| GridComponentOption
+	| DataZoomComponentOption
+>;
 
 type LangButtonProps = WithSxProp<{}>;
 

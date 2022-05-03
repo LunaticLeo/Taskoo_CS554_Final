@@ -68,4 +68,9 @@ type TaskInfo = Omit<Task, 'attachments'> & {
 type SearchOptions = { name: string; project: string; status: StaticStatus };
 
 /************************************************************* Chart *************************************************************/
-type StaticPieChartOptions = Record<Lowercase<StaticStatus>, number> & { borderColor?: string };
+type StatisticPieChartOptions = Record<Lowercase<StaticStatus>, number> & { borderColor?: string };
+type StatisticBarChartOptions = {
+	_id: string;
+	name: string;
+	statistic: Record<Lowercase<StaticStatus>, number>;
+};

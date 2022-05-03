@@ -10,7 +10,8 @@ const {
 	removeFromFavorite,
 	getTasks,
 	uploadAttachments,
-	getAttachments
+	getAttachments,
+	getTaskStatistic
 } = require('../data/project');
 const { search } = require('../data/core');
 const { Project, Check } = require('../lib');
@@ -39,7 +40,18 @@ router.get('/status/statistic', async (req, res) => {
 
 	try {
 		const data = await getStatusStatistic(bucket);
-		res.status(200).json({ code: 200, message: '', data: data });
+		res.status(200).json({ code: 200, message: '', data });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/task/statistic', async (req, res) => {
+	const { bucket } = req.session.accountInfo;
+
+	try {
+		const data = await getTaskStatistic(bucket);
+		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
