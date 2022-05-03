@@ -43,14 +43,14 @@ const useValidation = () => {
 			}
 		}),
 		password: (cb?: any) => ({
-			error: error[0],
-			helperText: helperText[0],
+			error: error[1],
+			helperText: helperText[1],
 			onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
 				cb && cb(e);
 
 				const value = e.target.value;
 				if (value.trim() === '') {
-					switchError(0, true);
+					switchError(1, true);
 					switchHelperText(0, 'The password cannot be empty.');
 					return;
 				}
@@ -61,8 +61,8 @@ const useValidation = () => {
 				// 	switchHelperText(0, 'The emial is invalid.');
 				// 	return;
 				// }
-				switchError(0, false);
-				switchHelperText(0, ' ');
+				switchError(1, false);
+				switchHelperText(1, ' ');
 			}
 		})
 	};
