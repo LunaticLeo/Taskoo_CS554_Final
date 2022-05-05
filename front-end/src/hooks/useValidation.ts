@@ -64,6 +64,22 @@ const useValidation = () => {
 				switchError(1, false);
 				switchHelperText(1, ' ');
 			}
+		}),
+		valid:(cb?: any) => ({
+			error: error[1],
+			helperText: helperText[1],
+			onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+				cb && cb(e);
+
+				const value = e.target.value;
+				if (value.trim() === '') {
+					switchError(1, true);
+					switchHelperText(0, 'Required information unfilled.');
+					return;
+				}
+				switchError(1, false);
+				switchHelperText(1, ' ');
+			}
 		})
 	};
 };

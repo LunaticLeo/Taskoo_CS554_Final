@@ -55,6 +55,9 @@ import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { setLoading } from '@/store/loading';
 import FilePresentRoundedIcon from '@mui/icons-material/FilePresentRounded';
+import useValidation from '@/hooks/useValidation';
+
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
@@ -305,6 +308,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 	const notificate = useNotification();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [taskForm, setTaskForm] = useState<Form.TaskForm>(new TaskFormClass(project));
+	const { valid } = useValidation();
 
 	const handleInputChange = (val: Partial<Form.TaskForm>) => {
 		setTaskForm(preVal => ({ ...preVal, ...val }));
@@ -370,7 +374,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 										label={t('task.form.name')}
 										variant='outlined'
 										margin='normal'
-										onChange={e => handleInputChange({ name: e.target.value })}
+										{...valid((e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
 									<DatePicker
 										label={t('task.form.dueTime')}
