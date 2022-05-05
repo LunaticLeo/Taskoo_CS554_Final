@@ -13,8 +13,6 @@ import { setLoading } from '@/store/loading';
 import useNotification from '@/hooks/useNotification';
 import useValidation from '@/hooks/useValidation';
 
-type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
-
 const Signin: React.FC = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();

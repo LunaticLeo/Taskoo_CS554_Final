@@ -1,6 +1,6 @@
 import React, { forwardRef, RefObject, useImperativeHandle, useLayoutEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
-import { BarChart, PieChart } from 'echarts/charts';
+import { BarChart, PieChart, SunburstChart, TreemapChart } from 'echarts/charts';
 import {
 	GraphicComponent,
 	TooltipComponent,
@@ -47,6 +47,8 @@ echarts.use([
 	CanvasRenderer,
 	PieChart,
 	BarChart,
+	TreemapChart,
+	SunburstChart,
 	TooltipComponent,
 	LegendComponent,
 	LabelLayout,

@@ -4,6 +4,7 @@
 	"signin": "Sign In",
 	"signup": "Sign Up",
 	"signout": "Sign Out",
+	"register": "Add Register",
 	"firstname": "First Name",
 	"lastname": "Last Name",
 	"department": "Department",
@@ -27,7 +28,8 @@
 		"newTask": "New Task",
 		"cancel": "Cancel",
 		"submit": "Submit",
-		"upload": "Upload"
+		"upload": "Upload",
+		"clear": "Clear"
 	},
 	"table": {
 		"header": {
@@ -36,7 +38,7 @@
 			"dueTime": "Due Time",
 			"status": "Status",
 			"members": "Members",
-			"fullName": "Full Name",
+			"fullName": "Name",
 			"email": "Email",
 			"position": "Position"
 		}

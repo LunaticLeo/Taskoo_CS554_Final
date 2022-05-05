@@ -50,8 +50,6 @@ const getOptions = (data: StatisticBarChartOptions[], theme: Theme): Option => {
 		}))
 	);
 
-	console.log(series);
-
 	return {
 		tooltip: {
 			trigger: 'axis',

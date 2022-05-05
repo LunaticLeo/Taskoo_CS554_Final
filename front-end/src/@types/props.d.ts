@@ -1,5 +1,5 @@
 import { SxProps, Theme } from '@mui/material';
-import { BarSeriesOption, PieSeriesOption } from 'echarts/charts';
+import { BarSeriesOption, PieSeriesOption, SunburstSeriesOption, TreemapSeriesOption } from 'echarts/charts';
 import {
 	DataZoomComponentOption,
 	GraphicComponentOption,
@@ -37,6 +37,8 @@ type Option = ComposeOption<
 	| GraphicComponentOption
 	| PieSeriesOption
 	| BarSeriesOption
+	| TreemapSeriesOption
+	| SunburstSeriesOption
 	| TooltipComponentOption
 	| LegendComponentOption
 	| GridComponentOption
@@ -112,3 +114,9 @@ type FileUploaderProps = WithSxProp<{ onFileSelected: (files: File[]) => void; s
 type FolderProps = { filesUrl: string[] };
 type FileItemProps = { fileUrl: string };
 type FileListProps = WithSxProp<{ files: File[]; onDelete: (index: number) => void }>;
+
+type ContactDisplayType = 'list' | 'treemap' | 'sunburst';
+type RelationsChartProps = { data: Account<StaticData>[]; type?: 'treemap' | 'sunburst' };
+type ContactsProps = { data: Account<StaticData>[] };
+type ContactListProps = ContactsProps;
+type ContactListItemProps = { data: Account<StaticData> };

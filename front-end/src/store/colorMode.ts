@@ -8,7 +8,7 @@ const initialState: { value: PaletteMode } = {
 };
 
 export const colorModeSlice = createSlice({
-	name: 'loading',
+	name: 'colorMode',
 	initialState,
 	reducers: {
 		switchMode: state => {
