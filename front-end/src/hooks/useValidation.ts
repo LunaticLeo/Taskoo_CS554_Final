@@ -29,13 +29,13 @@ const useValidation = () => {
 				const value = e.target.value;
 				if (value.trim() === '') {
 					switchError(0, true);
-					switchHelperText(0, 'The emial cannot be empty.');
+					switchHelperText(0, 'The email cannot be empty.');
 					return;
 				}
 				const reg = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+([.][a-zA-Z]+){1,2}$/;
 				if (!reg.test(e.target.value)) {
 					switchError(0, true);
-					switchHelperText(0, 'The emial is invalid.');
+					switchHelperText(0, 'The email is invalid.');
 					return;
 				}
 				switchError(0, false);
@@ -51,7 +51,7 @@ const useValidation = () => {
 				const value = e.target.value;
 				if (value.trim() === '') {
 					switchError(1, true);
-					switchHelperText(0, 'The password cannot be empty.');
+					switchHelperText(1, 'The password cannot be empty.');
 					return;
 				}
 				// TODO complete password validation
@@ -66,19 +66,19 @@ const useValidation = () => {
 			}
 		}),
 		valid:(cb?: any) => ({
-			error: error[1],
-			helperText: helperText[1],
+			error: error[0],
+			helperText: helperText[0],
 			onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
 				cb && cb(e);
 
 				const value = e.target.value;
 				if (value.trim() === '') {
-					switchError(1, true);
+					switchError(0, true);
 					switchHelperText(0, 'Required information unfilled.');
 					return;
 				}
-				switchError(1, false);
-				switchHelperText(1, ' ');
+				switchError(0, false);
+				switchHelperText(0, ' ');
 			}
 		})
 	};
