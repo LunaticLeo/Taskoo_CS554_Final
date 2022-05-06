@@ -4,7 +4,7 @@ const { Check } = require('../lib');
 const router = require('express').Router();
 
 router.get('/members', async (req, res) => {
-	const { pageNum, pageSize, department } = req.query;
+	const { department } = req.query;
 
 	try {
 		if (![undefined, 'self'].includes(department)) {
@@ -16,7 +16,7 @@ router.get('/members', async (req, res) => {
 
 	try {
 		let _department = department === 'self' ? req.session.accountInfo.department : department;
-		const data = await getMembers(_department, { pageNum, pageSize });
+		const data = await getMembers(_department);
 		res.json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
