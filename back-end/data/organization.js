@@ -2,9 +2,9 @@ const { accounts } = require('../config/mongoCollections');
 
 /**
  * get all the accounts by department
- * @param {object} pageConfig {pageNum: number, pageSize: number}
+ * @param {string} department 'self' | id
  */
-const getMembers = async (department, { pageNum = 1, pageSize = 10 }) => {
+const getMembers = async department => {
 	const accountCol = await accounts();
 	const match = department ? [{ $match: { department } }] : [];
 
@@ -20,8 +20,6 @@ const getMembers = async (department, { pageNum = 1, pageSize = 10 }) => {
 				}
 			},
 			{ $unwind: '$department' },
-			{ $skip: (+pageNum - 1) * +pageSize },
-			{ $limit: +pageSize },
 			{
 				$lookup: {
 					from: 'positions',

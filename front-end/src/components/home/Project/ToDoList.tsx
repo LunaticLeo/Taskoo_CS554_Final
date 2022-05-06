@@ -14,7 +14,7 @@ const ToDoList: React.FC = () => {
 	}, []);
 
 	return (
-		<Stack direction={{ xs: 'row', lg: 'column' }} spacing={2}>
+		<Stack direction={{ xs: 'row', lg: 'column' }} sx={{ position: 'sticky', top: 64 }} spacing={2}>
 			{listData.map(item => (
 				<TaskCard key={item._id} data={item} clickable />
 			))}

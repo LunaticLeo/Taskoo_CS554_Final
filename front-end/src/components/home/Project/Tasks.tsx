@@ -103,17 +103,26 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ status, data, permission }) => 
 
 	return (
 		<Box sx={{ flex: 1 }}>
-			<Typography variant='h6' component='div'>
-				{t(`status.${status.toLowerCase()}`).toUpperCase()}
-			</Typography>
-			<Divider
+			<Box
 				sx={{
-					backgroundColor: theme => (theme.palette as any)[status.toLowerCase()].main,
-					borderBottomWidth: 'medium',
-					mt: 1,
-					mb: 2
+					position: 'sticky',
+					top: '64px',
+					background: theme => theme.palette.background.paper,
+					zIndex: theme => theme.zIndex.appBar
 				}}
-			/>
+			>
+				<Typography variant='h6' component='div'>
+					{t(`status.${status.toLowerCase()}`).toUpperCase()}
+				</Typography>
+				<Divider
+					sx={{
+						backgroundColor: theme => (theme.palette as any)[status.toLowerCase()].main,
+						borderBottomWidth: 'medium',
+						mt: 1,
+						mb: 2
+					}}
+				/>
+			</Box>
 			<Droppable droppableId={status}>
 				{provided => (
 					<Stack spacing={2} ref={provided.innerRef} {...provided.droppableProps}>
