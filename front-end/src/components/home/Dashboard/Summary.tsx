@@ -5,6 +5,7 @@ import { CardContent, Palette, PaletteColor, Theme, useTheme } from '@mui/materi
 import Chart from '@/components/widgets/Chart';
 import { Option } from '@/@types/props';
 import http from '@/utils/http';
+import { HEIGHT } from './Dashboard';
 
 const Summary: React.FC = () => {
 	const { t } = useTranslation();
@@ -21,7 +22,7 @@ const Summary: React.FC = () => {
 		<Styled.Card>
 			<CardContent>
 				<Styled.Title>{t('summary')}</Styled.Title>
-				<Chart height='300px' option={option} />
+				<Chart height={HEIGHT} option={option} />
 			</CardContent>
 		</Styled.Card>
 	);

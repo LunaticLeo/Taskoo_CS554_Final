@@ -6,6 +6,7 @@ import Styled from '@/components/widgets/Styled';
 import { DashboardProps, Option } from '@/@types/props';
 import CategorySwitch from './CategorySwitch';
 import http from '@/utils/http';
+import { HEIGHT } from './Dashboard';
 
 const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 	const { t } = useTranslation();
@@ -30,7 +31,7 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 					<Styled.Title>{t('statistic')}</Styled.Title>
 					<CategorySwitch category={category} setCategoty={setCategoty} />
 				</Stack>
-				<Chart height='350px' option={option} />
+				<Chart height={HEIGHT} option={option} />
 			</CardContent>
 		</Styled.Card>
 	);

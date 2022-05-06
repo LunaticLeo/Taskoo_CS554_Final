@@ -57,14 +57,14 @@ type StyledAvatarGroupProps = {
 	max?: number;
 };
 type StyledDialogProps = { open: boolean; onClose: React.Dispatch<React.SetStateAction<boolean>> };
-type TableListProps<T extends { _id: string; [prop: string]: any }> = {
+type TableListProps<T extends { _id: string; [prop: string]: any }> = WithSxProp<{
 	showHeader?: boolean;
 	header: (keyof T)[];
 	data: T[] | Record<keyof T, any>[];
 	size?: 'small' | 'medium';
 	pageConfig?: PageConfig;
 	onPageChange?: (event: React.ChangeEvent<unknown>, value: number) => void;
-};
+}>;
 type WithPage<T> = { count: number; list: T };
 type PageConfig = {
 	pageSize: number;
@@ -124,5 +124,5 @@ type FileListProps = WithSxProp<{ files: File[]; onDelete: (index: number) => vo
 type ContactDisplayType = 'list' | 'treemap' | 'sunburst';
 type RelationsChartProps = { data: Account<StaticData>[]; type?: 'treemap' | 'sunburst' };
 type ContactsProps = { data: Account<StaticData>[] };
-type ContactListProps = ContactsProps;
+type ContactListProps = WithSxProp<ContactsProps & { dense?: boolean; filteable?: boolean }>;
 type ContactListItemProps = { data: Account<StaticData> };

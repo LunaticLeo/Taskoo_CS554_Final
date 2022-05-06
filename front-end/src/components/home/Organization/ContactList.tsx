@@ -23,7 +23,7 @@ import WorkRoundedIcon from '@mui/icons-material/WorkRounded';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
-const ContactList: React.FC<ContactListProps> = ({ data }) => {
+const ContactList: React.FC<ContactListProps> = ({ data, dense = false, sx, filteable = true }) => {
 	const { t } = useTranslation();
 	const [options, setOptions] = useState<Record<'departments' | 'positions', StaticData[]>>({
 		departments: [],
@@ -57,30 +57,32 @@ const ContactList: React.FC<ContactListProps> = ({ data }) => {
 
 	return (
 		<>
-			<Stack direction='row' spacing={1.5} mb={3}>
-				{['department', 'position'].map(item => (
-					<FormControl key={item} variant='filled' sx={{ minWidth: 200 }}>
-						<InputLabel id={`${item}-label`}>{t(item)}</InputLabel>
-						<Select
-							id={item}
-							labelId={`${item}-label`}
-							label={t(item)}
-							value={filter[item as 'department' | 'position']}
-							onChange={e => handleInputChange({ [item]: e.target.value })}
-						>
-							<MenuItem value=''>
-								<em>All</em>
-							</MenuItem>
-							{options[(item + 's') as 'departments' | 'positions'].map(option => (
-								<MenuItem key={option._id} value={option._id}>
-									{option.name}
+			{filteable && (
+				<Stack direction='row' spacing={1.5} mb={3}>
+					{['department', 'position'].map(item => (
+						<FormControl key={item} variant='filled' sx={{ minWidth: 200 }}>
+							<InputLabel id={`${item}-label`}>{t(item)}</InputLabel>
+							<Select
+								id={item}
+								labelId={`${item}-label`}
+								label={t(item)}
+								value={filter[item as 'department' | 'position']}
+								onChange={e => handleInputChange({ [item]: e.target.value })}
+							>
+								<MenuItem value=''>
+									<em>All</em>
 								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
-				))}
-			</Stack>
-			<List sx={{ height: { xs: 'auto', md: '85%' }, overflow: { xs: 'inherit', md: 'auto' } }}>
+								{options[(item + 's') as 'departments' | 'positions'].map(option => (
+									<MenuItem key={option._id} value={option._id}>
+										{option.name}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					))}
+				</Stack>
+			)}
+			<List dense={dense} sx={{ height: { xs: 'auto', md: '85%' }, overflow: { xs: 'inherit', md: 'auto' }, ...sx }}>
 				{listData.map(contact => (
 					<ContactListItem key={contact._id} data={contact} />
 				))}

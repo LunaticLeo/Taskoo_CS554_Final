@@ -19,16 +19,24 @@ export default class TableList<T extends { _id: string; [prop: string]: any }> e
 	TableListProps<T>
 > {
 	render() {
-		const { header, data, showHeader = false, size, pageConfig, onPageChange } = this.props;
+		const { header, data, showHeader = false, size, pageConfig, onPageChange, sx } = this.props;
 
 		const showPagination = (pageConfig?.count ?? -Infinity) > data.length;
 		const pageCount = ~~((pageConfig?.count ?? 0) / (pageConfig?.pageSize ?? 1)) + 1;
+		let height = 'fit-content';
+		let maxHeight = 'fit-content';
+		if (showPagination) {
+			// @ts-ignore
+			sx?.height && (height = `calc(${sx?.height} - 40px)`);
+			// @ts-ignore
+			sx?.maxHeight && (maxHeight = `calc(${sx?.maxHeight} - 40px)`);
+		}
 
 		return (
 			<Translation>
 				{t => (
-					<Box>
-						<TableContainer>
+					<>
+						<TableContainer sx={{ ...sx, height, maxHeight }}>
 							<Table aria-label='table list' size={size}>
 								{showHeader && (
 									<TableHead>
@@ -68,7 +76,7 @@ export default class TableList<T extends { _id: string; [prop: string]: any }> e
 								onChange={onPageChange}
 							/>
 						)}
-					</Box>
+					</>
 				)}
 			</Translation>
 		);

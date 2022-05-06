@@ -32,4 +32,6 @@ const Grid = styled(MuiGrid)(() => ({
 	}
 }));
 
+export const HEIGHT = '37.5vh';
+
 export default Dashboard;
