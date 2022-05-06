@@ -9,6 +9,7 @@ import {
 	DialogContent,
 	DialogTitle,
 	Divider,
+	IconButton,
 	List,
 	ListItem,
 	ListItemButton,
@@ -26,9 +27,10 @@ import { FileList } from '../home/Project/Detail';
 import { toFormData } from '@/utils';
 import http from '@/utils/http';
 import useNotification from '@/hooks/useNotification';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = (
-	{ data, sx, clickable = false, ...rest },
+	{ data, sx, clickable = false, deleteable = true, onDelete, ...rest },
 	ref
 ) => {
 	const { t } = useTranslation();
@@ -73,6 +75,11 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 					<Button color='primary' onClick={() => setOpen(true)}>
 						{t('detail')}
 					</Button>
+					{deleteable && onDelete && (
+						<IconButton color='error' sx={{ ml: 'auto!important' }} onClick={() => onDelete(data._id)}>
+							<DeleteOutlineOutlinedIcon color='inherit' />
+						</IconButton>
+					)}
 				</CardActions>
 			</Card>
 			<DetailDialog open={open} onClose={() => setOpen(false)} data={data} />

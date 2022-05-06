@@ -136,7 +136,7 @@ const Detail: React.FC = () => {
 					)}
 					<Styled.AvatarGroup data={allMembers} max={5} />
 				</Stack>
-				<Tasks data={tasks} setData={setTasks} sx={{ mt: 5 }} />
+				<Tasks data={tasks} setData={setTasks} sx={{ mt: 5 }} permission={permission} />
 			</Box>
 			{permission && <FormDialog project={id ?? ''} members={projectInfo.members} />}
 		</>

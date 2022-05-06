@@ -81,10 +81,16 @@ type TaskColumnData = Record<Lowercase<StaticStatus>, Task[]>;
 type TasksProps = WithSxProp<{
 	data: TaskColumnData;
 	setData: (value: React.SetStateAction<TaskColumnData>) => void;
+	permission: boolean;
 	[props: string]: any;
 }>;
-type TaskColumnProps = { status: string; data: Task[] };
-type TaskCardProps = WithSxProp<{ data: Task; clickable?: boolean }>;
+type TaskColumnProps = { status: string; data: Task[]; permission: boolean };
+type TaskCardProps = WithSxProp<{
+	data: Task;
+	clickable?: boolean;
+	deleteable?: boolean;
+	onDelete?: (id: string) => void;
+}>;
 type DetailDialogProps = StyledDialogProps & { data: Task };
 
 type TabPanelProps = { value: string | number; hidden: boolean; [props: string]: any };

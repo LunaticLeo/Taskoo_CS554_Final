@@ -12,7 +12,7 @@ import { toCapitalize } from '@/utils';
 
 const header: (keyof TaskInfo)[] = ['name', 'createTime', 'dueTime', 'status', 'members'];
 
-const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
+const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 	const theme = useTheme();
 	const notification = useNotification();
 	const [STATUS, setSTATUS] = useState<StatusPrerquest>({} as any);
@@ -82,7 +82,7 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
 			) : (
 				<Stack direction='row' spacing={{ md: 2, lg: 5 }} sx={sx}>
 					{Object.keys(data).map(item => (
-						<TaskColumn key={item} status={item} data={(data as any)[item]} />
+						<TaskColumn key={item} status={item} data={(data as any)[item]} permission={permission} />
 					))}
 				</Stack>
 			)}
@@ -90,8 +90,16 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
 	);
 };
 
-const TaskColumn: React.FC<TaskColumnProps> = ({ status, data }) => {
+const TaskColumn: React.FC<TaskColumnProps> = ({ status, data, permission }) => {
 	const { t } = useTranslation();
+	const notificate = useNotification();
+
+	const handleDelete = (id: string) => {
+		http
+			.delete('/task/remove', { id })
+			.then(res => notificate.success(res.message))
+			.catch(err => notificate.error(err?.message ?? err));
+	};
 
 	return (
 		<Box sx={{ flex: 1 }}>
@@ -117,6 +125,8 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ status, data }) => {
 										{...provided.draggableProps}
 										ref={provided.innerRef}
 										data={item}
+										deleteable={permission}
+										onDelete={handleDelete}
 									/>
 								)}
 							</Draggable>
