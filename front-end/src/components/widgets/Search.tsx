@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Autocomplete, Box, InputBase, lighten, styled } from '@mui/material';
+import { Autocomplete, Box, InputBase, lighten, Stack, styled, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { grey } from '@mui/material/colors';
 import http from '@/utils/http';
@@ -44,8 +44,10 @@ const Search: React.FC = () => {
 			isOptionEqualToValue={() => false}
 			renderOption={(props, option) => (
 				<Box component='li' {...props}>
-					<Styled.Status variant='outlined' sx={{ mr: 1 }} label={option.status} />
-					{option.name}
+					<Styled.Status size='small' variant='outlined' sx={{ mr: 1 }} label={option.status} />
+					<Typography variant='body2' noWrap>
+						{option.name}
+					</Typography>
 				</Box>
 			)}
 			renderInput={params => (
@@ -108,7 +110,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 		[theme.breakpoints.up('xs')]: {
 			width: '10ch!important',
 			'&:focus': {
-				width: '15ch!important'
+				width: '20ch!important'
 			}
 		}
 	}

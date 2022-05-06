@@ -79,14 +79,22 @@ const deleteobj = async (objid, category, cb) => {
  * @param {string} accountId
  */
 const search = async (searchTerm, accountId) => {
-	let collection = await tasks();
-	let task = await collection
+	const tasksCol = await tasks();
+	const taskList = await tasksCol
 		.find(
 			{ members: { $elemMatch: { _id: accountId } }, name: { $regex: searchTerm, $options: '$i' } },
 			{ projection: { _id: 0, name: 1, project: 1, status: 1 } }
 		)
 		.toArray();
-	return task;
+
+	const projectsCol = await projects();
+	const projectList = await projectsCol
+		.find(
+			{ members: { $elemMatch: { _id: accountId } }, name: { $regex: searchTerm, $options: '$i' } },
+			{ projection: { _id: 0, name: 1, project: '$_id', status: 1 } }
+		)
+		.toArray();
+	return [...taskList, ...projectList];
 };
 
 /**
