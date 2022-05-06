@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.disable('x-powered-by');
-app.use(multerMid.single('file'));
+app.use(multerMid.array('file'));
 app.use(
 	session({
 		name: 'AuthCookie',

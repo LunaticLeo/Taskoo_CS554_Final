@@ -1,9 +1,10 @@
 import React, { memo, RefObject, useEffect, useRef } from 'react';
-import Chart, { Option } from './Chart';
+import Chart from './Chart';
 import { useTheme } from '@mui/material';
 import VanillaTilt, { HTMLVanillaTiltElement } from 'vanilla-tilt';
+import { LogoProps, Option } from '@/@types/props';
 
-const Logo: React.FC<{ fontSize?: number }> = ({ fontSize = 50 }) => {
+const Logo: React.FC<LogoProps> = ({ fontSize = 50 }) => {
 	const option = createLogo({ fontSize });
 	const logoRef = useRef<RefObject<HTMLElement>>(null);
 	useEffect(() => {
@@ -24,7 +25,6 @@ const Logo: React.FC<{ fontSize?: number }> = ({ fontSize = 50 }) => {
 	);
 };
 
-type LogoProps = { color?: string; fontSize: number };
 export const createLogo = ({ color, fontSize }: LogoProps): Option => {
 	const theme = useTheme();
 	color = color ?? theme.palette.primary.main;

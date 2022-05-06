@@ -1,46 +1,54 @@
-import React, { useContext, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, IconButton, InputAdornment, Stack, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import Logo from '../widgets/Logo';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { toFormData } from '@/utils';
 import http from '@/utils/http';
-import { useNavigate } from 'react-router-dom';
-import { LoadingContext } from '@/App';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '@/hooks/useStore';
 import { set } from '@/store/accountInfo';
-
-type SignInForm = {
-	email: string;
-	password: string;
-};
+import { Form } from '@/@types/form';
+import { setLoading } from '@/store/loading';
+import useNotification from '@/hooks/useNotification';
+import useValidation from '@/hooks/useValidation';
 
 const Signin: React.FC = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
-	const [signinForm, setSigninForm] = useState<SignInForm>({ email: '', password: '' });
+	const notificate = useNotification();
+	const { state } = useLocation();
+	const [signinForm, setSigninForm] = useState<Form.SignInForm>({ email: '', password: '' });
 	const [showPassword, setShowPassword] = useState<boolean>(false);
-	const { setLoading } = useContext(LoadingContext);
 	const dispatch = useAppDispatch();
+	const { email, password } = useValidation();
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		setLoading(true);
-		const formData = toFormData<SignInForm>(signinForm);
+		dispatch(setLoading(true));
+		const formData = toFormData<Form.SignInForm>(signinForm);
 		http
 			.post('/account/signin', formData)
 			.then(res => {
 				setTimeout(() => {
-					setLoading(false);
+					dispatch(setLoading(false));
 					dispatch(set(res.data!));
 					navigate('/home');
 				}, 1000);
 			})
-			.catch(() => setTimeout(() => setLoading(false), 1000));
+			.catch(err => {
+				notificate.error(err?.message ?? err);
+				setTimeout(() => dispatch(setLoading(false)), 1000);
+			});
 	};
-	const handleInputChange = (val: Partial<SignInForm>) => {
+
+	const handleInputChange = (val: Partial<Form.SignInForm>) => {
 		setSigninForm(preVal => ({ ...preVal, ...val }));
 	};
+
+	useEffect(() => {
+		(state as any)?.email && handleInputChange({ email: (state as any).email });
+	}, [state]);
 
 	return (
 		<Stack component='form' autoComplete='off' spacing={5} onSubmit={handleSubmit}>
@@ -50,14 +58,16 @@ const Signin: React.FC = () => {
 				label={t('email')}
 				variant='standard'
 				type='email'
-				onChange={e => handleInputChange({ email: e.target.value })}
+				value={signinForm.email}
+				{...email((e: ChangeEvent) => handleInputChange({ email: e.target.value }))}
 			/>
 			<TextField
 				id='password'
 				label={t('password')}
 				variant='standard'
 				type={showPassword ? 'text' : 'password'}
-				onChange={e => handleInputChange({ password: e.target.value })}
+				value={signinForm.password}
+				{...password((e: ChangeEvent) => handleInputChange({ password: e.target.value }))}
 				InputProps={{
 					endAdornment: (
 						<InputAdornment position='end'>

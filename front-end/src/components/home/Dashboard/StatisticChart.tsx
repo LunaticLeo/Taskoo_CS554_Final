@@ -1,52 +1,57 @@
 import React, { useLayoutEffect, useState } from 'react';
-import Chart, { Option } from '@/components/widgets/Chart';
-import { CardContent, useTheme } from '@mui/material';
+import Chart from '@/components/widgets/Chart';
+import { CardContent, Stack, Theme, useMediaQuery, useTheme } from '@mui/material';
 import { TFunction, useTranslation } from 'react-i18next';
 import Styled from '@/components/widgets/Styled';
+import { DashboardProps, Option } from '@/@types/props';
+import CategorySwitch from './CategorySwitch';
+import http from '@/utils/http';
+import { HEIGHT } from './Dashboard';
 
-const StatisticChart: React.FC = () => {
+const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 	const { t } = useTranslation();
 	const [option, setOption] = useState<Option>({});
 	const theme = useTheme();
+	const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
+	let httpData: any;
 
 	useLayoutEffect(() => {
-		setOption(
-			statisticChartOption(
-				{
-					pending: 5,
-					processing: 10,
-					testing: 3,
-					done: 7,
-					borderColor: theme.palette.background.paper
-				},
-				t
-			)
-		);
-	}, []);
+		!httpData
+			? http.get<Record<Lowercase<StaticStatus>, number>>(`/${category}/status/statistic`).then(res => {
+					httpData = res.data!;
+					setOption(getOption({ ...res.data!, borderColor: theme.palette.background.paper }, t, theme, largeScreen));
+			  })
+			: setOption(getOption({ ...httpData!, borderColor: theme.palette.background.paper }, t, theme, largeScreen));
+	}, [category, largeScreen]);
 
 	return (
 		<Styled.Card>
 			<CardContent>
-				<Styled.Title>{t('statistic')}</Styled.Title>
-				<Chart height='230px' option={option} />
+				<Stack direction='row' justifyContent='space-between'>
+					<Styled.Title>{t('statistic')}</Styled.Title>
+					<CategorySwitch category={category} setCategoty={setCategoty} />
+				</Stack>
+				<Chart height={HEIGHT} option={option} />
 			</CardContent>
 		</Styled.Card>
 	);
 };
 
-const statisticChartOption = (
-	{ pending, processing, testing, done, borderColor }: StatisticChartOption,
-	t: TFunction<'translation', undefined>
+const getOption = (
+	{ pending, processing, testing, done, borderColor }: StatisticPieChartOptions,
+	t: TFunction<'translation', undefined>,
+	theme: Theme,
+	largeScreen: boolean
 ): Option => {
 	return {
 		tooltip: { trigger: 'item' },
-		legend: { top: 'center', right: 'right', orient: 'vertical' },
+		legend: largeScreen ? { bottom: 0, left: 'center' } : { top: 'center', right: 'right', orient: 'vertical' },
 		series: [
 			{
 				name: t('statisticChart.statisticData') as any,
 				type: 'pie',
 				radius: ['40%', '70%'],
-				center: ['35%', '50%'],
+				center: ['50%', '50%'],
 				avoidLabelOverlap: false,
 				itemStyle: {
 					borderRadius: 8,
@@ -66,22 +71,14 @@ const statisticChartOption = (
 				},
 				labelLine: { show: false },
 				data: [
-					{ name: t('status.pending') as any, value: pending },
-					{ name: t('status.processing'), value: processing },
-					{ name: t('status.testing'), value: testing },
-					{ name: t('status.done'), value: done }
+					{ name: t('status.pending') as any, value: pending, itemStyle: { color: theme.palette.pending.main } },
+					{ name: t('status.processing'), value: processing, itemStyle: { color: theme.palette.processing.main } },
+					{ name: t('status.testing'), value: testing, itemStyle: { color: theme.palette.testing.main } },
+					{ name: t('status.done'), value: done, itemStyle: { color: theme.palette.done.main } }
 				]
 			}
 		]
 	};
 };
-
-interface StatisticChartOption {
-	pending: number;
-	processing: number;
-	testing: number;
-	done: number;
-	borderColor?: string;
-}
 
 export default StatisticChart;

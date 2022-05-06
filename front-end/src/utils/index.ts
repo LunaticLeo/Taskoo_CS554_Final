@@ -1,3 +1,4 @@
+import { PageConfig } from '@/@types/props';
 import { PaletteMode, SxProps } from '@mui/material';
 import React from 'react';
 import http from './http';
@@ -9,6 +10,15 @@ import http from './http';
 export const toCapitalize = (str: string): string => {
 	return str?.toLowerCase().replace(/^./, l => l.toUpperCase());
 };
+
+/**
+ * combind first name and last name to full name
+ * @param {string} firstName
+ * @param {string} lastName
+ * @returns {string} fullName
+ */
+export const toFullName = (firstName: string, lastName: string): string =>
+	`${toCapitalize(firstName)} ${toCapitalize(lastName)}`;
 
 /**
  * get the system theme mode
@@ -38,7 +48,7 @@ export const getStaticData = async (
  * @param {T} obj
  * @returns {FormData}
  */
-export const toFormData = <T extends Record<string, string | string[] | File | File[]>>(obj: T): FormData => {
+export const toFormData = <T extends Record<string, any>>(obj: T): FormData => {
 	const formData = new FormData();
 	Object.keys(obj).forEach(key => {
 		if (Array.isArray(obj[key])) {
@@ -95,3 +105,14 @@ export const stringAvatar = (
 		children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
 	};
 };
+
+export class Page implements PageConfig {
+	pageNum = 1;
+	pageSize = 10;
+	count = 0;
+
+	constructor(obj?: Partial<PageConfig>) {
+		this.pageNum = obj?.pageNum ?? 1;
+		this.pageSize = obj?.pageSize ?? 10;
+	}
+}

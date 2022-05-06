@@ -3,6 +3,8 @@
 	"password": "Password",
 	"signin": "Sign In",
 	"signup": "Sign Up",
+	"signout": "Sign Out",
+	"register": "Add Register",
 	"firstname": "First Name",
 	"lastname": "Last Name",
 	"department": "Department",
@@ -23,20 +25,27 @@
 	},
 	"button": {
 		"newProject": "New Project",
+		"newTask": "New Task",
 		"cancel": "Cancel",
 		"submit": "Submit",
-		"upload": "Select Files"
+		"upload": "Upload",
+		"clear": "Clear"
 	},
 	"table": {
 		"header": {
 			"name": "Name",
 			"createTime": "Create Time",
+			"dueTime": "Due Time",
 			"status": "Status",
 			"members": "Members",
-			"fullName": "Full Name",
+			"fullName": "Name",
 			"email": "Email",
 			"position": "Position"
 		}
+	},
+	"tabs": {
+		"favorite": "Favorite",
+		"contacts": "Contacts"
 	},
 	"status": {
 		"pending": "Pending",
@@ -49,12 +58,15 @@
 	},
 	"overview": "Overview",
 	"statistic": "Statistic",
+	"summary": "Summary",
 	"profile": "Profile",
 	"contacts": "Contacts",
 	"detail": "Get Detail",
+	"createTime": "CREATE",
 	"dueTime": "DUE",
 	"todo": "TO DO",
 	"create": "Create on",
+	"noData": "No Data",
 	"project": {
 		"dialogTitle": "Create New project",
 		"manager": "Manager",
@@ -65,5 +77,19 @@
 			"name": "Project Name",
 			"description": "Description"
 		}
+	},
+	"task": {
+		"dialogTitle": "Create New task",
+		"info": "Task Info",
+		"members": "Members",
+		"form": {
+			"name": "Task Name",
+			"description": "Description",
+			"dueTime": "Due Time"
+		}
+	},
+	"file": {
+		"upload": "Files Upload",
+		"tip": "Drop files here, or click to select"
 	}
 }

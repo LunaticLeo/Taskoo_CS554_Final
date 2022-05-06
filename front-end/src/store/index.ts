@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import accountInfo from './accountInfo';
 import favoriteList, { getFavoriteList } from './favoriteList';
+import loading from './loading';
+import colorMode from './colorMode';
 
 const store = configureStore({
 	reducer: {
 		accountInfo,
-		favoriteList
+		favoriteList,
+		loading,
+		colorMode
 	},
 	middleware: getDefaultMiddleware =>
 		getDefaultMiddleware({

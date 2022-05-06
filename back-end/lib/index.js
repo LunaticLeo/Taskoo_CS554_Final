@@ -3,6 +3,7 @@ const { DBCollection, DBStaticCollection } = require('./Collection');
 const Account = require('./Account');
 const Bucket = require('./Bucket');
 const Project = require('./Project');
+const Task = require('./Task');
 
 module.exports = {
 	Check,
@@ -10,5 +11,6 @@ module.exports = {
 	DBStaticCollection,
 	Account,
 	Bucket,
-	Project
+	Project,
+	Task
 };

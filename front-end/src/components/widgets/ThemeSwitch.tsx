@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Box, styled, Switch } from '@mui/material';
-import { ColorModeContext } from '@/App';
+import { useAppDispatch } from '@/hooks/useStore';
+import { switchMode } from '@/store/colorMode';
 
 const ModeSwitch = styled(Switch)(({ theme }) => ({
 	width: 62,
@@ -50,10 +51,11 @@ const ModeSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const ThemeSwitch: React.FC = () => {
-	const colorMode = useContext(ColorModeContext);
+	const dispatch = useAppDispatch();
+
 	return (
 		<Box component='label'>
-			<ModeSwitch sx={{ mt: 1, mb: 1 }} onChange={colorMode.toggleColorMode} />
+			<ModeSwitch sx={{ mt: 1, mb: 1 }} onChange={() => dispatch(switchMode())} />
 		</Box>
 	);
 };

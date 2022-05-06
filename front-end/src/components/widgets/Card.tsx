@@ -1,11 +1,8 @@
 import React from 'react';
 import { Card as MuiCard, CardContent, Typography } from '@mui/material';
+import { CardProps, CardTitleProps } from '@/@types/props';
 
-interface CardProps {
-	title?: string;
-}
-
-export const CardTitle: React.FC<{ component?: React.ElementType<any> }> = ({ children, component = 'h2' }) => {
+export const CardTitle: React.FC<CardTitleProps> = ({ children, component = 'h2' }) => {
 	return (
 		<Typography component={component} variant='h5'>
 			{children}

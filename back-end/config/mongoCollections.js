@@ -22,5 +22,6 @@ module.exports = {
 	status: getCollectionFn('status'),
 	accounts: getCollectionFn('accounts'),
 	buckets: getCollectionFn('buckets'),
-	projects: getCollectionFn('projects')
+	projects: getCollectionFn('projects'),
+	tasks: getCollectionFn('tasks')
 };

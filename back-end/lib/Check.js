@@ -79,7 +79,12 @@ module.exports = {
 
 	// TODO
 	email(param) {
-		return param;
+		const reg = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+([.][a-zA-Z]+){1,2}$/;
+		if (reg.test(param)) {
+			return param;
+		} else {
+			throw Error(`The email ${param} is not valid`);
+		}
 	},
 
 	password(param) {
@@ -100,13 +105,19 @@ module.exports = {
 		return param;
 	},
 
-	status(param) {
-		if (param === null || param === undefined) {
-			throw Error('status is not provided');
-		}
+	status(param, allowNull = false) {
+		if (allowNull) {
+			if (![...Status, null].includes(param)) {
+				throw Error(`status: ${param} is not valid`);
+			}
+		} else {
+			if (param === null || param === undefined) {
+				throw Error('status is not provided');
+			}
 
-		if (!isType(param, 'string') || param.trim() === '' || !Status.includes(param)) {
-			throw Error(`status: ${param} is not valid`);
+			if (!isType(param, 'string') || param.trim() === '' || !Status.includes(param)) {
+				throw Error(`status: ${param} is not valid`);
+			}
 		}
 
 		return param;

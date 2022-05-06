@@ -1,65 +1,78 @@
-interface DBCollections {
+interface Menu {
+	title?: string;
+	id: string | number;
+	children: MenuItem[];
+}
+
+interface MenuItem {
+	icon: React.ReactElement;
+	text: string;
+	route: string;
+}
+
+type RequestMethod = 'get' | 'post' | 'put' | 'delete';
+interface ResponseData<T> {
+	code: number;
+	message: string;
+	data?: T;
+}
+type AxiosHttp = Record<RequestMethod, <T = {}>(path: string, param?: Object) => Promise<ResponseData<T>>>;
+
+/************************************************************* Account *************************************************************/
+interface Account<T = string | StaticData> {
 	_id: string;
-}
-
-interface AccountInfo extends DBCollections {
-	fullName?: string;
-	avatar: string | null;
-}
-
-interface Account extends AccountInfo {
 	email: string;
 	firstName: string;
 	lastName: string;
-	department: string;
-	position: string;
-	bucket: string;
+	department: T;
+	position: T;
+	avatar: string;
 }
 
-type StoreAccountInfo = Omit<Account, 'bucket'> & { fullName: string };
+type WithRole<S, U = string | StaticData> = S & { role: U };
+type WithFullName<S> = S & { fullName: string };
 
-interface ProjectList extends DBCollections {
-	name: string;
-	createTime: number;
-	status: StaticStatus;
-	members: Required<AccountInfo>[];
-}
-
-type ProjectForm = {
-	name: string;
-	description: string;
-	members: (AccountInfo & { role: string })[];
-	attachments: File[];
-};
-type ProjectFormData = Record<keyof ProjectForm, string | string[] | File | File[]>;
-
-interface ContactList extends AccountInfo {
-	email: string;
-	position: string;
-}
-
-interface Project extends DBCollections, Omit<ProjectForm, keyof { attachments: string[] }> {
-	manager: AccountInfo & { role: string };
-	task: string[];
-	status: StaticStatus;
-	createTime: number;
-}
-
-interface TaskInfo extends DBCollections {
-	name: string;
-	description?: string;
-	dueTime: number;
-	status: string;
-	members: AccountInfo[];
-}
-
-interface Task extends TaskInfo {
-	project: string;
-	createTime: number;
-	attachments?: string[];
-}
-
-interface FavoriteInfo {
+/************************************************************* Porject *************************************************************/
+interface Project {
 	_id: string;
 	name: string;
+	description: string;
+	createTime: number;
+	members: WithRole<Account<StaticData>, StaticData>[];
+	status: StaticStatus;
+	tasks: string[];
+	attachments: string[];
 }
+
+type ProjectInfo = Pick<Project, '_id' | 'name' | 'createTime' | 'status'> & {
+	members: WithRole<Omit<Account, 'department' | 'position'>>[];
+};
+
+/************************************************************* Task *************************************************************/
+interface Task {
+	_id: string;
+	name: string;
+	description: string;
+	project: string;
+	members: WithRole<Account<StaticData>, StaticData>[];
+	createTime: number;
+	dueTime: number;
+	status: StaticStatus;
+	attachments: string[];
+}
+
+type TaskInfo = Omit<Task, 'attachments'> & {
+	members: WithRole<Omit<Account, 'department' | 'position'>>[];
+};
+
+type SearchOptions = { name: string; project: string; status: StaticStatus };
+
+/************************************************************* Chart *************************************************************/
+type StatisticPieChartOptions = Record<Lowercase<StaticStatus>, number> & { borderColor?: string };
+type StatisticBarChartOptions = {
+	_id: string;
+	name: string;
+	statistic: Record<Lowercase<StaticStatus>, number>;
+};
+
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;

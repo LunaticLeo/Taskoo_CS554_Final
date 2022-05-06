@@ -2,24 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
-import { getStaticData, toCapitalize } from '@/utils';
+import { toCapitalize, toFormData } from '@/utils';
 import Logo from '../widgets/Logo';
 import http from '@/utils/http';
-
-interface FormInfo {
-	firstName: string;
-	lastName: string;
-	department: string;
-	position: string;
-}
-
-type SignUpForm = FormInfo & { email: string; password: string };
+import { Form } from '@/@types/form';
+import { useAppDispatch } from '@/hooks/useStore';
+import { setLoading } from '@/store/loading';
+import useNotification from '@/hooks/useNotification';
 
 const Signup: React.FC = () => {
 	const { t } = useTranslation();
 	const { registerId } = useParams();
 	const navigate = useNavigate();
-	const [signUpForm, setSignUpForm] = useState<SignUpForm>({
+	const dispatch = useAppDispatch();
+	const notificate = useNotification();
+	const [signUpForm, setSignUpForm] = useState<Form.SignUpForm>({
 		firstName: '',
 		lastName: '',
 		email: '',
@@ -27,7 +24,7 @@ const Signup: React.FC = () => {
 		department: '',
 		position: ''
 	});
-	const [displayForm, setDisplayForm] = useState<FormInfo>({
+	const [displayForm, setDisplayForm] = useState<Omit<Form.SignUpForm, 'email' | 'password'>>({
 		firstName: '',
 		lastName: '',
 		department: '',
@@ -36,25 +33,52 @@ const Signup: React.FC = () => {
 
 	useEffect(() => {
 		http
-			.get<SignUpForm>('/account/registerInfo', { registerId })
-			.then(async res => {
-				const data = res.data as SignUpForm;
-				setSignUpForm(preVal => ({ ...preVal, ...data }));
-				const department = ((await getStaticData('departments', data.department)) as StaticData).name;
-				const position = ((await getStaticData('positions', data.position)) as StaticData).name;
-				debugger;
+			.get<Omit<Form.SignUpForm<StaticData>, 'email' | 'password'>>('/account/registerInfo', { registerId })
+			.then(res => {
+				const { firstName, lastName, department, position } = res.data!;
+				setSignUpForm(preVal => ({
+					...preVal,
+					firstName,
+					lastName,
+					department: department._id,
+					position: position._id
+				}));
+
 				setDisplayForm({
-					firstName: toCapitalize(data.firstName),
-					lastName: toCapitalize(data.lastName),
-					department,
-					position
+					firstName: toCapitalize(firstName),
+					lastName: toCapitalize(lastName),
+					department: department.name,
+					position: position.name
 				});
 			})
 			.catch(err => navigate(`/error/404/${err.message}`));
 	}, []);
 
+	const handleInputChange = (value: Partial<Form.SignUpForm>) => {
+		setSignUpForm(preVal => ({ ...preVal, ...value }));
+	};
+
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		dispatch(setLoading(true));
+		const formData = toFormData<Form.SignUpForm>(signUpForm);
+		http
+			.post('/account/signup', formData)
+			.then(res => {
+				notificate.success(res.message);
+				setTimeout(() => {
+					dispatch(setLoading(false));
+					navigate('/account/signin', { replace: true, state: { email: res.data! } });
+				}, 1000);
+			})
+			.catch(err => {
+				notificate.error(err?.message ?? err);
+				setTimeout(() => dispatch(setLoading(false)), 1000);
+			});
+	};
+
 	return (
-		<Stack component='form' autoComplete='off' spacing={1.5}>
+		<Stack component='form' autoComplete='off' spacing={1.5} onSubmit={handleSubmit}>
 			<Logo />
 			<Stack direction='row' justifyContent='space-between' spacing={1.5}>
 				<TextField
@@ -74,18 +98,32 @@ const Signup: React.FC = () => {
 					value={displayForm.lastName}
 				/>
 			</Stack>
-			<TextField id='email' label={t('email')} variant='standard' type='email' />
-			<TextField id='password' label={t('password')} variant='standard' type='password' />
+			<TextField
+				id='email'
+				label={t('email')}
+				variant='standard'
+				type='email'
+				value={signUpForm.email}
+				onChange={e => handleInputChange({ email: e.target.value.trim() })}
+			/>
+			<TextField
+				id='password'
+				label={t('password')}
+				variant='standard'
+				type='password'
+				value={signUpForm.password}
+				onChange={e => handleInputChange({ password: e.target.value.trim() })}
+			/>
 			<TextField id='department' label={t('department')} variant='standard' disabled value={displayForm.department} />
 			<TextField id='position' label={t('position')} variant='standard' disabled value={displayForm.position} />
 
-			<Button size='large' variant='contained'>
+			<Button size='large' variant='contained' type='submit'>
 				{t('signup')}
 			</Button>
 
 			<Typography variant='body2' color='text.secondary' sx={{ alignSelf: 'flex-end' }}>
 				{t('signupTip')}
-				<Link component={RouterLink} to='/'>
+				<Link component={RouterLink} to='/account/signin'>
 					{t('signin')}
 				</Link>
 			</Typography>

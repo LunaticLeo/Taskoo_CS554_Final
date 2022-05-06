@@ -1,75 +1,54 @@
-import React, { useMemo, useState } from 'react';
-import TableList from '@/components/widgets/TableList';
-import { CardContent, Chip, Link } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
+import { CardContent, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Link as NavLink } from 'react-router-dom';
-import * as dayjs from 'dayjs';
+import { DashboardProps, PageConfig, WithPage } from '@/@types/props';
+import { Page } from '@/utils';
 import Styled from '@/components/widgets/Styled';
+import TableList from '@/components/widgets/TableList';
+import useFormatList from '@/hooks/useFormatList';
+import http from '@/utils/http';
+import CategorySwitch from './CategorySwitch';
+import { HEIGHT } from './Dashboard';
 
-const header: (keyof ProjectList)[] = ['name', 'createTime', 'status', 'members'];
-
-const List: React.FC = () => {
+const List: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 	const { t } = useTranslation();
-	const [data, setData] = useState<ProjectList[]>([
-		{
-			_id: '1',
-			name: 'Demo',
-			createTime: 1649730701083,
-			status: 'Pending',
-			members: [
-				{
-					_id: '5cf94f63-9def-4dea-b058-f8d9c4bf9337',
-					fullName: 'Shihao Xiong',
-					avatar: 'https://storage.cloud.google.com/taskoo_bucket/IMG_0586.JPG'
-				},
-				{
-					_id: '4bbabe1c-778e-4716-ae15-160752990ce7',
-					fullName: 'Yufu Liao',
-					avatar: 'https://storage.cloud.google.com/taskoo_bucket/IMG_0587.JPG'
-				},
-				{
-					_id: '6335ffda-42e7-45c4-b568-8cdd22a1d130',
-					fullName: 'Shilin Ding',
-					avatar: 'https://storage.cloud.google.com/taskoo_bucket/IMG_0588.JPG'
-				},
-				{
-					_id: '1b1fb0f3-6f8b-4077-8ed4-21c1bd38a6bf',
-					fullName: 'Peixin Dai',
-					avatar: 'https://storage.cloud.google.com/taskoo_bucket/IMG_0589.JPG'
-				},
-				{
-					_id: '8aeb1eb0-d3fa-4582-ad35-78db86159a5b',
-					fullName: 'Wenjing Zhou',
-					avatar: 'https://storage.cloud.google.com/taskoo_bucket/IMG_0590.JPG'
-				}
-			]
-		}
-	]);
+	const [data, setData] = useState<ProjectInfo[] | TaskInfo[]>([]);
+	const [pageConfig, setPageConfig] = useState<PageConfig>(new Page({ pageSize: 10 }));
+	const header: (keyof ProjectInfo)[] | (keyof TaskInfo)[] = useMemo(() => {
+		return category === 'project'
+			? ['name', 'createTime', 'status', 'members']
+			: ['name', 'createTime', 'dueTime', 'status', 'members'];
+	}, [category]);
+	const tableData = category === 'project' ? useFormatList(data, _id => `/home/project/${_id}`) : useFormatList(data);
 
-	const tableData = useMemo(
-		() =>
-			data.map(item => {
-				const { _id, name, createTime, status, members } = item;
-				return {
-					_id,
-					name: (
-						<Link component={NavLink} to='' underline='hover'>
-							{name}
-						</Link>
-					),
-					createTime: dayjs(createTime).format('MM/DD/YYYY'),
-					status: <Chip label={status} color='success' variant='outlined' />,
-					members: <Styled.AvatarGroup data={members} />
-				};
-			}),
-		[data]
-	);
+	useEffect(() => {
+		const { pageNum, pageSize } = pageConfig;
+		http.get<WithPage<ProjectInfo[] | TaskInfo[]>>(`/${category}/list`, { pageNum, pageSize }).then(res => {
+			setData(res.data!.list);
+			setPageConfig(preVal => ({ ...preVal, count: res.data!.count }));
+		});
+	}, [category, pageConfig.pageNum]);
+
+	const handlePageChange = (_: unknown, value: number) => {
+		setPageConfig(preVal => ({ ...preVal, pageNum: value }));
+	};
 
 	return (
 		<Styled.Card>
 			<CardContent>
-				<Styled.Title>{t('overview')}</Styled.Title>
-				<TableList<ProjectList> showHeader size='small' header={header} data={tableData} />
+				<Stack direction='row' justifyContent='space-between'>
+					<Styled.Title>{t('overview')}</Styled.Title>
+					<CategorySwitch category={category} setCategoty={setCategoty} />
+				</Stack>
+				<TableList<ProjectInfo | TaskInfo>
+					showHeader
+					size='small'
+					header={header as any}
+					data={tableData}
+					sx={{ height: HEIGHT }}
+					pageConfig={pageConfig}
+					onPageChange={handlePageChange}
+				/>
 			</CardContent>
 		</Styled.Card>
 	);
