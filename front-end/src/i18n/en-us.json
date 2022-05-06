@@ -44,7 +44,8 @@
 		}
 	},
 	"tabs": {
-		"favorite": "Favorite"
+		"favorite": "Favorite",
+		"contacts": "Contacts"
 	},
 	"status": {
 		"pending": "Pending",

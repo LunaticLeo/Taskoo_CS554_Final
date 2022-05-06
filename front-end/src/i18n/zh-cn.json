@@ -44,7 +44,8 @@
 		}
 	},
 	"tabs": {
-		"favorite": "我的收藏"
+		"favorite": "我的收藏",
+		"contacts": "联系人"
 	},
 	"status": {
 		"pending": "待开始",
