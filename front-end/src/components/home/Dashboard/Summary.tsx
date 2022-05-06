@@ -21,7 +21,7 @@ const Summary: React.FC = () => {
 		<Styled.Card>
 			<CardContent>
 				<Styled.Title>{t('summary')}</Styled.Title>
-				<Chart height='400px' option={option} />
+				<Chart height='300px' option={option} />
 			</CardContent>
 		</Styled.Card>
 	);

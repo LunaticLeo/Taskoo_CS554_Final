@@ -34,7 +34,16 @@ const Home: React.FC = () => {
 		<Box sx={{ display: 'flex', minHeight: '100vh' }}>
 			<Nav openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
 			<Paper component='main' square elevation={0} sx={{ flex: 1 }}>
-				<Toolbar component='div' ref={toolbar}>
+				<Toolbar
+					component='div'
+					ref={toolbar}
+					sx={{
+						position: 'sticky',
+						top: 0,
+						background: theme => theme.palette.background.paper,
+						zIndex: theme => theme.zIndex.appBar
+					}}
+				>
 					<IconButton
 						aria-label='drawer-control'
 						sx={{ mr: 2, display: { lg: 'none' } }}

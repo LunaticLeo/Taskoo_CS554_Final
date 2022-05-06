@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react';
 import Chart from '@/components/widgets/Chart';
-import { CardContent, Stack, Theme, useTheme } from '@mui/material';
+import { CardContent, Stack, Theme, useMediaQuery, useTheme } from '@mui/material';
 import { TFunction, useTranslation } from 'react-i18next';
 import Styled from '@/components/widgets/Styled';
 import { DashboardProps, Option } from '@/@types/props';
@@ -11,12 +11,17 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 	const { t } = useTranslation();
 	const [option, setOption] = useState<Option>({});
 	const theme = useTheme();
+	const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
+	let httpData: any;
 
 	useLayoutEffect(() => {
-		http.get<Record<Lowercase<StaticStatus>, number>>(`/${category}/status/statistic`).then(res => {
-			setOption(statisticChartOption({ ...res.data!, borderColor: theme.palette.background.paper }, t, theme));
-		});
-	}, [category]);
+		!httpData
+			? http.get<Record<Lowercase<StaticStatus>, number>>(`/${category}/status/statistic`).then(res => {
+					httpData = res.data!;
+					setOption(getOption({ ...res.data!, borderColor: theme.palette.background.paper }, t, theme, largeScreen));
+			  })
+			: setOption(getOption({ ...httpData!, borderColor: theme.palette.background.paper }, t, theme, largeScreen));
+	}, [category, largeScreen]);
 
 	return (
 		<Styled.Card>
@@ -25,26 +30,27 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 					<Styled.Title>{t('statistic')}</Styled.Title>
 					<CategorySwitch category={category} setCategoty={setCategoty} />
 				</Stack>
-				<Chart height='230px' option={option} />
+				<Chart height='350px' option={option} />
 			</CardContent>
 		</Styled.Card>
 	);
 };
 
-const statisticChartOption = (
+const getOption = (
 	{ pending, processing, testing, done, borderColor }: StatisticPieChartOptions,
 	t: TFunction<'translation', undefined>,
-	theme: Theme
+	theme: Theme,
+	largeScreen: boolean
 ): Option => {
 	return {
 		tooltip: { trigger: 'item' },
-		legend: { top: 'center', right: 'right', orient: 'vertical' },
+		legend: largeScreen ? { bottom: 0, left: 'center' } : { top: 'center', right: 'right', orient: 'vertical' },
 		series: [
 			{
 				name: t('statisticChart.statisticData') as any,
 				type: 'pie',
 				radius: ['40%', '70%'],
-				center: ['35%', '50%'],
+				center: ['50%', '50%'],
 				avoidLabelOverlap: false,
 				itemStyle: {
 					borderRadius: 8,

@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { Avatar, Badge as MuiBadge, Box, IconButton, Menu, MenuItem, styled, Tooltip, Typography } from '@mui/material';
+import {
+	alpha,
+	Avatar,
+	Badge as MuiBadge,
+	Box,
+	Divider,
+	IconButton,
+	ListItemIcon,
+	Menu as MuiMenu,
+	MenuItem,
+	styled,
+	Tooltip
+} from '@mui/material';
 import { stringAvatar } from '@/utils';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +22,7 @@ import { clear } from '@/store/accountInfo';
 import useNotification from '@/hooks/useNotification';
 import Styled from './Styled';
 import { useNavigate } from 'react-router-dom';
+import Logout from '@mui/icons-material/Logout';
 
 const AvatarMenu: React.FC<AvatarMenuProps> = ({ sx }) => {
 	const { t } = useTranslation();
@@ -37,7 +50,6 @@ const AvatarMenu: React.FC<AvatarMenuProps> = ({ sx }) => {
 				</IconButton>
 			</Tooltip>
 			<Menu
-				sx={{ mt: '45px' }}
 				id='menu-appbar'
 				anchorEl={anchorElUser}
 				keepMounted
@@ -47,15 +59,41 @@ const AvatarMenu: React.FC<AvatarMenuProps> = ({ sx }) => {
 				onClose={() => setAnchorElUser(null)}
 			>
 				<Styled.AccountInfo component={MenuItem} {...accountInfo} onClick={() => navigate('/home/profile')} />
-				<MenuItem>
-					<Typography textAlign='center' onClick={signOut}>
-						{t('signout')}
-					</Typography>
+				<Divider />
+				<MenuItem onClick={signOut}>
+					<ListItemIcon>
+						<Logout fontSize='small' />
+					</ListItemIcon>
+					{t('signout')}
 				</MenuItem>
 			</Menu>
 		</Box>
 	);
 };
+
+const Menu = styled(MuiMenu)(({ theme }) => ({
+	'& .MuiPaper-root': {
+		borderRadius: 6,
+		marginTop: '45px',
+		minWidth: 250,
+		color: theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
+		boxShadow:
+			'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+		'& .MuiMenu-list': {
+			padding: '4px 0'
+		},
+		'& .MuiMenuItem-root': {
+			'& .MuiSvgIcon-root': {
+				fontSize: 18,
+				color: theme.palette.text.secondary,
+				marginRight: theme.spacing(1.5)
+			},
+			'&:active': {
+				backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
+			}
+		}
+	}
+}));
 
 const Badge = styled(MuiBadge)(({ theme }) => ({
 	'& .MuiBadge-badge': {
