@@ -49,7 +49,12 @@ const StyledStatus: React.FC<StyledStatusProps> = ({ label, sx, variant = 'fille
 		/>
 	);
 };
-const StyledAccountInfo: React.FC<StyledAccountInfoProps> = ({ component = ListItem, onClick, ...accountInfo }) => {
+const StyledAccountInfo: React.FC<StyledAccountInfoProps> = ({
+	component = ListItem,
+	onClick,
+	children,
+	...accountInfo
+}) => {
 	const { firstName, lastName, avatar, position } = accountInfo;
 	const fullName = toFullName(firstName!, lastName!);
 
@@ -58,7 +63,7 @@ const StyledAccountInfo: React.FC<StyledAccountInfoProps> = ({ component = ListI
 			<ListItemAvatar>
 				{avatar ? <Avatar alt={fullName} src={avatar} /> : <Avatar alt={fullName} {...stringAvatar(fullName)} />}
 			</ListItemAvatar>
-			<ListItemText primary={fullName} secondary={(position as StaticData)?.name ?? position} />
+			{children ?? <ListItemText primary={fullName} secondary={(position as StaticData)?.name ?? position} />}
 		</Box>
 	);
 };

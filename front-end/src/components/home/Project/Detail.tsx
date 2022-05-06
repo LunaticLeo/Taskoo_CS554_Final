@@ -338,7 +338,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 			setTaskForm(preVal => {
 				const { members: memberList } = preVal;
 				const creator = members?.find(item => item._id === _id);
-				memberList.unshift({ _id, role: creator?.role! });
+				memberList.some(item => item._id === creator?._id) && memberList.unshift({ _id, role: creator?.role! });
 				return { ...preVal };
 			});
 	};

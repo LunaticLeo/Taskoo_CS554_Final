@@ -286,9 +286,37 @@ const getTasks = async projectId => {
 					from: 'accounts',
 					localField: 'members._id',
 					foreignField: '_id',
-					pipeline: [{ $project: { bucket: 0, disabled: 0, password: 0 } }],
-					as: 'members'
+					pipeline: [
+						{
+							$project: { bucket: 0, disabled: 0, password: 0, position: 0, department: 0 }
+						}
+					],
+					as: 'membersRef'
 				}
+			},
+			{
+				$addFields: {
+					members: {
+						$map: {
+							input: '$membersRef',
+							in: {
+								$arrayToObject: {
+									$concatArrays: [
+										{ $objectToArray: '$$this' },
+										{
+											$objectToArray: {
+												$arrayElemAt: ['$members', { $indexOfArray: ['$members._id', '$$this._id'] }]
+											}
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				$project: { membersRef: 0 }
 			}
 		])
 		.toArray();

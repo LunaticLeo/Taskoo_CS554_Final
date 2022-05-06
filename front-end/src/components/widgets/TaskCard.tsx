@@ -13,6 +13,7 @@ import {
 	List,
 	ListItem,
 	ListItemButton,
+	ListItemText,
 	Stack,
 	Typography
 } from '@mui/material';
@@ -24,7 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import Folder from './Folder';
 import FileUploader from './FileUploader';
 import { FileList } from '../home/Project/Detail';
-import { toFormData } from '@/utils';
+import { toFormData, toFullName } from '@/utils';
 import http from '@/utils/http';
 import useNotification from '@/hooks/useNotification';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -130,7 +131,9 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 					<List dense sx={{ height: '100%', overflow: 'auto' }}>
 						{data.members.map(member => (
 							<ListItem key={member._id} disablePadding>
-								<Styled.AccountInfo {...member} component={ListItemButton} />
+								<Styled.AccountInfo {...member} component={ListItemButton}>
+									<ListItemText primary={toFullName(member.firstName, member.lastName)} secondary={member.role?.name} />
+								</Styled.AccountInfo>
 							</ListItem>
 						))}
 					</List>
