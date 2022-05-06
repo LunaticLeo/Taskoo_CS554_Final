@@ -15,7 +15,9 @@ import {
 	Select,
 	Stack,
 	TextField,
-	Typography
+	Typography,
+	useMediaQuery,
+	useTheme
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import Styled from '@/components/widgets/Styled';
@@ -42,6 +44,8 @@ const Register: React.FC<WithSxProp<{}>> = ({ sx }) => {
 	const { email } = useValidation();
 	const notificate = useNotification();
 	const dispatch = useAppDispatch();
+	const theme = useTheme();
+	const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 	const [registerForm, setRegisterForm] = useState<Form.RegisterForm>(new RegisterFromClass());
 	const [options, setOptions] = useState<Record<'departments' | 'positions', StaticData[]>>({
 		departments: [],
@@ -88,7 +92,7 @@ const Register: React.FC<WithSxProp<{}>> = ({ sx }) => {
 	return (
 		<>
 			<Styled.Title>{t('register')}</Styled.Title>
-			<Box component='img' src={illustration} sx={{ mt: 2, mb: 2 }} />
+			{largeScreen && <Box component='img' src={illustration} sx={{ mt: 2, mb: 2 }} />}
 			<Stack component='form' onSubmit={handleSubmit} spacing={1.5} sx={{ flex: 1 }}>
 				<TextField
 					id='email'

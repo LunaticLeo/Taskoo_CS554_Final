@@ -80,7 +80,7 @@ const ContactList: React.FC<ContactListProps> = ({ data }) => {
 					</FormControl>
 				))}
 			</Stack>
-			<List>
+			<List sx={{ height: { xs: 'auto', md: '85%' }, overflow: { xs: 'inherit', md: 'auto' } }}>
 				{listData.map(contact => (
 					<ContactListItem key={contact._id} data={contact} />
 				))}

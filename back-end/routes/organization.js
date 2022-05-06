@@ -7,9 +7,6 @@ router.get('/members', async (req, res) => {
 	const { pageNum, pageSize, department } = req.query;
 
 	try {
-		// if (department && (department !== 'self' || Check.department(department))) {
-		// 	throw Error('department can only be "self" or id');
-		// }
 		if (![undefined, 'self'].includes(department)) {
 			Check.department(department);
 		}

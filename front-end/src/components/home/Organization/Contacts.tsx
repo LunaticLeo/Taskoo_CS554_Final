@@ -27,7 +27,7 @@ const Contacts: React.FC<ContactsProps> = ({ data }) => {
 		setType(value);
 	};
 
-	const display = useMemo(() => types.find(item => item.name === type)?.component, [type]);
+	const display = useMemo(() => types.find(item => item.name === type)?.component, [type, data]);
 
 	return (
 		<>

@@ -15,7 +15,15 @@ const Organzation: React.FC = () => {
 	}, []);
 	return (
 		<>
-			<Grid container sx={{ flexDirection: { xs: 'row-reverse', lg: 'row' } }} spacing={3}>
+			<Grid
+				container
+				sx={{
+					flexDirection: { xs: 'column-reverse', md: 'row' },
+					height: { xs: 'auto', md: '100%' },
+					overflow: { xs: 'inherit', md: 'hidden' }
+				}}
+				spacing={3}
+			>
 				<Grid item xs={12} md={8} lg={9}>
 					<Contacts data={data} />
 				</Grid>
