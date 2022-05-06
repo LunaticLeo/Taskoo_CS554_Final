@@ -1,10 +1,25 @@
 const { getMembers } = require('../data/organization');
+const { Check } = require('../lib');
 
 const router = require('express').Router();
 
-router.get('/members', async (_, res) => {
+router.get('/members', async (req, res) => {
+	const { pageNum, pageSize, department } = req.query;
+
 	try {
-		const data = await getMembers();
+		// if (department && (department !== 'self' || Check.department(department))) {
+		// 	throw Error('department can only be "self" or id');
+		// }
+		if (![undefined, 'self'].includes(department)) {
+			Check.department(department);
+		}
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		let _department = department === 'self' ? req.session.accountInfo.department : department;
+		const data = await getMembers(_department, { pageNum, pageSize });
 		res.json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
