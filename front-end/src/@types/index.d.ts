@@ -74,3 +74,5 @@ type StatisticBarChartOptions = {
 	name: string;
 	statistic: Record<Lowercase<StaticStatus>, number>;
 };
+
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;

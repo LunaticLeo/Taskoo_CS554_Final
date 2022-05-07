@@ -1,5 +1,5 @@
 import { SxProps, Theme } from '@mui/material';
-import { BarSeriesOption, PieSeriesOption } from 'echarts/charts';
+import { BarSeriesOption, PieSeriesOption, SunburstSeriesOption, TreemapSeriesOption } from 'echarts/charts';
 import {
 	DataZoomComponentOption,
 	GraphicComponentOption,
@@ -37,6 +37,8 @@ type Option = ComposeOption<
 	| GraphicComponentOption
 	| PieSeriesOption
 	| BarSeriesOption
+	| TreemapSeriesOption
+	| SunburstSeriesOption
 	| TooltipComponentOption
 	| LegendComponentOption
 	| GridComponentOption
@@ -48,21 +50,21 @@ type LangButtonProps = WithSxProp<{}>;
 type LoadingProps = { open: boolean };
 type LogoProps = { fontSize?: number; color?: string };
 
-type StyledStatusProps = WithSxProp<{ label: string; variant?: 'filled' | 'outlined' }>;
+type StyledStatusProps = WithSxProp<{ label: string; variant?: 'filled' | 'outlined'; size?: 'small' | 'medium' }>;
 type StyledAccountInfoProps = Partial<Account> & { component?: React.ElementType<any>; onClick?: () => void };
 type StyledAvatarGroupProps = {
 	data: Required<Pick<Account, 'avatar' | 'firstName' | 'lastName'>>[];
 	max?: number;
 };
 type StyledDialogProps = { open: boolean; onClose: React.Dispatch<React.SetStateAction<boolean>> };
-type TableListProps<T extends { _id: string; [prop: string]: any }> = {
+type TableListProps<T extends { _id: string; [prop: string]: any }> = WithSxProp<{
 	showHeader?: boolean;
 	header: (keyof T)[];
 	data: T[] | Record<keyof T, any>[];
 	size?: 'small' | 'medium';
 	pageConfig?: PageConfig;
 	onPageChange?: (event: React.ChangeEvent<unknown>, value: number) => void;
-};
+}>;
 type WithPage<T> = { count: number; list: T };
 type PageConfig = {
 	pageSize: number;
@@ -79,10 +81,16 @@ type TaskColumnData = Record<Lowercase<StaticStatus>, Task[]>;
 type TasksProps = WithSxProp<{
 	data: TaskColumnData;
 	setData: (value: React.SetStateAction<TaskColumnData>) => void;
+	permission: boolean;
 	[props: string]: any;
 }>;
-type TaskColumnProps = { status: string; data: Task[] };
-type TaskCardProps = WithSxProp<{ data: Task; clickable?: boolean }>;
+type TaskColumnProps = { status: string; data: Task[]; permission: boolean };
+type TaskCardProps = WithSxProp<{
+	data: Task;
+	clickable?: boolean;
+	deleteable?: boolean;
+	onDelete?: (id: string) => void;
+}>;
 type DetailDialogProps = StyledDialogProps & { data: Task };
 
 type TabPanelProps = { value: string | number; hidden: boolean; [props: string]: any };
@@ -112,3 +120,9 @@ type FileUploaderProps = WithSxProp<{ onFileSelected: (files: File[]) => void; s
 type FolderProps = { filesUrl: string[] };
 type FileItemProps = { fileUrl: string };
 type FileListProps = WithSxProp<{ files: File[]; onDelete: (index: number) => void }>;
+
+type ContactDisplayType = 'list' | 'treemap' | 'sunburst';
+type RelationsChartProps = { data: Account<StaticData>[]; type?: 'treemap' | 'sunburst' };
+type ContactsProps = { data: Account<StaticData>[] };
+type ContactListProps = WithSxProp<ContactsProps & { dense?: boolean; filteable?: boolean }>;
+type ContactListItemProps = { data: Account<StaticData> };

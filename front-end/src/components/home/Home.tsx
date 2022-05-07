@@ -12,6 +12,7 @@ import Project from './Project/Project';
 import Profile from './Profile/Profile';
 import Detail from './Project/Detail';
 import Search from '../widgets/Search';
+import Organzation from './Organization/Organization';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
@@ -33,7 +34,16 @@ const Home: React.FC = () => {
 		<Box sx={{ display: 'flex', minHeight: '100vh' }}>
 			<Nav openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
 			<Paper component='main' square elevation={0} sx={{ flex: 1 }}>
-				<Toolbar component='div' ref={toolbar}>
+				<Toolbar
+					component='div'
+					ref={toolbar}
+					sx={{
+						position: 'sticky',
+						top: 0,
+						background: theme => theme.palette.background.paper,
+						zIndex: theme => theme.zIndex.appBar
+					}}
+				>
 					<IconButton
 						aria-label='drawer-control'
 						sx={{ mr: 2, display: { lg: 'none' } }}
@@ -60,6 +70,7 @@ const Home: React.FC = () => {
 						<Route path='/profile' element={<Profile />} />
 						<Route path='/project' element={<Project />} />
 						<Route path='/project/:id' element={<Detail />} />
+						<Route path='/organization' element={<Organzation />} />
 					</Routes>
 				</Box>
 			</Paper>

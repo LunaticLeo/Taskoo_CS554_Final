@@ -8,11 +8,12 @@ import TableList from '@/components/widgets/TableList';
 import useFormatList from '@/hooks/useFormatList';
 import http from '@/utils/http';
 import CategorySwitch from './CategorySwitch';
+import { HEIGHT } from './Dashboard';
 
 const List: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 	const { t } = useTranslation();
 	const [data, setData] = useState<ProjectInfo[] | TaskInfo[]>([]);
-	const [pageConfig, setPageConfig] = useState<PageConfig>(new Page({ pageSize: 5 }));
+	const [pageConfig, setPageConfig] = useState<PageConfig>(new Page({ pageSize: 10 }));
 	const header: (keyof ProjectInfo)[] | (keyof TaskInfo)[] = useMemo(() => {
 		return category === 'project'
 			? ['name', 'createTime', 'status', 'members']
@@ -44,6 +45,7 @@ const List: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 					size='small'
 					header={header as any}
 					data={tableData}
+					sx={{ height: HEIGHT }}
 					pageConfig={pageConfig}
 					onPageChange={handlePageChange}
 				/>

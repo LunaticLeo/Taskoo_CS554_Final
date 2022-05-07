@@ -9,9 +9,11 @@ import {
 	DialogContent,
 	DialogTitle,
 	Divider,
+	IconButton,
 	List,
 	ListItem,
 	ListItemButton,
+	ListItemText,
 	Stack,
 	Typography
 } from '@mui/material';
@@ -23,12 +25,13 @@ import { useNavigate } from 'react-router-dom';
 import Folder from './Folder';
 import FileUploader from './FileUploader';
 import { FileList } from '../home/Project/Detail';
-import { toFormData } from '@/utils';
+import { toFormData, toFullName } from '@/utils';
 import http from '@/utils/http';
 import useNotification from '@/hooks/useNotification';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = (
-	{ data, sx, clickable = false, ...rest },
+	{ data, sx, clickable = false, deleteable = true, onDelete, ...rest },
 	ref
 ) => {
 	const { t } = useTranslation();
@@ -73,6 +76,11 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 					<Button color='primary' onClick={() => setOpen(true)}>
 						{t('detail')}
 					</Button>
+					{deleteable && onDelete && (
+						<IconButton color='error' sx={{ ml: 'auto!important' }} onClick={() => onDelete(data._id)}>
+							<DeleteOutlineOutlinedIcon color='inherit' />
+						</IconButton>
+					)}
 				</CardActions>
 			</Card>
 			<DetailDialog open={open} onClose={() => setOpen(false)} data={data} />
@@ -123,7 +131,9 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 					<List dense sx={{ height: '100%', overflow: 'auto' }}>
 						{data.members.map(member => (
 							<ListItem key={member._id} disablePadding>
-								<Styled.AccountInfo {...member} component={ListItemButton} />
+								<Styled.AccountInfo {...member} component={ListItemButton}>
+									<ListItemText primary={toFullName(member.firstName, member.lastName)} secondary={member.role?.name} />
+								</Styled.AccountInfo>
 							</ListItem>
 						))}
 					</List>

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Chip, Link, Typography } from '@mui/material';
+import { Chip, Link } from '@mui/material';
 import { Link as NavLink } from 'react-router-dom';
 import dayjs from 'dayjs';
 import Styled from '@/components/widgets/Styled';

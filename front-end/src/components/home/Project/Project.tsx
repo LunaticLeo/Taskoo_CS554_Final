@@ -77,6 +77,7 @@ const Project: React.FC = () => {
 						header={header}
 						data={tableData}
 						pageConfig={pageConfig}
+						sx={{ height: '85vh' }}
 						onPageChange={handlePageChange}
 					/>
 				</Grid>

@@ -12,7 +12,7 @@ import { toCapitalize } from '@/utils';
 
 const header: (keyof TaskInfo)[] = ['name', 'createTime', 'dueTime', 'status', 'members'];
 
-const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
+const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 	const theme = useTheme();
 	const notification = useNotification();
 	const [STATUS, setSTATUS] = useState<StatusPrerquest>({} as any);
@@ -82,7 +82,7 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
 			) : (
 				<Stack direction='row' spacing={{ md: 2, lg: 5 }} sx={sx}>
 					{Object.keys(data).map(item => (
-						<TaskColumn key={item} status={item} data={(data as any)[item]} />
+						<TaskColumn key={item} status={item} data={(data as any)[item]} permission={permission} />
 					))}
 				</Stack>
 			)}
@@ -90,22 +90,39 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx }) => {
 	);
 };
 
-const TaskColumn: React.FC<TaskColumnProps> = ({ status, data }) => {
+const TaskColumn: React.FC<TaskColumnProps> = ({ status, data, permission }) => {
 	const { t } = useTranslation();
+	const notificate = useNotification();
+
+	const handleDelete = (id: string) => {
+		http
+			.delete('/task/remove', { id })
+			.then(res => notificate.success(res.message))
+			.catch(err => notificate.error(err?.message ?? err));
+	};
 
 	return (
 		<Box sx={{ flex: 1 }}>
-			<Typography variant='h6' component='div'>
-				{t(`status.${status.toLowerCase()}`).toUpperCase()}
-			</Typography>
-			<Divider
+			<Box
 				sx={{
-					backgroundColor: theme => (theme.palette as any)[status.toLowerCase()].main,
-					borderBottomWidth: 'medium',
-					mt: 1,
-					mb: 2
+					position: 'sticky',
+					top: '64px',
+					background: theme => theme.palette.background.paper,
+					zIndex: theme => theme.zIndex.appBar
 				}}
-			/>
+			>
+				<Typography variant='h6' component='div'>
+					{t(`status.${status.toLowerCase()}`).toUpperCase()}
+				</Typography>
+				<Divider
+					sx={{
+						backgroundColor: theme => (theme.palette as any)[status.toLowerCase()].main,
+						borderBottomWidth: 'medium',
+						mt: 1,
+						mb: 2
+					}}
+				/>
+			</Box>
 			<Droppable droppableId={status}>
 				{provided => (
 					<Stack spacing={2} ref={provided.innerRef} {...provided.droppableProps}>
@@ -117,6 +134,8 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ status, data }) => {
 										{...provided.draggableProps}
 										ref={provided.innerRef}
 										data={item}
+										deleteable={permission}
+										onDelete={handleDelete}
 									/>
 								)}
 							</Draggable>

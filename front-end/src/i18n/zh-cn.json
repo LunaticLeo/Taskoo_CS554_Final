@@ -4,6 +4,7 @@
 	"signin": "登录",
 	"signup": "注册",
 	"signout": "退出登录",
+	"register": "添加登记",
 	"firstname": "名称",
 	"lastname": "姓氏",
 	"department": "部门",
@@ -27,7 +28,8 @@
 		"newTask": "新建任务",
 		"cancel": "取消",
 		"submit": "提交",
-		"upload": "上传"
+		"upload": "上传",
+		"clear": "清空"
 	},
 	"table": {
 		"header": {
@@ -42,7 +44,8 @@
 		}
 	},
 	"tabs": {
-		"favorite": "我的收藏"
+		"favorite": "我的收藏",
+		"contacts": "联系人"
 	},
 	"status": {
 		"pending": "待开始",

@@ -46,7 +46,7 @@ const create = async (obj, category, cb) => {
  * @param {string} objid
  * @param {string} category project | task
  */
- const deleteobj = async (objid, category, cb) => {
+const deleteobj = async (objid, category, cb) => {
 	if (!['project', 'task'].includes(category)) throw Error('category is invalid');
 
 	let collection;
@@ -56,16 +56,15 @@ const create = async (obj, category, cb) => {
 		collection = await tasks();
 	}
 
-	const deleteobj = await collection.findOne({_id:objid});
+	const deleteobj = await collection.findOne({ _id: objid });
 	const { deletedCount } = await collection.deleteOne({ _id: objid });
 	if (!deletedCount) throw Error('The object is not exist in list');
-	console.log(deleteobj);
 	// update bucket for members
 	const accountsCol = await accounts();
 	const memberId = deleteobj.members.map(item => item._id);
 	const bucketIds = await accountsCol.find({ _id: { $in: memberId } }, { projection: { _id: 0, bucket: 1 } }).toArray();
 	const updateFunc = bucketIds.map(
-		async item => await Bucket.deleteObj(item.bucket, category + 's', objid,deleteobj.status)
+		async item => await Bucket.deleteObj(item.bucket, category + 's', objid, deleteobj.status)
 	);
 	await Promise.all(updateFunc);
 
@@ -80,14 +79,22 @@ const create = async (obj, category, cb) => {
  * @param {string} accountId
  */
 const search = async (searchTerm, accountId) => {
-	let collection = await tasks();
-	let task = await collection
+	const tasksCol = await tasks();
+	const taskList = await tasksCol
 		.find(
 			{ members: { $elemMatch: { _id: accountId } }, name: { $regex: searchTerm, $options: '$i' } },
 			{ projection: { _id: 0, name: 1, project: 1, status: 1 } }
 		)
 		.toArray();
-	return task;
+
+	const projectsCol = await projects();
+	const projectList = await projectsCol
+		.find(
+			{ members: { $elemMatch: { _id: accountId } }, name: { $regex: searchTerm, $options: '$i' } },
+			{ projection: { _id: 0, name: 1, project: '$_id', status: 1 } }
+		)
+		.toArray();
+	return [...taskList, ...projectList];
 };
 
 /**

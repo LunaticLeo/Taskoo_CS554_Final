@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid } from '@mui/material';
+import { Grid as MuiGrid, styled } from '@mui/material';
 import List from './List';
 import StatisticChart from './StatisticChart';
 import Contacts from './Contacts';
@@ -25,5 +25,13 @@ const Dashboard: React.FC = () => {
 		</Grid>
 	);
 };
+
+const Grid = styled(MuiGrid)(() => ({
+	'&.MuiGrid-item > .MuiCard-root': {
+		height: '100%'
+	}
+}));
+
+export const HEIGHT = '37.5vh';
 
 export default Dashboard;

@@ -1,6 +1,6 @@
-import React, { forwardRef, RefObject, useImperativeHandle, useLayoutEffect, useRef } from 'react';
+import React, { forwardRef, RefObject, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts/core';
-import { BarChart, PieChart } from 'echarts/charts';
+import { BarChart, PieChart, SunburstChart, TreemapChart } from 'echarts/charts';
 import {
 	GraphicComponent,
 	TooltipComponent,
@@ -23,18 +23,10 @@ const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> 
 
 	let chart: echarts.ECharts;
 	useLayoutEffect(() => {
-		const resize = () => {
-			chart?.resize();
-		};
-
-		if (!chart) {
-			chart = echarts.init(chartRef.current!);
-			chartRef.current?.addEventListener('resize', resize);
-		}
+		!chart && (chart = echarts.init(chartRef.current!));
 		chart.setOption(option);
 
 		return () => {
-			chartRef.current?.removeEventListener('resize', resize);
 			echarts.dispose(chart);
 		};
 	}, [option]);
@@ -47,6 +39,8 @@ echarts.use([
 	CanvasRenderer,
 	PieChart,
 	BarChart,
+	TreemapChart,
+	SunburstChart,
 	TooltipComponent,
 	LegendComponent,
 	LabelLayout,
