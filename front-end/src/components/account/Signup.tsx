@@ -9,12 +9,16 @@ import { Form } from '@/@types/form';
 import { useAppDispatch } from '@/hooks/useStore';
 import { setLoading } from '@/store/loading';
 import useNotification from '@/hooks/useNotification';
+import useValidation from '@/hooks/useValidation';
+
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Signup: React.FC = () => {
 	const { t } = useTranslation();
 	const { registerId } = useParams();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
+	const { email, password } = useValidation();
 	const notificate = useNotification();
 	const [signUpForm, setSignUpForm] = useState<Form.SignUpForm>({
 		firstName: '',
@@ -104,7 +108,7 @@ const Signup: React.FC = () => {
 				variant='standard'
 				type='email'
 				value={signUpForm.email}
-				onChange={e => handleInputChange({ email: e.target.value.trim() })}
+				{...email((e: ChangeEvent) => handleInputChange({ email: e.target.value.trim() }))}
 			/>
 			<TextField
 				id='password'
@@ -112,7 +116,7 @@ const Signup: React.FC = () => {
 				variant='standard'
 				type='password'
 				value={signUpForm.password}
-				onChange={e => handleInputChange({ password: e.target.value.trim() })}
+				{...password((e: ChangeEvent) => handleInputChange({ password: e.target.value }))}
 			/>
 			<TextField id='department' label={t('department')} variant='standard' disabled value={displayForm.department} />
 			<TextField id='position' label={t('position')} variant='standard' disabled value={displayForm.position} />

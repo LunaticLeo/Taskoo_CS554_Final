@@ -32,7 +32,9 @@ import { PageConfig, ProjectFormDialogProps, ProjectMemberListProps, WithPage } 
 import useNotification from '@/hooks/useNotification';
 import { useAppDispatch } from '@/hooks/useStore';
 import { setLoading } from '@/store/loading';
+import useValidation from '@/hooks/useValidation';
 
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
 const Project: React.FC = () => {
@@ -101,6 +103,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 	const notificate = useNotification();
 	const [projectForm, setProjectForm] = useState<Form.ProjectForm>(new ProjectFormClass());
 	const accountInfo = useAccountInfo();
+	const { valid } = useValidation();
 
 	useEffect(() => {
 		http.get<Account<string>[]>('/account/members').then(res => {
@@ -168,7 +171,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 										label={t('project.form.name')}
 										variant='outlined'
 										margin='normal'
-										onChange={e => handleInputChange({ name: e.target.value })}
+										{...valid((e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
 									<TextField
 										id='description'
