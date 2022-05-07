@@ -16,12 +16,37 @@ const insertStatic = async collectionName => {
 const insertAccounts = async (departmentIds, positionIds) => {
 	// insert account
 	const accountCol = await mongoCollections.accounts();
+	const Random = Mock.Random;
+	const randomAccounts=[];
+	Object.keys(departmentIds).forEach(
+		(element) => {
+		for(let i=0;i<12;i++){
+			let firstname=Random.first()
+			let newAccount={
+				"email": firstname+"@taskoo.com",
+				"password": "123456",
+				"firstName": firstname,
+				"lastName": Random.last(),
+				"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0586.JPG",
+				"disabled": false
+			}
+			randomAccounts.push(newAccount);
+		}
+	});
+
 	const accountData = await Promise.all(
 		staticData.account.map(
 			async (item, index) =>
-				await new Account({ ...item, department: departmentIds[0], position: positionIds[index] }).hashPwd()
-		)
+				await new Account({ ...item, department: departmentIds[0], position: positionIds[0] }).hashPwd()
+		)		
 	);
+	const randomAccountData=await Promise.all(
+		randomAccounts.map(
+			async (item,index) =>
+				await new Account({ ...item, department: departmentIds[Math.floor((Math.random()*(Object.keys(departmentIds).length)))], position: positionIds[(index+1)%5==0?0:Math.floor((Math.random()*(Object.keys(positionIds).length-1))+1)]}).hashPwd()
+		)
+	)
+	Object.values(randomAccountData).map(item => accountData.push(item));
 	const { insertedIds: accountIds } = await accountCol.insertMany(accountData);
 
 	// create bucket and bind owner id
