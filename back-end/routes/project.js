@@ -19,6 +19,7 @@ const { Project, Check } = require('../lib');
 router.post('/create', async (req, res) => {
 	const { _id } = req.session.accountInfo;
 
+	req.body.members = req.body.members ?? [];
 	req.body.members.unshift({ _id, role: { _id: '584b21b7-57b5-4394-825c-f488c53c7d51', name: 'Manager' } });
 	let newProject;
 	try {

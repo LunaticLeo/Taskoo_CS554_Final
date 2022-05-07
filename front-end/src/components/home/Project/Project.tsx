@@ -30,6 +30,8 @@ import useFormatList from '@/hooks/useFormatList';
 import { Form } from '@/@types/form';
 import { PageConfig, ProjectFormDialogProps, ProjectMemberListProps, WithPage } from '@/@types/props';
 import useNotification from '@/hooks/useNotification';
+import { useAppDispatch } from '@/hooks/useStore';
+import { setLoading } from '@/store/loading';
 
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
@@ -93,6 +95,7 @@ class ProjectFormClass implements Form.ProjectForm {
 
 const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [members, setMembers] = useState<Account<string>[]>([]);
 	const notificate = useNotification();
@@ -117,6 +120,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 		e.preventDefault();
 		const members = projectForm.members.map(item => JSON.stringify(item));
 		const formData = toFormData<Form.ProjectForm<string>>({ ...projectForm, members });
+		dispatch(setLoading(true));
 		http
 			.post('/project/create', formData)
 			.then(res => {
@@ -125,6 +129,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => {
+				setTimeout(() => dispatch(setLoading(false)), 1000);
 				setOpenDialog(false);
 				setProjectForm(new ProjectFormClass());
 			});
