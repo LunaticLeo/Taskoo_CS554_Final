@@ -13,6 +13,7 @@ import Profile from './Profile/Profile';
 import Detail from './Project/Detail';
 import Search from '../widgets/Search';
 import Organzation from './Organization/Organization';
+import Calendar from '../calendar/Calendar';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
@@ -70,6 +71,7 @@ const Home: React.FC = () => {
 						<Route path='/profile' element={<Profile />} />
 						<Route path='/project' element={<Project />} />
 						<Route path='/project/:id' element={<Detail />} />
+						<Route path='/calendar' element={<Calendar />} />
 						<Route path='/organization' element={<Organzation />} />
 					</Routes>
 				</Box>

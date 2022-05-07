@@ -2,6 +2,7 @@ import { PageConfig } from '@/@types/props';
 import { PaletteMode, SxProps } from '@mui/material';
 import React from 'react';
 import http from './http';
+import * as colors from '@mui/material/colors';
 
 /**
  * format the string to capitalize
@@ -116,3 +117,13 @@ export class Page implements PageConfig {
 		this.pageSize = obj?.pageSize ?? 10;
 	}
 }
+
+const palette = Object.values(colors).flatMap(item => (item as any)[500] ?? []);
+const len = palette.length;
+/**
+ * get random color from palette
+ */
+export const getRandomColor = (): string => {
+	const index = ~~(Math.random() * len);
+	return palette[index];
+};

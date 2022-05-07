@@ -91,5 +91,11 @@
 	"file": {
 		"upload": "Files Upload",
 		"tip": "Drop files here, or click to select"
+	},
+	"calendar": {
+		"view": "View",
+		"day": "Day",
+		"week": "Week",
+		"month": "Month"
 	}
 }

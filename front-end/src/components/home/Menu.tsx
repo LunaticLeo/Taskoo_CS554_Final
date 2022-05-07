@@ -20,7 +20,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Translation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore';
 import { getFavoriteList } from '@/store/favoriteList';
-import * as colors from '@mui/material/colors';
+import { getRandomColor } from '@/utils';
 
 const navMenu: Menu[] = [
 	{
@@ -40,9 +40,6 @@ const navMenu: Menu[] = [
 		]
 	}
 ];
-
-const palette = Object.values(colors).flatMap(item => (item as any)[500] ?? []);
-const len = palette.length;
 
 const Menu: React.FC = () => {
 	const { pathname } = useLocation();
@@ -76,9 +73,9 @@ const Menu: React.FC = () => {
 						))}
 						{Boolean(favoriteList.length) && (
 							<List subheader={<ListSubheader>{t('menu.favorite')}</ListSubheader>}>
-								{favoriteList.map((item, index) => (
+								{favoriteList.map(item => (
 									<ListItemButton to={`/home/project/${item._id}`} component={Link} key={item._id}>
-										<CircleIcon sx={{ color: palette[len % index], mr: 2, fontSize: 12 }} />
+										<CircleIcon sx={{ color: getRandomColor(), mr: 2, fontSize: 12 }} />
 										<ListItemText disableTypography>
 											<Typography variant='inherit' noWrap>
 												{item.name}

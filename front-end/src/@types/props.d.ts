@@ -126,3 +126,5 @@ type RelationsChartProps = { data: Account<StaticData>[]; type?: 'treemap' | 'su
 type ContactsProps = { data: Account<StaticData>[] };
 type ContactListProps = WithSxProp<ContactsProps & { dense?: boolean; filteable?: boolean }>;
 type ContactListItemProps = { data: Account<StaticData> };
+
+type CalendarView = 'day' | 'week' | 'month';
