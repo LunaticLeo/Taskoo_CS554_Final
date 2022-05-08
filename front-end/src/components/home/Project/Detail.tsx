@@ -365,22 +365,23 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 						<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
 							<Stack flexGrow={1}>
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
-									<Typography variant='h6' component='h3' mb={1}>
+									<Typography variant='h6' component='h3'>
 										{t('task.info')}
 									</Typography>
 									<TextField
+										required
 										id='name'
 										value={taskForm.name}
 										label={t('task.form.name')}
 										variant='outlined'
-										margin='dense'
-										{...valid((e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
+										margin='normal'
+										{...valid('Task', (e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
 									<DatePicker
 										label={t('task.form.dueTime')}
 										value={taskForm.dueTime}
 										onChange={value => handleInputChange({ dueTime: dayjs(value).valueOf()! })}
-										renderInput={params => <TextField margin='dense' {...params} />}
+										renderInput={params => <TextField required margin='normal' {...params} />}
 									/>
 									<TextField
 										id='description'
@@ -388,7 +389,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 										label={t('task.form.description')}
 										multiline
 										rows={5}
-										margin='dense'
+										margin='normal'
 										onChange={e => handleInputChange({ description: e.target.value })}
 									/>
 								</LocalizationProvider>

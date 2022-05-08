@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const useValidation = () => {
 	const count = 2;
 	const [error, setError] = useState<boolean[]>(Array(count).fill(false));
-	const [helperText, setHelperText] = useState<string[]>(Array(count).fill(' '));
+	const [helperText, setHelperText] = useState<string[]>(Array(count).fill(''));
 
 	const switchError = (index: number, value: boolean) => {
 		setError(preVal => {
@@ -39,7 +39,7 @@ const useValidation = () => {
 					return;
 				}
 				switchError(0, false);
-				switchHelperText(0, ' ');
+				switchHelperText(0, '');
 			}
 		}),
 		password: (cb?: any) => ({
@@ -88,7 +88,7 @@ const useValidation = () => {
 				switchHelperText(1, ' ');
 			}
 		}),
-		valid:(cb?: any) => ({
+		valid: (type: string, cb?: any) => ({
 			error: error[0],
 			helperText: helperText[0],
 			onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +97,7 @@ const useValidation = () => {
 				const value = e.target.value;
 				if (value.trim() === '') {
 					switchError(0, true);
-					switchHelperText(0, 'Required information unfilled.');
+					switchHelperText(0, type + ' ' + e.target.id + ' cannot be empty.');
 					return;
 				}
 				switchError(0, false);

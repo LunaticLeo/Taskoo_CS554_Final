@@ -30,6 +30,7 @@ import { useAppDispatch } from '@/hooks/useStore';
 import { setLoading } from '@/store/loading';
 import { WithSxProp } from '@/@types/props';
 import illustration from '@/assets/illustration.svg';
+import useAccountInfo from '@/hooks/useAccountInfo';
 
 class RegisterFromClass implements Form.RegisterForm {
 	email = '';
@@ -37,10 +38,15 @@ class RegisterFromClass implements Form.RegisterForm {
 	lastName = '';
 	department = '';
 	position = '';
+
+	constructor(obj?: Partial<Form.RegisterForm>) {
+		obj && Object.keys(obj).forEach(key => ((this as any)[key] = obj[key as keyof Form.RegisterForm]));
+	}
 }
 
 const Register: React.FC<WithSxProp<{}>> = ({ sx }) => {
 	const { t } = useTranslation();
+	const { department } = useAccountInfo();
 	const { email } = useValidation();
 	const notificate = useNotification();
 	const dispatch = useAppDispatch();
@@ -55,6 +61,7 @@ const Register: React.FC<WithSxProp<{}>> = ({ sx }) => {
 	useEffect(() => {
 		http.get<StaticData[]>('/static/departments').then(res => {
 			setOptions(preVal => ({ ...preVal, departments: res.data! }));
+			setRegisterForm(new RegisterFromClass({ department: res.data!.find(item => item.name === department)?._id }));
 		});
 		http.get<StaticData[]>('/static/positions').then(res => {
 			setOptions(preVal => ({ ...preVal, positions: res.data! }));
@@ -95,6 +102,7 @@ const Register: React.FC<WithSxProp<{}>> = ({ sx }) => {
 			{largeScreen && <Box component='img' src={illustration} sx={{ mt: 2, mb: 2 }} />}
 			<Stack component='form' onSubmit={handleSubmit} spacing={1.5} sx={{ flex: 1 }}>
 				<TextField
+					required
 					id='email'
 					label={t('email')}
 					variant='standard'
@@ -104,6 +112,7 @@ const Register: React.FC<WithSxProp<{}>> = ({ sx }) => {
 				/>
 				<Stack direction='row' justifyContent='space-between' spacing={1.5}>
 					<TextField
+						required
 						fullWidth
 						id='firstname'
 						label={t('firstname')}
@@ -112,6 +121,7 @@ const Register: React.FC<WithSxProp<{}>> = ({ sx }) => {
 						onChange={e => handleInputChange({ firstName: e.target.value })}
 					/>
 					<TextField
+						required
 						fullWidth
 						id='lastname'
 						label={t('lastname')}
