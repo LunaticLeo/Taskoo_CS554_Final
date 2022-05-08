@@ -55,15 +55,18 @@ import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { setLoading } from '@/store/loading';
 import FilePresentRoundedIcon from '@mui/icons-material/FilePresentRounded';
+import useSocket from '@/hooks/useSocket';
 
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
 	const { id } = useParams();
+	const { _id: accountId } = useAccountInfo()
 	const dispatch = useAppDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 	const [projectInfo, setProjectInfo] = useState<Project>({} as Project);
 	const [favoriteStatus, setFavoriteStatus] = useState<boolean>(false);
 	const [permission, setPermission] = useState<boolean>(false);
+	const socket = useSocket();
 	const [tasks, setTasks] = useState<TaskColumnData>({
 		pending: [],
 		processing: [],
@@ -71,6 +74,13 @@ const Detail: React.FC = () => {
 		done: []
 	} as TaskColumnData);
 	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
+
+	const setTasksData = useCallback(() => {
+		socket?.emit('update', {projectId: id})
+		socket?.on('tasks', (data: TaskColumnData) => {
+			setTasks(data)
+		})
+	}, [setTasks, socket])
 
 	useEffect(() => {
 		// get project detail info
@@ -83,16 +93,22 @@ const Detail: React.FC = () => {
 			setFavoriteStatus(res.data!);
 		});
 
-		// get tasks
-		http.get<TaskColumnData>('/project/tasks', { id }).then(res => {
-			setTasks(res.data!);
-		});
-
 		// check create permission
 		http.get<boolean>('/account/permission', { category: 'tasks' }).then(res => {
 			setPermission(res.data!);
 		});
+
 	}, [id]);
+
+	useEffect(() => {
+		if (socket) {
+			socket?.emit("join", { accountId, projectId: id })
+			socket?.on("tasks", (data) => {
+				setTasks(data);
+			});
+		}
+	}, [socket]);
+
 
 	const swithFavoriteStatus = () => {
 		const newStatus = !favoriteStatus;
@@ -138,7 +154,7 @@ const Detail: React.FC = () => {
 				</Stack>
 				<Tasks data={tasks} setData={setTasks} sx={{ mt: 5 }} permission={permission} />
 			</Box>
-			{permission && <FormDialog project={id ?? ''} members={projectInfo.members} />}
+			{permission && <FormDialog project={id ?? ''} members={projectInfo.members} setTasksData={setTasksData} />}
 		</>
 	);
 };
@@ -299,7 +315,7 @@ class TaskFormClass implements Form.TaskForm {
 	}
 }
 
-const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
+const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, setTasksData }) => {
 	const { t } = useTranslation();
 	const { _id } = useAccountInfo();
 	const notificate = useNotification();
@@ -319,12 +335,16 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 		const formData = toFormData<Form.TaskForm<string>>({ ...taskForm, members });
 		http
 			.post('/task/create', formData)
-			.then(res => notificate.success(res.message))
+			.then(res => {
+				notificate.success(res.message);
+				setTasksData()
+			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => {
 				setOpenDialog(false);
 				setTaskForm(new TaskFormClass(project));
 				addCreator();
+
 			});
 	};
 
@@ -411,16 +431,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-					const { members } = preVal;
-					members.push({ _id: member._id, role: member.role });
-					return { ...preVal, members };
-			  })
+				const { members } = preVal;
+				members.push({ _id: member._id, role: member.role });
+				return { ...preVal, members };
+			})
 			: setMembers(preVal => {
-					const { members } = preVal;
-					const index = members.findIndex(item => item._id === member._id);
-					members.splice(index, 1);
-					return { ...preVal, members };
-			  });
+				const { members } = preVal;
+				const index = members.findIndex(item => item._id === member._id);
+				members.splice(index, 1);
+				return { ...preVal, members };
+			});
 	};
 
 	return (
