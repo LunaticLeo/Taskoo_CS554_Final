@@ -110,7 +110,7 @@ type TaskFormDialogProps = {
 	project: string;
 	members: WithRole<Account<StaticData>, StaticData>[];
 	refresh?: () => void;
-	setTasksData: () => void
+	emitUpdate: () => void;
 };
 type TaskMemberListProps = {
 	data: WithRole<Account<StaticData>, StaticData>[];

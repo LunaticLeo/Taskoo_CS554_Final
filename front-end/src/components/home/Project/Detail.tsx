@@ -78,11 +78,8 @@ const Detail: React.FC = () => {
 	} as TaskColumnData);
 	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
 
-	const setTasksData = useCallback(() => {
+	const emitUpdate = useCallback(() => {
 		socket?.emit('update', { projectId: id });
-		socket?.on('tasks', (data: TaskColumnData) => {
-			setTasks(data);
-		});
 	}, [setTasks, socket]);
 
 	useEffect(() => {
@@ -155,7 +152,7 @@ const Detail: React.FC = () => {
 				</Stack>
 				<Tasks data={tasks} setData={setTasks} sx={{ mt: 5 }} permission={permission} />
 			</Box>
-			{permission && <FormDialog project={id ?? ''} members={projectInfo.members} setTasksData={setTasksData} />}
+			{permission && <FormDialog project={id ?? ''} members={projectInfo.members} emitUpdate={emitUpdate} />}
 		</>
 	);
 };
@@ -316,7 +313,7 @@ class TaskFormClass implements Form.TaskForm {
 	}
 }
 
-const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, setTasksData }) => {
+const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdate }) => {
 	const { t } = useTranslation();
 	const { _id } = useAccountInfo();
 	const notificate = useNotification();
@@ -339,7 +336,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, setTasksD
 			.post('/task/create', formData)
 			.then(res => {
 				notificate.success(res.message);
-				setTasksData();
+				emitUpdate();
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => {
@@ -359,7 +356,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, setTasksD
 			setTaskForm(preVal => {
 				const { members: memberList } = preVal;
 				const creator = members?.find(item => item._id === _id);
-				memberList.some(item => item._id === creator?._id) && memberList.unshift({ _id, role: creator?.role! });
+				!memberList.some(item => item._id === creator?._id) && memberList.unshift({ _id, role: creator?.role! });
 				return { ...preVal };
 			});
 	};
