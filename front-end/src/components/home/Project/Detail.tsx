@@ -375,7 +375,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 										label={t('task.form.name')}
 										variant='outlined'
 										margin='normal'
-										{...valid((e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
+										{...valid('Task', (e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
 									<DatePicker
 										label={t('task.form.dueTime')}
