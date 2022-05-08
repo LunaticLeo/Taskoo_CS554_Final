@@ -2,7 +2,6 @@ import { PageConfig } from '@/@types/props';
 import { PaletteMode, SxProps } from '@mui/material';
 import React from 'react';
 import http from './http';
-import * as colors from '@mui/material/colors';
 
 /**
  * format the string to capitalize
@@ -66,7 +65,7 @@ export const toFormData = <T extends Record<string, any>>(obj: T): FormData => {
  * @param {string} string
  * @returns {string} color
  */
-const stringToColor = (string: string): string => {
+export const stringToColor = (string: string): string => {
 	let hash = 0;
 	let i;
 
@@ -101,6 +100,8 @@ export const stringAvatar = (
 	width && (sx.width = width);
 	height && (sx.height = height);
 
+	console.log(sx);
+
 	return {
 		sx,
 		children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
@@ -117,13 +118,3 @@ export class Page implements PageConfig {
 		this.pageSize = obj?.pageSize ?? 10;
 	}
 }
-
-const palette = Object.values(colors).flatMap(item => (item as any)[500] ?? []);
-const len = palette.length;
-/**
- * get random color from palette
- */
-export const getRandomColor = (): string => {
-	const index = ~~(Math.random() * len);
-	return palette[index];
-};

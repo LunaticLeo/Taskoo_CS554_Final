@@ -4,7 +4,7 @@ import TuiCalendar from 'tui-calendar';
 import 'tui-calendar/dist/tui-calendar.css';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { getRandomColor } from '@/utils';
+import { stringToColor } from '@/utils';
 import { CalendarView } from '@/@types/props';
 import { useTranslation } from 'react-i18next';
 import http from '@/utils/http';
@@ -81,7 +81,7 @@ const createSchedule = (task: Task) => {
 		end: dayjs(+dueTime).format(),
 		isReadOnly: true,
 		color: '#fff',
-		bgColor: getRandomColor(),
+		bgColor: stringToColor(name),
 		state: ['Pending', 'Done'].includes(status) ? 'free' : 'busy'
 	};
 };

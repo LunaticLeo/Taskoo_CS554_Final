@@ -20,7 +20,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Translation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore';
 import { getFavoriteList } from '@/store/favoriteList';
-import { getRandomColor } from '@/utils';
+import { stringToColor } from '@/utils';
 
 const navMenu: Menu[] = [
 	{
@@ -75,7 +75,7 @@ const Menu: React.FC = () => {
 							<List subheader={<ListSubheader>{t('menu.favorite')}</ListSubheader>}>
 								{favoriteList.map(item => (
 									<ListItemButton to={`/home/project/${item._id}`} component={Link} key={item._id}>
-										<CircleIcon sx={{ color: getRandomColor(), mr: 2, fontSize: 12 }} />
+										<CircleIcon sx={{ color: stringToColor(item.name), mr: 2, fontSize: 12 }} />
 										<ListItemText disableTypography>
 											<Typography variant='inherit' noWrap>
 												{item.name}
