@@ -103,6 +103,7 @@ const Signup: React.FC = () => {
 				/>
 			</Stack>
 			<TextField
+				required
 				id='email'
 				label={t('email')}
 				variant='standard'
@@ -111,6 +112,7 @@ const Signup: React.FC = () => {
 				{...email((e: ChangeEvent) => handleInputChange({ email: e.target.value.trim() }))}
 			/>
 			<TextField
+				required
 				id='password'
 				label={t('password')}
 				variant='standard'

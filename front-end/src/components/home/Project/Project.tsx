@@ -162,15 +162,16 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 							</Box>
 							<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
 								<Stack flexGrow={1}>
-									<Typography variant='h6' component='h3' mb={1}>
+									<Typography variant='h6' component='h3'>
 										{t('project.info')}
 									</Typography>
 									<TextField
+										required
 										id='name'
 										value={projectForm.name}
 										label={t('project.form.name')}
 										variant='outlined'
-										margin='dense'
+										margin='normal'
 										{...valid((e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
 									<TextField
@@ -179,7 +180,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 										label={t('project.form.description')}
 										multiline
 										rows={5}
-										margin='dense'
+										margin='normal'
 										onChange={e => handleInputChange({ description: e.target.value })}
 									/>
 								</Stack>
