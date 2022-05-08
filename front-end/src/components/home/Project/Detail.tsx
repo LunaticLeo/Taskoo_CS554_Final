@@ -296,7 +296,7 @@ class TaskFormClass implements Form.TaskForm {
 	description = '';
 	project = '';
 	members = [];
-	dueTime = dayjs().valueOf();
+	dueTime = dayjs().add(1, 'day').valueOf();
 	constructor(project: string) {
 		this.project = project;
 	}
@@ -365,7 +365,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 						<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
 							<Stack flexGrow={1}>
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
-									<Typography variant='h6' component='h3'>
+									<Typography variant='h6' component='h3' mb={1}>
 										{t('task.info')}
 									</Typography>
 									<TextField
@@ -373,14 +373,14 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 										value={taskForm.name}
 										label={t('task.form.name')}
 										variant='outlined'
-										margin='normal'
+										margin='dense'
 										{...valid((e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
 									<DatePicker
 										label={t('task.form.dueTime')}
 										value={taskForm.dueTime}
 										onChange={value => handleInputChange({ dueTime: dayjs(value).valueOf()! })}
-										renderInput={params => <TextField margin='normal' {...params} />}
+										renderInput={params => <TextField margin='dense' {...params} />}
 									/>
 									<TextField
 										id='description'
@@ -388,7 +388,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 										label={t('task.form.description')}
 										multiline
 										rows={5}
-										margin='normal'
+										margin='dense'
 										onChange={e => handleInputChange({ description: e.target.value })}
 									/>
 								</LocalizationProvider>
@@ -432,7 +432,7 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 			<Typography variant='h6' component='h3'>
 				{t('task.members')}
 			</Typography>
-			<List dense sx={{ height: '100%', overflow: 'auto' }}>
+			<List dense sx={{ height: 360.18, overflow: 'auto' }}>
 				{data.map(member => (
 					<ListItem
 						key={member._id}

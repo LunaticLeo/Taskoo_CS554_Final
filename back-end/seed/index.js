@@ -94,7 +94,7 @@ const insertProjects = async () => {
 
 	await Promise.all(
 		managers.map(async manager => {
-			const count = ~~(Math.random() * 10) + 20;
+			const count = ~~(Math.random() * 11) + 20;
 			for (let i = 0; i < count; i++) {
 				await createProject(
 					new Project({

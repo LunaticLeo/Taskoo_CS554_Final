@@ -100,8 +100,6 @@ export const stringAvatar = (
 	width && (sx.width = width);
 	height && (sx.height = height);
 
-	console.log(sx);
-
 	return {
 		sx,
 		children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
