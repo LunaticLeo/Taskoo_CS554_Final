@@ -63,7 +63,7 @@ type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
 	const { id } = useParams();
-	const { _id: accountId } = useAccountInfo()
+	const { _id: accountId } = useAccountInfo();
 	const dispatch = useAppDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 	const [projectInfo, setProjectInfo] = useState<Project>({} as Project);
@@ -79,11 +79,11 @@ const Detail: React.FC = () => {
 	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
 
 	const setTasksData = useCallback(() => {
-		socket?.emit('update', {projectId: id})
+		socket?.emit('update', { projectId: id });
 		socket?.on('tasks', (data: TaskColumnData) => {
-			setTasks(data)
-		})
-	}, [setTasks, socket])
+			setTasks(data);
+		});
+	}, [setTasks, socket]);
 
 	useEffect(() => {
 		// get project detail info
@@ -100,18 +100,16 @@ const Detail: React.FC = () => {
 		http.get<boolean>('/account/permission', { category: 'tasks' }).then(res => {
 			setPermission(res.data!);
 		});
-
 	}, [id]);
 
 	useEffect(() => {
 		if (socket) {
-			socket?.emit("join", { accountId, projectId: id })
-			socket?.on("tasks", (data) => {
+			socket?.emit('join', { accountId, projectId: id });
+			socket?.on('tasks', (data: TaskColumnData) => {
 				setTasks(data);
 			});
 		}
 	}, [socket]);
-
 
 	const swithFavoriteStatus = () => {
 		const newStatus = !favoriteStatus;
@@ -341,14 +339,13 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, setTasksD
 			.post('/task/create', formData)
 			.then(res => {
 				notificate.success(res.message);
-				setTasksData()
+				setTasksData();
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => {
 				setOpenDialog(false);
 				setTaskForm(new TaskFormClass(project));
 				addCreator();
-
 			});
 	};
 
@@ -436,16 +433,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-				const { members } = preVal;
-				members.push({ _id: member._id, role: member.role });
-				return { ...preVal, members };
-			})
+					const { members } = preVal;
+					members.push({ _id: member._id, role: member.role });
+					return { ...preVal, members };
+			  })
 			: setMembers(preVal => {
-				const { members } = preVal;
-				const index = members.findIndex(item => item._id === member._id);
-				members.splice(index, 1);
-				return { ...preVal, members };
-			});
+					const { members } = preVal;
+					const index = members.findIndex(item => item._id === member._id);
+					members.splice(index, 1);
+					return { ...preVal, members };
+			  });
 	};
 
 	return (

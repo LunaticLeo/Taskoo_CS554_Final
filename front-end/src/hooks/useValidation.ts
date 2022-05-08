@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 
+const FormHelperTextProps = { sx: { position: 'absolute', bottom: 0, transform: 'translateY(100%)' } };
+
 const useValidation = () => {
-	const count = 2;
+	const count = 3;
 	const [error, setError] = useState<boolean[]>(Array(count).fill(false));
 	const [helperText, setHelperText] = useState<string[]>(Array(count).fill(''));
 
@@ -23,6 +25,7 @@ const useValidation = () => {
 		email: (cb?: any) => ({
 			error: error[0],
 			helperText: helperText[0],
+			FormHelperTextProps,
 			onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
 				cb && cb(e);
 
@@ -45,6 +48,7 @@ const useValidation = () => {
 		password: (cb?: any) => ({
 			error: error[1],
 			helperText: helperText[1],
+			FormHelperTextProps,
 			onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
 				cb && cb(e);
 
@@ -54,54 +58,51 @@ const useValidation = () => {
 					switchHelperText(1, 'The password cannot be empty.');
 					return;
 				}
-				const isAlphanumeric = /^[0-9a-zA-Z]*$/
-				const number = /[0-9]/; 
-				const alphabet = /[a-z]/i
-				if(value.length<8||value.length>16) 
-				{
+				const isAlphanumeric = /^[0-9a-zA-Z]*$/;
+				const number = /[0-9]/;
+				const alphabet = /[a-z]/i;
+				if (value.length < 8 || value.length > 16) {
 					switchError(1, true);
 					switchHelperText(1, "Password's length is 8 to 16");
-					return
+					return;
 				}
-				if(isAlphanumeric.test(value))
-				{
-					if(number.test(value))
-					{
-						if(!alphabet.test(value))
-						{
+				if (isAlphanumeric.test(value)) {
+					if (number.test(value)) {
+						if (!alphabet.test(value)) {
 							switchError(1, true);
-							switchHelperText(1, "Password must have letter");
-							return
+							switchHelperText(1, 'Password must have letter');
+							return;
 						}
-					}else{
+					} else {
 						switchError(1, true);
-						switchHelperText(1, "Password must have number");
-						return
+						switchHelperText(1, 'Password must have number');
+						return;
 					}
-				}else{
+				} else {
 					switchError(1, true);
-					switchHelperText(1, "Password can only contain numbers and letters");
-					return
+					switchHelperText(1, 'Password can only contain numbers and letters');
+					return;
 				}
-				
+
 				switchError(1, false);
 				switchHelperText(1, ' ');
 			}
 		}),
 		valid: (type: string, cb?: any) => ({
-			error: error[0],
-			helperText: helperText[0],
+			error: error[2],
+			helperText: helperText[2],
+			FormHelperTextProps,
 			onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
 				cb && cb(e);
 
 				const value = e.target.value;
 				if (value.trim() === '') {
-					switchError(0, true);
-					switchHelperText(0, type + ' ' + e.target.id + ' cannot be empty.');
+					switchError(2, true);
+					switchHelperText(2, type + ' ' + e.target.id + ' cannot be empty.');
 					return;
 				}
-				switchError(0, false);
-				switchHelperText(0, ' ');
+				switchError(2, false);
+				switchHelperText(2, ' ');
 			}
 		})
 	};
