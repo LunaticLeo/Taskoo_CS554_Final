@@ -16,12 +16,56 @@ const insertStatic = async collectionName => {
 const insertAccounts = async (departmentIds, positionIds) => {
 	// insert account
 	const accountCol = await mongoCollections.accounts();
+	const Random = Mock.Random;
+
+	Random.extend({
+		positions: function () {
+			return this.pick(Object.values(positionIds));
+		}
+	});
+
+	const randomAccounts = Object.values(departmentIds).reduce((pre, cur) => {
+		const count = ~~(Math.random() * 11) + 10;
+		for (let i = 0; i < count; i++) {
+			const firstName = Random.first();
+			const lastName = Random.last()
+			pre.push(
+				new Account({
+					email: firstName.toLowerCase() + '@taskoo.com',
+					password: firstName[0]+lastName[0]+'123456',
+					firstName,
+					lastName,
+					department: cur,
+					position: Random.positions(),
+					avatar: null,
+					disabled: false
+				})
+			);
+		}
+
+		return pre;
+	}, []);
+
 	const accountData = await Promise.all(
 		staticData.account.map(
 			async (item, index) =>
-				await new Account({ ...item, department: departmentIds[0], position: positionIds[index] }).hashPwd()
+				await new Account({ ...item, department: departmentIds[0], position: positionIds[0] }).hashPwd()
 		)
 	);
+	const randomAccountData = await Promise.all(
+		randomAccounts.map(
+			async (item, index) =>
+				await new Account({
+					...item,
+					department: departmentIds[Math.floor(Math.random() * Object.keys(departmentIds).length)],
+					position:
+						positionIds[
+							(index + 1) % 5 == 0 ? 0 : Math.floor(Math.random() * (Object.keys(positionIds).length - 1) + 1)
+						]
+				}).hashPwd()
+		)
+	);
+	Object.values(randomAccountData).map(item => accountData.push(item));
 	const { insertedIds: accountIds } = await accountCol.insertMany(accountData);
 
 	// create bucket and bind owner id
@@ -51,7 +95,7 @@ const insertProjects = async () => {
 
 	await Promise.all(
 		managers.map(async manager => {
-			const count = ~~(Math.random() * 10) + 20;
+			const count = ~~(Math.random() * 11) + 20;
 			for (let i = 0; i < count; i++) {
 				await createProject(
 					new Project({

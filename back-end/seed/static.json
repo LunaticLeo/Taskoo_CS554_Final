@@ -88,7 +88,7 @@
 	"account": [
 		{
 			"email": "sxiong5@taskoo.com",
-			"password": "123456",
+			"password": "sx123456",
 			"firstName": "Shihao",
 			"lastName": "Xiong",
 			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0586.JPG",
@@ -96,7 +96,7 @@
 		},
 		{
 			"email": "yufu@taskoo.com",
-			"password": "123456",
+			"password": "yl123456",
 			"firstName": "Yufu",
 			"lastName": "Liao",
 			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0587.JPG",
@@ -104,7 +104,7 @@
 		},
 		{
 			"email": "shilin@taskoo.com",
-			"password": "123456",
+			"password": "sd123456",
 			"firstName": "Shilin",
 			"lastName": "Ding",
 			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0588.JPG",
@@ -112,7 +112,7 @@
 		},
 		{
 			"email": "peixin@taskoo.com",
-			"password": "123456",
+			"password": "pd123456",
 			"firstName": "Peixin",
 			"lastName": "Dai",
 			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0589.JPG",
@@ -120,7 +120,7 @@
 		},
 		{
 			"email": "wenjing@taskoo.com",
-			"password": "123456",
+			"password": "wz123456",
 			"firstName": "Wenjing",
 			"lastName": "Zhou",
 			"avatar": "https://storage.cloud.google.com/taskoo_bucket/IMG_0590.JPG",

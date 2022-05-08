@@ -65,7 +65,7 @@ export const toFormData = <T extends Record<string, any>>(obj: T): FormData => {
  * @param {string} string
  * @returns {string} color
  */
-const stringToColor = (string: string): string => {
+export const stringToColor = (string: string): string => {
 	let hash = 0;
 	let i;
 

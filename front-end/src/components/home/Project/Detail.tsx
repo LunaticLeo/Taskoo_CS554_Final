@@ -56,6 +56,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { setLoading } from '@/store/loading';
 import FilePresentRoundedIcon from '@mui/icons-material/FilePresentRounded';
 import useSocket from '@/hooks/useSocket';
+import useValidation from '@/hooks/useValidation';
+
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
@@ -309,7 +312,7 @@ class TaskFormClass implements Form.TaskForm {
 	description = '';
 	project = '';
 	members = [];
-	dueTime = dayjs().valueOf();
+	dueTime = dayjs().add(1, 'day').valueOf();
 	constructor(project: string) {
 		this.project = project;
 	}
@@ -321,6 +324,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, setTasksD
 	const notificate = useNotification();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [taskForm, setTaskForm] = useState<Form.TaskForm>(new TaskFormClass(project));
+	const { valid } = useValidation();
 
 	const handleInputChange = (val: Partial<Form.TaskForm>) => {
 		setTaskForm(preVal => ({ ...preVal, ...val }));
@@ -385,18 +389,19 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, setTasksD
 										{t('task.info')}
 									</Typography>
 									<TextField
+										required
 										id='name'
 										value={taskForm.name}
 										label={t('task.form.name')}
 										variant='outlined'
 										margin='normal'
-										onChange={e => handleInputChange({ name: e.target.value })}
+										{...valid('Task', (e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
 									<DatePicker
 										label={t('task.form.dueTime')}
 										value={taskForm.dueTime}
 										onChange={value => handleInputChange({ dueTime: dayjs(value).valueOf()! })}
-										renderInput={params => <TextField margin='normal' {...params} />}
+										renderInput={params => <TextField required margin='normal' {...params} />}
 									/>
 									<TextField
 										id='description'
@@ -448,7 +453,7 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 			<Typography variant='h6' component='h3'>
 				{t('task.members')}
 			</Typography>
-			<List dense sx={{ height: '100%', overflow: 'auto' }}>
+			<List dense sx={{ height: 360.18, overflow: 'auto' }}>
 				{data.map(member => (
 					<ListItem
 						key={member._id}

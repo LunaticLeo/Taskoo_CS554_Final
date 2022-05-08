@@ -42,7 +42,7 @@ export const FavoriteList: React.FC<TabPanelProps> = ({ value, hidden, ...other 
 export const ContactList: React.FC<TabPanelProps> = ({ value, hidden, ...other }) => {
 	const { _id } = useAccountInfo();
 	const [contacts, setContacts] = useState<Account<StaticData>[]>([]);
-	const avatarSize = { height: 55, width: 55 };
+	const avatarSize = 55;
 
 	useEffect(() => {
 		http.get<Account<StaticData>[]>('/org/members').then(res => {
@@ -61,9 +61,9 @@ export const ContactList: React.FC<TabPanelProps> = ({ value, hidden, ...other }
 							<Card>
 								<CardContent component={Stack} alignItems='center' spacing={1.5}>
 									{contact.avatar ? (
-										<Avatar alt={fullName} src={contact.avatar} sx={{ ...avatarSize }} />
+										<Avatar alt={fullName} src={contact.avatar} sx={{ height: avatarSize, width: avatarSize }} />
 									) : (
-										<Avatar alt={fullName} {...stringAvatar(fullName)} sx={{ ...avatarSize }} />
+										<Avatar alt={fullName} {...stringAvatar(fullName, avatarSize, avatarSize)} />
 									)}
 									<Typography component={Link} underline='hover' sx={{ fontWeight: 'bold', cursor: 'pointer' }}>
 										{fullName}
