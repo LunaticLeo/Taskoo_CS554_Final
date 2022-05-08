@@ -28,12 +28,13 @@ const insertAccounts = async (departmentIds, positionIds) => {
 		const count = ~~(Math.random() * 11) + 10;
 		for (let i = 0; i < count; i++) {
 			const firstName = Random.first();
+			const lastName = Random.last()
 			pre.push(
 				new Account({
 					email: firstName.toLowerCase() + '@taskoo.com',
-					password: '123456',
+					password: firstName[0]+lastName[0]+'123456',
 					firstName,
-					lastName: Random.last(),
+					lastName,
 					department: cur,
 					position: Random.positions(),
 					avatar: null,
