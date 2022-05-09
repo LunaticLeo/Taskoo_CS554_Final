@@ -25,11 +25,16 @@ const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> 
 
 	let chart: echarts.ECharts;
 	useLayoutEffect(() => {
+		const resize = () => {
+			chart.resize();
+		};
 		!chart && (chart = echarts.init(chartRef.current!, colorMode));
 		chart.setOption(option);
+		window.addEventListener('resize', resize);
 
 		return () => {
 			echarts.dispose(chart);
+			window.removeEventListener('resize', resize);
 		};
 	}, [option, colorMode]);
 

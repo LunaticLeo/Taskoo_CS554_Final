@@ -54,7 +54,7 @@ import FileUploader from '@/components/widgets/FileUploader';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { setLoading } from '@/store/loading';
-import FilePresentRoundedIcon from '@mui/icons-material/FilePresentRounded';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import useSocket from '@/hooks/useSocket';
 import useValidation from '@/hooks/useValidation';
 
@@ -238,14 +238,14 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
 
 	return (
 		<>
-			<IconButton
-				color='primary'
-				aria-describedby={id}
-				aria-label='upload-btn'
+			<Button
+				sx={{ ml: 1 }}
+				variant='contained'
+				startIcon={<CloudUploadIcon />}
 				onClick={e => setAnchorEl(e.currentTarget)}
 			>
-				<FilePresentRoundedIcon color='inherit' />
-			</IconButton>
+				{t('button.upload')}
+			</Button>
 			<Popover
 				id={id}
 				open={open}
