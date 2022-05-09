@@ -1,4 +1,4 @@
-import React, { forwardRef, RefObject, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
+import React, { forwardRef, RefObject, useImperativeHandle, useLayoutEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
 import { BarChart, PieChart, SunburstChart, TreemapChart } from 'echarts/charts';
 import {
@@ -12,24 +12,26 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { Box } from '@mui/material';
 import { ChartProps } from '@/@types/props';
+import { useAppSelector } from '@/hooks/useStore';
 
 const Chart: React.ForwardRefRenderFunction<RefObject<HTMLElement>, ChartProps> = (
 	{ option, sx, height = '100%', width = '100%' },
 	ref
 ) => {
 	const chartRef = useRef<HTMLDivElement>(null);
+	const colorMode = useAppSelector(state => state.colorMode.value);
 
 	useImperativeHandle(ref, () => ({ current: chartRef.current }));
 
 	let chart: echarts.ECharts;
 	useLayoutEffect(() => {
-		!chart && (chart = echarts.init(chartRef.current!));
+		!chart && (chart = echarts.init(chartRef.current!, colorMode));
 		chart.setOption(option);
 
 		return () => {
 			echarts.dispose(chart);
 		};
-	}, [option]);
+	}, [option, colorMode]);
 
 	return <Box sx={{ ...sx, width, height }} ref={chartRef}></Box>;
 };

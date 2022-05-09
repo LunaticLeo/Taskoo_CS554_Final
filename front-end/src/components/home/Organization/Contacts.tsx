@@ -35,13 +35,7 @@ const Contacts: React.FC<ContactsProps> = ({ data }) => {
 				<Styled.Title>{t('contacts')}</Styled.Title>
 			</Stack>
 			<Divider sx={{ mt: 1, mb: 3 }} />
-			<ToggleButtonGroup
-				orientation={type === 'list' ? 'horizontal' : 'vertical'}
-				value={type}
-				onChange={handleSwitchType}
-				exclusive
-				sx={{ mb: 1.5 }}
-			>
+			<ToggleButtonGroup value={type} onChange={handleSwitchType} exclusive sx={{ mb: 1.5 }}>
 				{types.map(item => (
 					<ToggleButton key={item.name} value={item.name}>
 						{item.icon}
