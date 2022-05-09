@@ -11,6 +11,8 @@ import http from '@/utils/http';
 import { WithPage } from '@/@types/props';
 import { randomBytes } from 'crypto';
 
+import * as colors from '@mui/material/colors';
+
 dayjs.extend(utc);
 
 const Calendar: React.FC = () => {
@@ -80,10 +82,11 @@ const Calendar: React.FC = () => {
 	);
 };
 
+const palette = Object.values(colors).flatMap((item)=>(item as any)[300]??[]);
+
 const createSchedule = (task: Task) => {
 	const { _id, name, description, createTime, dueTime, status } = task;
-	let colors=["#087E8B","#BDE4A7","#B3D2B2","#9FBBCC","#A7A284","#FCBFB7","#49516F","#912F56","#BA2D0B","#A0DDFF"];
-
+	
 	return {
 		id: _id,
 		calendarId: '1',
@@ -94,7 +97,7 @@ const createSchedule = (task: Task) => {
 		end: dayjs(+dueTime).format(),
 		isReadOnly: true,
 		color: '#fff',
-		bgColor: colors[Math.floor(Math.random()*9)],
+		bgColor: palette[Math.floor(Math.random()*(palette.length))],
 		state: ['Pending', 'Done'].includes(status) ? 'free' : 'busy'
 	};
 };
