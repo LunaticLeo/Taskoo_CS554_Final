@@ -38,7 +38,7 @@ const deleteTask = async objid => {
  * @param {object} pageConfig {pageNum: number, pageSize: number}
  */
 const getTaskList = async (bucketId, pageConfig) => {
-	return await core.getListFromBucket('tasks', bucketId, pageConfig, { description: 0, attachments: 0 });
+	return await core.getListFromBucket('tasks', bucketId, pageConfig, { attachments: 0 });
 };
 
 /**
