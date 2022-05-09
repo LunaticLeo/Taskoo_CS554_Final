@@ -8,6 +8,7 @@ import { stringToColor } from '@/utils';
 import { CalendarView } from '@/@types/props';
 import { useTranslation } from 'react-i18next';
 import http from '@/utils/http';
+import { WithPage } from '@/@types/props';
 
 dayjs.extend(utc);
 
@@ -15,17 +16,18 @@ const Calendar: React.FC = () => {
 	const { t } = useTranslation();
 	const [calendar, setCalendar] = useState<TuiCalendar | null>(null);
 	const [view, setView] = useState<CalendarView>('day');
-
+	const [lastClickSchedule,setLastClick]=useState({'id':'','calendarId':''});
+	
 	useLayoutEffect(() => {
 		!calendar &&
 			setCalendar(
 				new TuiCalendar('#calendar', {
 					defaultView: view,
 					isReadOnly: true,
-					disableDblClick: true
+					disableDblClick: true,
+					useDetailPopup: true
 				})
 			);
-
 		return () => {
 			calendar?.destroy();
 			setCalendar(null);
@@ -34,7 +36,16 @@ const Calendar: React.FC = () => {
 
 	useLayoutEffect(() => {
 		if (!calendar) return;
-
+		http.get<WithPage<Task[]>>('/task/todo').then(res=>{
+			const tasks=res.data!.list;
+			if(tasks){
+				const formattask=tasks.map((task)=>{
+					alert(Object.keys(task));
+					return createSchedule(task);
+				})
+				calendar.createSchedules(Object.values(formattask));
+			}
+		});
 		// TODO get the task data from server side
 		// http.get<>('').then(res => {
 		//   // 1. call createSchedule to format the task
@@ -77,6 +88,7 @@ const createSchedule = (task: Task) => {
 		calendarId: '1',
 		title: name,
 		body: description,
+		category: 'time',
 		start: dayjs(+createTime).format(),
 		end: dayjs(+dueTime).format(),
 		isReadOnly: true,
