@@ -9,6 +9,7 @@ import { CalendarView } from '@/@types/props';
 import { useTranslation } from 'react-i18next';
 import http from '@/utils/http';
 import { WithPage } from '@/@types/props';
+import { randomBytes } from 'crypto';
 
 dayjs.extend(utc);
 
@@ -40,7 +41,6 @@ const Calendar: React.FC = () => {
 			const tasks=res.data!.list;
 			if(tasks){
 				const formattask=tasks.map((task)=>{
-					alert(Object.keys(task));
 					return createSchedule(task);
 				})
 				calendar.createSchedules(Object.values(formattask));
@@ -82,6 +82,7 @@ const Calendar: React.FC = () => {
 
 const createSchedule = (task: Task) => {
 	const { _id, name, description, createTime, dueTime, status } = task;
+	let colors=["#087E8B","#BDE4A7","#B3D2B2","#9FBBCC","#A7A284","#FCBFB7","#49516F","#912F56","#BA2D0B","#A0DDFF"];
 
 	return {
 		id: _id,
@@ -93,7 +94,7 @@ const createSchedule = (task: Task) => {
 		end: dayjs(+dueTime).format(),
 		isReadOnly: true,
 		color: '#fff',
-		bgColor: stringToColor(name),
+		bgColor: colors[Math.floor(Math.random()*9)],
 		state: ['Pending', 'Done'].includes(status) ? 'free' : 'busy'
 	};
 };
