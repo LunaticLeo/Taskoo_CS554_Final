@@ -16,7 +16,7 @@ i18n
 		resources,
 		fallbackLng: 'en',
 		detection: {
-			caches: ['localStorage', 'cookie']
+			caches: ['sessionStorage', 'cookie']
 		}
 	});
 
