@@ -9,13 +9,14 @@ import useFormatList from '@/hooks/useFormatList';
 import http from '@/utils/http';
 import useNotification from '@/hooks/useNotification';
 import { toCapitalize } from '@/utils';
+import useSocket from '@/hooks/useSocket';
 
 const header: (keyof TaskInfo)[] = ['name', 'createTime', 'dueTime', 'status', 'members'];
 
 const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 	const theme = useTheme();
 	const notification = useNotification();
-	
+
 	const [STATUS, setSTATUS] = useState<StatusPrerquest>({} as any);
 	const hideColumns = useMediaQuery(theme.breakpoints.down('md'));
 	const listData = useFormatList(
@@ -28,6 +29,7 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 			[data]
 		)
 	);
+	const socket = useSocket();
 
 	useEffect(() => {
 		http.get<StaticData[]>('/static/status').then(res => {
