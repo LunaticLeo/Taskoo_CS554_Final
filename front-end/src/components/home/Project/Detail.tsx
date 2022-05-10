@@ -102,6 +102,11 @@ const Detail: React.FC = () => {
 	useEffect(() => {
 		if (socket) {
 			socket?.emit('join', { accountId, projectId: id });
+		}
+	}, [socket]);
+
+	useEffect(() => {
+		if (socket) {
 			socket?.on('tasks', (data: TaskColumnData) => {
 				setTasks(data);
 			});

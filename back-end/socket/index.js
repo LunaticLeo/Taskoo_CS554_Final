@@ -1,4 +1,4 @@
-const { getTasks } = require("../data/project");
+const { getTasks, getDetails } = require("../data/project");
 
 const constructorMethod = (io) => {
 
@@ -16,12 +16,22 @@ const constructorMethod = (io) => {
         });
         socket.on('update', async (msg) => {
             const data = await getTasks(msg.projectId);
-            socket.emit("tasks", data);
-            console.log(data);
+            // socket.emit("tasks", data);
+            const proDate = await getDetails(msg.projectId);
+            membersInform = proDate.members.map(item => item._id);
+            // console.log(membersInform);
+            membersInform.forEach(element => {
+                if (accountSockets[element]) {
+                    // console.log(element)
+                    accountSockets[element].forEach(element2 => {
+                        io.to(element2).emit("tasks",data);
+                    });
+                }
+            });
         });
         socket.on('disconnect', (msg) => {
             accountSockets[accountId].delete(socket.id);
-            console.log(accountSockets);
+            // console.log(accountSockets);
         });
     });
 
