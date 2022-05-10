@@ -1,1 +1,1 @@
-export const SESSION_KEY: string = 'accountInfo';
+export const STORAGE_KEY: string = 'accountInfo';

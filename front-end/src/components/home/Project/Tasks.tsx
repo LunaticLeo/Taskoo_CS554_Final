@@ -67,6 +67,8 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 				[source.droppableId]: srcColumn
 			}));
 		} else {
+			console.log(srcColumn[source.index]);
+			console.log(source, destination);
 			const draggedItem = srcColumn.splice(source.index, 1)[0];
 			const targetColumn = [...data[destination.droppableId as keyof TaskColumnData]];
 			targetColumn.splice(destination.index, 0, draggedItem);

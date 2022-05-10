@@ -1,9 +1,9 @@
 import { toCapitalize } from '@/utils';
-import { SESSION_KEY } from '@/utils/keys';
+import { STORAGE_KEY } from '@/utils/keys';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: { value: WithFullName<Account> } = {
-	value: JSON.parse(sessionStorage.getItem(SESSION_KEY)!) ?? {
+	value: JSON.parse(localStorage.getItem(STORAGE_KEY)!) ?? {
 		email: '',
 		firstName: '',
 		lastName: '',
@@ -28,10 +28,10 @@ export const accountInfoSlice = createSlice({
 			newInfo.fullName = `${toCapitalize(newInfo.firstName!)} ${toCapitalize(newInfo.lastName!)}`;
 
 			state.value = newInfo;
-			sessionStorage.setItem(SESSION_KEY, JSON.stringify(newInfo));
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(newInfo));
 		},
 		clear: () => {
-			sessionStorage.removeItem(SESSION_KEY);
+			localStorage.removeItem(STORAGE_KEY);
 			// refresh the page
 			location.reload();
 		}
