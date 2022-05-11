@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Box, Divider, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TaskCard from '@/components/widgets/TaskCard';
@@ -30,7 +31,7 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 		)
 	);
 	const socket = useSocket();
-
+	const projectId =  useParams().id;
 	useEffect(() => {
 		http.get<StaticData[]>('/static/status').then(res => {
 			setSTATUS(
@@ -67,16 +68,28 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 				[source.droppableId]: srcColumn
 			}));
 		} else {
-			console.log(srcColumn[source.index]);
-			console.log(source, destination);
-			const draggedItem = srcColumn.splice(source.index, 1)[0];
-			const targetColumn = [...data[destination.droppableId as keyof TaskColumnData]];
-			targetColumn.splice(destination.index, 0, draggedItem);
-			setData(preVal => ({
-				...preVal,
-				[source.droppableId]: srcColumn,
-				[destination.droppableId]: targetColumn
-			}));
+			// const draggedItem = srcColumn.splice(source.index, 1)[0];
+			// const targetColumn = [...data[destination.droppableId as keyof TaskColumnData]];
+			// targetColumn.splice(destination.index, 0, draggedItem);
+			// setData(preVal => ({
+			// 	...preVal,
+			// 	[source.droppableId]: srcColumn,
+			// 	[destination.droppableId]: targetColumn
+			// }));
+			// console.log(srcColumn[source.index]);
+			// console.log(source, destination);
+			http
+				.post('/task/updateTaskStatus', {
+					"taskId": srcColumn[source.index]._id,
+					"preStatus": source.droppableId,
+					"destStatus": destination.droppableId
+				})
+				.then(res => {
+					notification.success(res.message);
+					socket?.emit('queryTasks', { projectId: projectId });
+				})
+				.catch(err => notification.error(err?.message ?? err))
+				.finally(() => { });
 		}
 	};
 

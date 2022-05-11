@@ -79,7 +79,7 @@ const Detail: React.FC = () => {
 	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
 
 	const emitUpdate = useCallback(() => {
-		socket?.emit('update', { projectId: id });
+		socket?.emit('queryTasks', { projectId: id });
 	}, [setTasks, socket]);
 
 	useEffect(() => {
@@ -435,16 +435,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-					const { members } = preVal;
-					members.push({ _id: member._id, role: member.role });
-					return { ...preVal, members };
-			  })
+				const { members } = preVal;
+				members.push({ _id: member._id, role: member.role });
+				return { ...preVal, members };
+			})
 			: setMembers(preVal => {
-					const { members } = preVal;
-					const index = members.findIndex(item => item._id === member._id);
-					members.splice(index, 1);
-					return { ...preVal, members };
-			  });
+				const { members } = preVal;
+				const index = members.findIndex(item => item._id === member._id);
+				members.splice(index, 1);
+				return { ...preVal, members };
+			});
 	};
 
 	return (

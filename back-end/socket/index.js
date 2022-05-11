@@ -14,7 +14,7 @@ const constructorMethod = (io) => {
             const data = await getTasks(msg.projectId);
             socket.emit("tasks", data);
         });
-        socket.on('update', async (msg) => {
+        socket.on('queryTasks', async (msg) => {
             const data = await getTasks(msg.projectId);
             // socket.emit("tasks", data);
             const proDate = await getDetails(msg.projectId);
