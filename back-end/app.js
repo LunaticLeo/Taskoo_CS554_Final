@@ -1,3 +1,4 @@
+// express
 const express = require('express');
 const session = require('express-session');
 const app = express();
@@ -11,9 +12,6 @@ const multerMid = multer({
 	}
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 app.disable('x-powered-by');
 app.use(multerMid.array('file'));
 app.use(
@@ -25,8 +23,25 @@ app.use(
 	})
 );
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 configRoutes(app);
 
-app.listen(4000, () => {
-	console.log('🚀 Server ready at http://localhost:4000 🚀');
+// socket
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server, {
+	cors: {
+		origin: "*"
+	}
+});
+const configServer = require('./socket');
+configServer(io);
+
+
+server.listen(4000, () => {
+	console.log("We've now got a server with socket!");
+	console.log('Your routes will be running on http://localhost:4000');
 });

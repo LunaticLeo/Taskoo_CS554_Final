@@ -52,6 +52,7 @@ const getOptions = (data: StatisticBarChartOptions[], theme: Theme): Option => {
 	);
 
 	return {
+		backgroundColor: 'transparent',
 		tooltip: {
 			trigger: 'axis',
 			axisPointer: { type: 'shadow' }

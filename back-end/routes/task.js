@@ -1,7 +1,9 @@
 const router = require('express').Router();
-const { createTask, getTaskList, uploadAttachments, deleteTask, getStatusStatistic } = require('../data/task');
+const { createTask, getTaskList, uploadAttachments, deleteTask, getStatusStatistic, updateTaskStatus } = require('../data/task');
 const { Check } = require('../lib');
+const { toCapitalize } = require('../utils/helpers');
 const Task = require('../lib/Task');
+const { updateStatus } = require('../lib/Bucket');
 
 router.post('/create', async (req, res) => {
 	let newTask;
@@ -13,6 +15,28 @@ router.post('/create', async (req, res) => {
 
 	try {
 		const message = await createTask(newTask);
+		res.json({ code: 200, message });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.post('/updateTaskStatus', async (req, res) => {
+	const taskId = req.body['taskId'];
+	const preStatus = toCapitalize(req.body['preStatus']);
+	const destStatus = toCapitalize(req.body['destStatus']);
+	// console.log(taskId, preStatus, destStatus)
+
+	try {
+		Check._id(taskId);
+		Check.status(preStatus);
+		Check.status(destStatus);
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const message = await updateTaskStatus(req.session.accountInfo.bucket, taskId, preStatus, destStatus);
 		res.json({ code: 200, message });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
@@ -50,15 +74,19 @@ router.post('/attachments', async (req, res) => {
 
 router.get('/todo', async (req, res) => {
 	const { bucket } = req.session.accountInfo;
+	const { pageNum, pageSize } = req.query;
 
 	try {
-		const data = await getTaskList(bucket);
-		const todoList = data.map(x => {
+		let data = await getTaskList(bucket, { pageNum, pageSize });
+		const list = data.list.map(x => {
 			if (x.status !== 'done') {
 				return x;
 			}
 		});
-		res.status(200).json({ code: 200, message: '', todoList });
+
+		data.list = list;
+
+		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, IconButton, Paper, Stack, Toolbar, Typography } from '@mui/material';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { SESSION_KEY } from '@/utils/keys';
+import { STORAGE_KEY } from '@/utils/keys';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import Dashboard from './Dashboard/Dashboard';
 import Nav from './Nav';
@@ -13,6 +13,7 @@ import Profile from './Profile/Profile';
 import Detail from './Project/Detail';
 import Search from '../widgets/Search';
 import Organzation from './Organization/Organization';
+import Calendar from '../calendar/Calendar';
 
 const Home: React.FC = () => {
 	const { t } = useTranslation();
@@ -30,7 +31,7 @@ const Home: React.FC = () => {
 		setToolbarHeight(toolbar.current?.clientHeight ?? 64);
 	}, [toolbar]);
 
-	return sessionStorage.getItem(SESSION_KEY) ? (
+	return localStorage.getItem(STORAGE_KEY) ? (
 		<Box sx={{ display: 'flex', minHeight: '100vh' }}>
 			<Nav openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
 			<Paper component='main' square elevation={0} sx={{ flex: 1 }}>
@@ -70,6 +71,7 @@ const Home: React.FC = () => {
 						<Route path='/profile' element={<Profile />} />
 						<Route path='/project' element={<Project />} />
 						<Route path='/project/:id' element={<Detail />} />
+						<Route path='/calendar' element={<Calendar />} />
 						<Route path='/organization' element={<Organzation />} />
 					</Routes>
 				</Box>

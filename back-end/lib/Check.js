@@ -79,8 +79,8 @@ module.exports = {
 
 	// TODO
 	email(param) {
-		const reg = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+([.][a-zA-Z]+){1,2}$/;
-		if (reg.test(param)) {
+		var reg = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+([.][a-zA-Z]+){1,2}$/;
+    	if (reg.test(param)) {
 			return param;
 		} else {
 			throw Error(`The email ${param} is not valid`);
@@ -88,7 +88,26 @@ module.exports = {
 	},
 
 	password(param) {
-		return param;
+		const isAlphanumeric = /^[0-9a-zA-Z]*$/
+		const number = /[0-9]/; 
+		const alphabet = /[a-z]/i
+		if(param.length<8||param.length>16) throw Error(`Password's length is 8 to 16`)
+		if(isAlphanumeric.test(param))
+		{
+			if(number.test(param))
+			{
+				if(alphabet.test(param))
+				{
+					return param
+				}else{
+					throw Error(`Password must have letter`)
+				}
+			}else{
+				throw Error(`Password must have number`)
+			}
+		}else{
+			throw Error(`Password can only contain numbers and letters`)
+		}
 	},
 
 	department(param) {

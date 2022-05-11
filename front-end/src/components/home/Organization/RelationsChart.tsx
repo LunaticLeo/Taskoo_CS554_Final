@@ -34,10 +34,11 @@ const RelationsChart: React.FC<RelationsChartProps> = ({ data, type = 'treemap' 
 		[type, chartData]
 	);
 
-	return <Chart height='100%' width='100%' option={option} />;
+	return <Chart height='80vh' width='100%' option={option} />;
 };
 
 const getTreemapOption = (data: TreemapSeriesOption['data']): Option => ({
+	backgroundColor: 'transparent',
 	series: [
 		{
 			type: 'treemap',
@@ -58,6 +59,7 @@ const getTreemapOption = (data: TreemapSeriesOption['data']): Option => ({
 });
 
 const getSunburstOption = (data: TreemapSeriesOption['data']): Option => ({
+	backgroundColor: 'transparent',
 	series: [
 		{
 			type: 'sunburst',

@@ -30,6 +30,7 @@ export const createLogo = ({ color, fontSize }: LogoProps): Option => {
 	color = color ?? theme.palette.primary.main;
 
 	return {
+		backgroundColor: 'transparent',
 		graphic: {
 			id: 'logo',
 			elements: [

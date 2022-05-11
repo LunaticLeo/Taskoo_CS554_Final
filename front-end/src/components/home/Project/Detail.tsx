@@ -54,16 +54,22 @@ import FileUploader from '@/components/widgets/FileUploader';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { setLoading } from '@/store/loading';
-import FilePresentRoundedIcon from '@mui/icons-material/FilePresentRounded';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import useSocket from '@/hooks/useSocket';
+import useValidation from '@/hooks/useValidation';
+
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
 	const { id } = useParams();
+	const { _id: accountId } = useAccountInfo();
 	const dispatch = useAppDispatch();
 	const { enqueueSnackbar } = useSnackbar();
 	const [projectInfo, setProjectInfo] = useState<Project>({} as Project);
 	const [favoriteStatus, setFavoriteStatus] = useState<boolean>(false);
 	const [permission, setPermission] = useState<boolean>(false);
+	const socket = useSocket();
 	const [tasks, setTasks] = useState<TaskColumnData>({
 		pending: [],
 		processing: [],
@@ -71,6 +77,10 @@ const Detail: React.FC = () => {
 		done: []
 	} as TaskColumnData);
 	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
+
+	const emitUpdate = useCallback(() => {
+		socket?.emit('queryTasks', { projectId: id });
+	}, [setTasks, socket]);
 
 	useEffect(() => {
 		// get project detail info
@@ -83,16 +93,25 @@ const Detail: React.FC = () => {
 			setFavoriteStatus(res.data!);
 		});
 
-		// get tasks
-		http.get<TaskColumnData>('/project/tasks', { id }).then(res => {
-			setTasks(res.data!);
-		});
-
 		// check create permission
 		http.get<boolean>('/account/permission', { category: 'tasks' }).then(res => {
 			setPermission(res.data!);
 		});
 	}, [id]);
+
+	useEffect(() => {
+		if (socket) {
+			socket?.emit('join', { accountId, projectId: id });
+		}
+	}, [socket]);
+
+	useEffect(() => {
+		if (socket) {
+			socket?.on('tasks', (data: TaskColumnData) => {
+				setTasks(data);
+			});
+		}
+	}, [socket]);
 
 	const swithFavoriteStatus = () => {
 		const newStatus = !favoriteStatus;
@@ -138,7 +157,7 @@ const Detail: React.FC = () => {
 				</Stack>
 				<Tasks data={tasks} setData={setTasks} sx={{ mt: 5 }} permission={permission} />
 			</Box>
-			{permission && <FormDialog project={id ?? ''} members={projectInfo.members} />}
+			{permission && <FormDialog project={id ?? ''} members={projectInfo.members} emitUpdate={emitUpdate} />}
 		</>
 	);
 };
@@ -224,14 +243,14 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
 
 	return (
 		<>
-			<IconButton
-				color='primary'
-				aria-describedby={id}
-				aria-label='upload-btn'
+			<Button
+				sx={{ ml: 1 }}
+				variant='contained'
+				startIcon={<CloudUploadIcon />}
 				onClick={e => setAnchorEl(e.currentTarget)}
 			>
-				<FilePresentRoundedIcon color='inherit' />
-			</IconButton>
+				{t('button.upload')}
+			</Button>
 			<Popover
 				id={id}
 				open={open}
@@ -293,18 +312,19 @@ class TaskFormClass implements Form.TaskForm {
 	description = '';
 	project = '';
 	members = [];
-	dueTime = dayjs().valueOf();
+	dueTime = dayjs().add(1, 'day').valueOf();
 	constructor(project: string) {
 		this.project = project;
 	}
 }
 
-const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
+const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdate }) => {
 	const { t } = useTranslation();
 	const { _id } = useAccountInfo();
 	const notificate = useNotification();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [taskForm, setTaskForm] = useState<Form.TaskForm>(new TaskFormClass(project));
+	const { valid } = useValidation();
 
 	const handleInputChange = (val: Partial<Form.TaskForm>) => {
 		setTaskForm(preVal => ({ ...preVal, ...val }));
@@ -319,7 +339,10 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 		const formData = toFormData<Form.TaskForm<string>>({ ...taskForm, members });
 		http
 			.post('/task/create', formData)
-			.then(res => notificate.success(res.message))
+			.then(res => {
+				notificate.success(res.message);
+				emitUpdate();
+			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => {
 				setOpenDialog(false);
@@ -338,7 +361,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 			setTaskForm(preVal => {
 				const { members: memberList } = preVal;
 				const creator = members?.find(item => item._id === _id);
-				memberList.some(item => item._id === creator?._id) && memberList.unshift({ _id, role: creator?.role! });
+				!memberList.some(item => item._id === creator?._id) && memberList.unshift({ _id, role: creator?.role! });
 				return { ...preVal };
 			});
 	};
@@ -365,18 +388,19 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members }) => {
 										{t('task.info')}
 									</Typography>
 									<TextField
+										required
 										id='name'
 										value={taskForm.name}
 										label={t('task.form.name')}
 										variant='outlined'
 										margin='normal'
-										onChange={e => handleInputChange({ name: e.target.value })}
+										{...valid('Task', (e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
 									<DatePicker
 										label={t('task.form.dueTime')}
 										value={taskForm.dueTime}
 										onChange={value => handleInputChange({ dueTime: dayjs(value).valueOf()! })}
-										renderInput={params => <TextField margin='normal' {...params} />}
+										renderInput={params => <TextField required margin='normal' {...params} />}
 									/>
 									<TextField
 										id='description'
@@ -411,16 +435,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-					const { members } = preVal;
-					members.push({ _id: member._id, role: member.role });
-					return { ...preVal, members };
-			  })
+				const { members } = preVal;
+				members.push({ _id: member._id, role: member.role });
+				return { ...preVal, members };
+			})
 			: setMembers(preVal => {
-					const { members } = preVal;
-					const index = members.findIndex(item => item._id === member._id);
-					members.splice(index, 1);
-					return { ...preVal, members };
-			  });
+				const { members } = preVal;
+				const index = members.findIndex(item => item._id === member._id);
+				members.splice(index, 1);
+				return { ...preVal, members };
+			});
 	};
 
 	return (
@@ -428,7 +452,7 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 			<Typography variant='h6' component='h3'>
 				{t('task.members')}
 			</Typography>
-			<List dense sx={{ height: '100%', overflow: 'auto' }}>
+			<List dense sx={{ height: 360.18, overflow: 'auto' }}>
 				{data.map(member => (
 					<ListItem
 						key={member._id}

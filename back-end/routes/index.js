@@ -8,10 +8,13 @@ const organization = require('./organization');
 const whitelist = ['/account/signin', '/account/signup'];
 
 module.exports = app => {
-	app.post('*', (req, res, next) => {
+	app.use('*', (req, res, next) => {
 		const { originalUrl } = req;
+		// console.log(originalUrl)
 		if (!whitelist.includes(originalUrl) && !req.session.accountInfo) {
 			return res.status(401).json({ code: 401, message: 'Unauthorized request' });
+			// return res.redirect("/account/signin");
+			// res.redirect("/account/signin");
 		}
 		next();
 	});

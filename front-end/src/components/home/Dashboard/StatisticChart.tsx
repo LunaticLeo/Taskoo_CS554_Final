@@ -7,22 +7,25 @@ import { DashboardProps, Option } from '@/@types/props';
 import CategorySwitch from './CategorySwitch';
 import http from '@/utils/http';
 import { HEIGHT } from './Dashboard';
+import { useAppSelector } from '@/hooks/useStore';
 
 const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => {
 	const { t } = useTranslation();
 	const [option, setOption] = useState<Option>({});
 	const theme = useTheme();
 	const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
-	let httpData: any;
+	const colorMode = useAppSelector(state => state.colorMode.value);
+	let httpData: Record<Lowercase<StaticStatus>, number>;
 
 	useLayoutEffect(() => {
+		const borderColor = colorMode === 'dark' ? '#252525' : '#fff';
 		!httpData
 			? http.get<Record<Lowercase<StaticStatus>, number>>(`/${category}/status/statistic`).then(res => {
 					httpData = res.data!;
-					setOption(getOption({ ...res.data!, borderColor: theme.palette.background.paper }, t, theme, largeScreen));
+					setOption(getOption({ ...res.data!, borderColor }, t, theme, largeScreen));
 			  })
-			: setOption(getOption({ ...httpData!, borderColor: theme.palette.background.paper }, t, theme, largeScreen));
-	}, [category, largeScreen]);
+			: setOption(getOption({ ...httpData!, borderColor }, t, theme, largeScreen));
+	}, [category, largeScreen, colorMode]);
 
 	return (
 		<Styled.Card>
@@ -44,6 +47,7 @@ const getOption = (
 	largeScreen: boolean
 ): Option => {
 	return {
+		backgroundColor: 'transparent',
 		tooltip: { trigger: 'item' },
 		legend: largeScreen ? { bottom: 0, left: 'center' } : { top: 'center', right: 'right', orient: 'vertical' },
 		series: [

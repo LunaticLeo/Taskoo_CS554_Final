@@ -30,7 +30,11 @@ import useFormatList from '@/hooks/useFormatList';
 import { Form } from '@/@types/form';
 import { PageConfig, ProjectFormDialogProps, ProjectMemberListProps, WithPage } from '@/@types/props';
 import useNotification from '@/hooks/useNotification';
+import { useAppDispatch } from '@/hooks/useStore';
+import { setLoading } from '@/store/loading';
+import useValidation from '@/hooks/useValidation';
 
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 const header: (keyof ProjectInfo)[] = ['name', 'createTime', 'status', 'members'];
 
 const Project: React.FC = () => {
@@ -93,11 +97,13 @@ class ProjectFormClass implements Form.ProjectForm {
 
 const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [members, setMembers] = useState<Account<string>[]>([]);
 	const notificate = useNotification();
 	const [projectForm, setProjectForm] = useState<Form.ProjectForm>(new ProjectFormClass());
 	const accountInfo = useAccountInfo();
+	const { valid } = useValidation();
 
 	useEffect(() => {
 		http.get<Account<string>[]>('/account/members').then(res => {
@@ -117,6 +123,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 		e.preventDefault();
 		const members = projectForm.members.map(item => JSON.stringify(item));
 		const formData = toFormData<Form.ProjectForm<string>>({ ...projectForm, members });
+		dispatch(setLoading(true));
 		http
 			.post('/project/create', formData)
 			.then(res => {
@@ -125,6 +132,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => {
+				setTimeout(() => dispatch(setLoading(false)), 1000);
 				setOpenDialog(false);
 				setProjectForm(new ProjectFormClass());
 			});
@@ -158,12 +166,13 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 										{t('project.info')}
 									</Typography>
 									<TextField
+										required
 										id='name'
 										value={projectForm.name}
 										label={t('project.form.name')}
 										variant='outlined'
 										margin='normal'
-										onChange={e => handleInputChange({ name: e.target.value })}
+										{...valid('Project', (e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
 									<TextField
 										id='description'
@@ -193,6 +202,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 
 const MemberList: React.FC<ProjectMemberListProps> = ({ data, members, setMembers }) => {
 	const { t } = useTranslation();
+	const [checked, setChecked] = useState<boolean[]>(Array(data.length).fill(false));
 	const [roleList, setRoleList] = useState<StaticData[]>([]);
 	const [anchorEl, setAnchorEl] = useState<{ el: null | HTMLDivElement; index: number }>({
 		el: null,
@@ -206,6 +216,10 @@ const MemberList: React.FC<ProjectMemberListProps> = ({ data, members, setMember
 	}, []);
 
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+		setChecked(preVal => {
+			preVal[index] = e.target.checked;
+			return [...preVal];
+		});
 		if (e.target.checked) {
 			setAnchorEl({ el: e.target, index });
 		} else {
@@ -221,6 +235,14 @@ const MemberList: React.FC<ProjectMemberListProps> = ({ data, members, setMember
 	};
 
 	const handleMenuClose = () => {
+		const exist = members.some(item => item._id === data[anchorEl.index]._id);
+		if (checked[anchorEl.index] && !exist) {
+			setChecked(preVal => {
+				preVal[anchorEl.index] = false;
+				return [...preVal];
+			});
+		}
+
 		setAnchorEl({ el: null, index: -1 });
 	};
 
@@ -248,7 +270,7 @@ const MemberList: React.FC<ProjectMemberListProps> = ({ data, members, setMember
 			<Typography variant='h6' component='h3'>
 				{t('project.members')}
 			</Typography>
-			<List dense sx={{ maxHeight: 260, overflow: 'auto' }}>
+			<List dense sx={{ maxHeight: 240.12, overflow: 'auto' }}>
 				{data.map((member, index) => (
 					<ListItem
 						key={member._id}
@@ -258,6 +280,7 @@ const MemberList: React.FC<ProjectMemberListProps> = ({ data, members, setMember
 								{getRoles(member._id)}
 								<Checkbox
 									edge='end'
+									checked={checked[index]}
 									onChange={e => handleToggle(e, index)}
 									inputProps={{ 'aria-labelledby': member._id }}
 								/>

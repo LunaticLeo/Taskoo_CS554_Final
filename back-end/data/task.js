@@ -21,6 +21,26 @@ const createTask = async taskObj => {
 };
 
 /**
+ * update task status
+ * @param {taskId, preStatus, destStatus} 
+ */
+const updateTaskStatus = async (bucketId, taskId, preStatus, destStatus) => {
+	const taskCol = await tasks();
+	const taskObj = new Task(await taskCol.findOne({ _id: taskId }));	
+
+	taskObj.updateStatus(bucketId, destStatus);
+
+	const projectId = taskObj.project;
+	if (preStatus === "Processing" && destStatus === "Testing") {
+		const projectCol = await projects();
+		const { modifiedCount } = await projectCol.updateOne({ _id: projectId }, { $set: { "status": "Testing" } });
+		// if (!modifiedCount) throw Error('The project is not exists');  // not required to check
+	}
+
+	return `Set task ${taskObj.name} as ${destStatus}`;
+};
+
+/**
  * delete task
  * @param {string} objid
  */
@@ -38,7 +58,7 @@ const deleteTask = async objid => {
  * @param {object} pageConfig {pageNum: number, pageSize: number}
  */
 const getTaskList = async (bucketId, pageConfig) => {
-	return await core.getListFromBucket('tasks', bucketId, pageConfig, { description: 0, attachments: 0 });
+	return await core.getListFromBucket('tasks', bucketId, pageConfig, { attachments: 0 });
 };
 
 /**
@@ -64,5 +84,6 @@ module.exports = {
 	getTaskList,
 	deleteTask,
 	uploadAttachments,
-	getStatusStatistic
+	getStatusStatistic,
+	updateTaskStatus
 };
