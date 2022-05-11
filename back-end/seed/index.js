@@ -28,10 +28,12 @@ const insertAccounts = async (departmentIds, positionIds) => {
 		const count = ~~(Math.random() * 11) + 10;
 		for (let i = 0; i < count; i++) {
 			const firstName = Random.first();
-			const lastName = Random.last()
+			const lastName = Random.last();
+			const accountSameNamecount = pre.filter(item=>item.firstName===firstName).length;
+			const email=accountSameNamecount===0?firstName.toLowerCase() + '@taskoo.com':firstName.toLowerCase() +accountSameNamecount+ '@taskoo.com';
 			pre.push(
 				new Account({
-					email: firstName.toLowerCase() + '@taskoo.com',
+					email,
 					password: firstName[0]+lastName[0]+'123456',
 					firstName,
 					lastName,
