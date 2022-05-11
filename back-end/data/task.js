@@ -37,7 +37,7 @@ const updateTaskStatus = async (bucketId, taskId, preStatus, destStatus) => {
 		// if (!modifiedCount) throw Error('The project is not exists');  // not required to check
 	}
 
-	return `Task ${taskObj.name} update status successfully`;
+	return `Set task ${taskObj.name} as ${destStatus}`;
 };
 
 /**

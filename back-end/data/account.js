@@ -37,7 +37,7 @@ const addToRegisterList = async (accountInfo, email) => {
 
 	await sendEmail({
 		to: email,
-		subject: 'Taskoo Registe Invitation',
+		subject: 'Taskoo Register Invitation',
 		text: mailTemplate(accountInfo.firstName, registerId)
 	});
 
@@ -61,7 +61,7 @@ const mailTemplate = (firstName, registerId) => {
 		Hi ${toCapitalize(firstName)},
 
 		Welcome to Taskoo, please click the link below to start sign up your account.
-		This link will expier in 1 hour.
+		This link will expire in 1 hour.
 
 		http://localhost:3000/#/account/signup/${registerId}
 
