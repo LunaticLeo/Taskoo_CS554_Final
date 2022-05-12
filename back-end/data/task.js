@@ -13,6 +13,7 @@ const { updateStatus } = require('../lib/Bucket');
 const createTask = async (taskObj, bucketId) => {
 	return await core.create(taskObj, 'task', async insertedId => {
 		const projectCol = await projects();
+		if(dayjs().isAfter(dayjs(taskObj.dueTime),'day')) throw Error("The dueTime can't before today")
 		let { modifiedCount } = await projectCol.updateOne(
 			{ _id: taskObj.project },
 			{ $addToSet: { tasks: insertedId } }
