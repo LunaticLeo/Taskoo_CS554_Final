@@ -48,11 +48,6 @@ const Calendar: React.FC = () => {
 				calendar.createSchedules(Object.values(formattask));
 			}
 		});
-		// TODO get the task data from server side
-		// http.get<>('').then(res => {
-		//   // 1. call createSchedule to format the task
-		//   // 2. call calendat.createSchedules(tasks) to add task into calendat
-		// })
 	}, [calendar]);
 
 	const handleSwitchView = (e: React.ChangeEvent<HTMLInputElement>) => {

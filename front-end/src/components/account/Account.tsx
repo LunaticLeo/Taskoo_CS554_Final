@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Box, Stack } from '@mui/material';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Signin from './Signin';
@@ -7,8 +7,21 @@ import ThemeSwitch from '../widgets/ThemeSwitch';
 import Signup from './Signup';
 import DynamicBG from '../layout/DynamicBG';
 import { STORAGE_KEY } from '@/utils/keys';
+import useSocket from '@/hooks/useSocket';
+import { useAppDispatch } from '@/hooks/useStore';
+import { clear } from '@/store/accountInfo';
 
 const Account: React.FC = () => {
+	const socket = useSocket();
+	const dispatch = useAppDispatch();
+	useEffect(() => {
+		if (socket) {
+			socket?.on('disconnect',(msg)=>{
+				dispatch(clear());
+			});
+		}
+	}, [socket]);
+	
 	return localStorage.getItem(STORAGE_KEY) ? <Navigate to="/home/dashboard" replace /> : <Box sx={{ height: '100%', background: theme => theme.palette.background.default }}>
 	<DynamicBG />
 	<Stack

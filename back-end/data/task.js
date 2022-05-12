@@ -2,6 +2,7 @@ const { tasks, projects } = require('../config/mongoCollections');
 const { Check } = require('../lib');
 const Task = require('../lib/Task');
 const core = require('./core');
+const dayjs = require('dayjs');
 
 /**
  * create task
@@ -10,11 +11,17 @@ const core = require('./core');
 const createTask = async taskObj => {
 	return await core.create(taskObj, 'task', async insertedId => {
 		const projectCol = await projects();
-		const { modifiedCount } = await projectCol.updateOne(
+		let { modifiedCount } = await projectCol.updateOne(
 			{ _id: taskObj.project },
 			{ $addToSet: { tasks: insertedId } }
 		);
 		if (!modifiedCount) throw Error('The task is already in task list');
+		const project=await projectCol.findOne({_id:taskObj.project})
+		if(project.status==="Pending") modifiedCount=await projectCol.updateOne(
+			{_id:taskObj.project},
+			{$set:{"status": "Processing"}}
+		)
+		//if (!modifiedCount) throw Error('The task is already in task list');
 	});
 
 	// TODO update project status from Pending to Processing
