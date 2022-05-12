@@ -7,6 +7,38 @@
 		{
 			"_id": "50596f2c-3d93-4bda-a02a-2c0fe71cf0db",
 			"name": "Researchand Dev Dept"
+		},
+		{
+			"_id": "00110906-b284-45af-be3d-3a5544b4b491",
+			"name": "Technology Dept"
+		},
+		{
+			"_id": "6ce4d800-7be9-4c86-ae03-7f3a9b4bee9f",
+			"name": "Research Dept"
+		},
+		{
+			"_id": "268f8abc-741a-469c-9ad8-90ce777b2a08",
+			"name": "Business Office"
+		},
+		{
+			"_id": "0378a344-b34b-4305-8917-01da37a84e2f",
+			"name": "Personnel Department"
+		},
+		{
+			"_id": "0278cb5a-f5d6-45e6-a4b3-c1e29fa45e5e",
+			"name": "Engineering Department"
+		},
+		{
+			"_id": "16fe6efd-5273-4691-b824-c725669c00e3",
+			"name": "Administration Dept"
+		},
+		{
+			"_id": "f08cff93-2ee2-48e7-9d03-507d6d1abfd9",
+			"name": "Technologe Department"
+		},
+		{
+			"_id": "3932398c-d84e-47f6-9727-1757a493c1f8",
+			"name": "Sales Department"
 		}
 	],
 	"positions": [
