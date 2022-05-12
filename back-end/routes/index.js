@@ -5,7 +5,7 @@ const task = require('./task');
 const organization = require('./organization');
 
 // the whitelist routes
-const whitelist = ['/account/signin', '/account/signup'];
+const whitelist = ['/account/signin', '/account/signup','/account/signout'];
 
 module.exports = app => {
 	app.use('*', (req, res, next) => {

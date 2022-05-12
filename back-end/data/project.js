@@ -336,6 +336,10 @@ const getTasks = async projectId => {
 		}
 	);
 
+	for (const property in tasks) {
+		tasks[property].sort((a, b) => a.dueTime - b.dueTime);
+	}
+
 	return tasks;
 };
 

@@ -107,8 +107,8 @@ const Detail: React.FC = () => {
 
 	useEffect(() => {
 		if (socket) {
-			socket?.on('tasks', (data: TaskColumnData) => {
-				setTasks(data);
+			socket?.on('tasks', (msg) => {
+				msg.projectId == id && setTasks(msg.tasks);
 			});
 		}
 	}, [socket]);
@@ -399,7 +399,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 									<DatePicker
 										label={t('task.form.dueTime')}
 										value={taskForm.dueTime}
-										onChange={value => handleInputChange({ dueTime: dayjs(value).valueOf()! })}
+										onChange={value => handleInputChange({ dueTime: +(dayjs(value).valueOf()!) })}
 										renderInput={params => <TextField required margin='normal' {...params} />}
 									/>
 									<TextField

@@ -3,7 +3,7 @@ const { getTasks, getDetails } = require("../data/project");
 const constructorMethod = (io) => {
 
     const accountSockets = {};
-    
+
     io.on('connection', (socket) => {
         let accountId;
         socket.on('join', async (msg) => {
@@ -12,7 +12,7 @@ const constructorMethod = (io) => {
             accountSockets[msg.accountId].add(socket.id);
 
             const data = await getTasks(msg.projectId);
-            socket.emit("tasks", data);
+            socket.emit("tasks", { "projectId": msg.projectId, "tasks": data });
         });
         socket.on('queryTasks', async (msg) => {
             const data = await getTasks(msg.projectId);
@@ -22,7 +22,7 @@ const constructorMethod = (io) => {
             membersInform.forEach(element => {
                 if (accountSockets[element]) {
                     accountSockets[element].forEach(element2 => {
-                        io.to(element2).emit("tasks",data);
+                        io.to(element2).emit("tasks", { "projectId": msg.projectId, "tasks": data });
                     });
                 }
             });

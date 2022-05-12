@@ -7,8 +7,10 @@ const { updateStatus } = require('../lib/Bucket');
 
 router.post('/create', async (req, res) => {
 	let newTask;
+	// console.log(req.body);
 	try {
 		newTask = new Task(req.body);
+		// console.log(newTask);
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}
