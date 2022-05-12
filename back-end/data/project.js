@@ -88,7 +88,7 @@ const getTaskStatistic = async bucketId => {
  * @param {object} pageConfig {pageNum: number, pageSize: number}
  */
 const getProjectList = async (bucketId, pageConfig) => {
-	return await core.getListFromBucket('projects', bucketId, pageConfig, { description: 0, tasks: 0, attachments: 0 });
+	return await core.getListFromBucket('projects', bucketId, pageConfig, { description: 0, tasks: 0, attachments: 0 }, { $sort: { "list.createTime": -1 } });
 };
 
 /**
