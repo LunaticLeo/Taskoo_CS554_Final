@@ -3,12 +3,14 @@ const { Check } = require('../lib');
 const Task = require('../lib/Task');
 const core = require('./core');
 const dayjs = require('dayjs');
+const { updateStatus } = require('../lib/Bucket');
 
 /**
  * create task
  * @param {Task} taskObj
+ * @param {string} bucketId
  */
-const createTask = async taskObj => {
+const createTask = async (taskObj, bucketId) => {
 	return await core.create(taskObj, 'task', async insertedId => {
 		const projectCol = await projects();
 		let { modifiedCount } = await projectCol.updateOne(
@@ -16,11 +18,12 @@ const createTask = async taskObj => {
 			{ $addToSet: { tasks: insertedId } }
 		);
 		if (!modifiedCount) throw Error('The task is already in task list');
-		const project=await projectCol.findOne({_id:taskObj.project})
-		if(project.status==="Pending") modifiedCount=await projectCol.updateOne(
-			{_id:taskObj.project},
-			{$set:{"status": "Processing"}}
+		const project = await projectCol.findOne({ _id: taskObj.project })
+		if (project.status === "Pending") modifiedCount = await projectCol.updateOne(
+			{ _id: taskObj.project },
+			{ $set: { "status": "Processing" } }
 		)
+		updateStatus(bucketId, "projects", project._id, "Pending", "Processing");
 		//if (!modifiedCount) throw Error('The task is already in task list');
 	});
 
@@ -29,11 +32,14 @@ const createTask = async taskObj => {
 
 /**
  * update task status
- * @param {taskId, preStatus, destStatus} 
+ * @param {string} bucketId
+ * @param {string} taskId
+ * @param {string} preStatus
+ * @param {string} destStatus
  */
 const updateTaskStatus = async (bucketId, taskId, preStatus, destStatus) => {
 	const taskCol = await tasks();
-	const taskObj = new Task(await taskCol.findOne({ _id: taskId }));	
+	const taskObj = new Task(await taskCol.findOne({ _id: taskId }));
 
 	taskObj.updateStatus(bucketId, destStatus);
 
