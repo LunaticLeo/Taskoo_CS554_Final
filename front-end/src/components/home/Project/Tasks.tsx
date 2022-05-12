@@ -31,7 +31,7 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 		)
 	);
 	const socket = useSocket();
-	const projectId =  useParams().id;
+	const projectId = useParams().id;
 	useEffect(() => {
 		http.get<StaticData[]>('/static/status').then(res => {
 			setSTATUS(
@@ -112,10 +112,16 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ status, data, permission }) => 
 	const { t } = useTranslation();
 	const notificate = useNotification();
 
+	const socket = useSocket();
+	const projectId = useParams().id;
+
 	const handleDelete = (id: string) => {
 		http
 			.delete('/task/remove', { id })
-			.then(res => notificate.success(res.message))
+			.then(res => {
+				notificate.success(res.message);
+				socket?.emit('queryTasks', { projectId: projectId });
+			})
 			.catch(err => notificate.error(err?.message ?? err));
 	};
 

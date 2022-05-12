@@ -10,7 +10,7 @@ class Task extends DBCollection {
 	project = '';
 	members = [];
 	createTime = dayjs().valueOf();
-	dueTime = '';
+	dueTime = NaN;
 	status = 'Pending';
 	attachments = [];
 
@@ -25,8 +25,9 @@ class Task extends DBCollection {
 				return item;
 			}
 		});
-
+		
 		Object.keys(obj).forEach(key => (this[key] = obj[key]));
+		this.dueTime = +this.dueTime;
 		this.checkValidation();
 	}
 
