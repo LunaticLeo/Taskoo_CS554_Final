@@ -11,6 +11,7 @@ const dayjs = require('dayjs');
 const createTask = async taskObj => {
 	return await core.create(taskObj, 'task', async insertedId => {
 		const projectCol = await projects();
+		if(dayjs().isAfter(dayjs(taskObj.dueTime),'day')) throw Error("The dueTime can't before today")
 		let { modifiedCount } = await projectCol.updateOne(
 			{ _id: taskObj.project },
 			{ $addToSet: { tasks: insertedId } }
