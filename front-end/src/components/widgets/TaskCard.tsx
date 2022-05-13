@@ -56,7 +56,7 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 						{t('dueTime')}
 					</Typography>
 					<Typography variant='body2' component='span'>
-						{dayjs(+data.dueTime).format('MM/DD/YYYY')}
+						{dayjs(+data.dueTime).format("L LT")}
 					</Typography>
 				</Stack>
 			</Stack>
@@ -144,7 +144,7 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 									{t(item)}
 								</Typography>
 								<Typography variant='body2' component='span'>
-									{dayjs(+(data as any)[item]).format('MM/DD/YYYY')}
+									{dayjs(+(data as any)[item]).format("L LT")}
 								</Typography>
 							</Stack>
 						))}

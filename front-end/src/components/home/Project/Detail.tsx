@@ -378,7 +378,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 				{t('button.newTask')}
 			</Fab>
 			<Styled.Dialog open={openDialog} onClose={setOpenDialog}>
-				<DialogTitle>{t('project.dialogTitle')}</DialogTitle>
+				<DialogTitle>{t('task.dialogTitle')}</DialogTitle>
 				<form onSubmit={handleSubmit}>
 					<DialogContent>
 						<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
