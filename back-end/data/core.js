@@ -76,6 +76,9 @@ const deleteobj = async (objid, category, cb) => {
 	}
 
 	const deleteobj = await collection.findOne({ _id: objid });
+	if(category==='task') {
+		if(deleteobj.status==='Done') throw Error('task cannot be deleted')
+	}
 	const { deletedCount } = await collection.deleteOne({ _id: objid });
 	if (!deletedCount) throw Error('The object is not exist in list');
 	// update bucket for members

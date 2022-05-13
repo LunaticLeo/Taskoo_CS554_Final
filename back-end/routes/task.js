@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { createTask, getTaskList, uploadAttachments, deleteTask, getStatusStatistic, updateTaskStatus } = require('../data/task');
+const { createTask, getTaskList, uploadAttachments, deleteTask, getStatusStatistic, updateTaskStatus, getTaskby } = require('../data/task');
 const { Check } = require('../lib');
 const { toCapitalize } = require('../utils/helpers');
 const Task = require('../lib/Task');
@@ -118,7 +118,8 @@ router.delete('/remove', async (req, res) => {
 		const message = await deleteTask(taskId);
 		res.json({ code: 200, message });
 	} catch (error) {
-		return res.status(500).json({ code: 500, message: error?.message ?? error });
+		if(error.message==='task cannot be deleted') return res.status(403).json({code: 403, message: error?.message ?? error})
+		else return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
 
