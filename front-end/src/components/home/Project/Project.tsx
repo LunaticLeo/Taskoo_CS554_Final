@@ -107,7 +107,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 
 	useEffect(() => {
 		http.get<Account<string>[]>('/account/members').then(res => {
-			const memberList = res.data!.filter(item => item._id !== accountInfo._id);
+			const memberList = res.data!.filter(item => item._id !== accountInfo._id && item.position!=="Product Manager");
 			setMembers(memberList);
 		});
 	}, []);
