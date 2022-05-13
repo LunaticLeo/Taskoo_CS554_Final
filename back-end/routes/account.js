@@ -49,7 +49,7 @@ router.post('/signin', async (req, res) => {
 
 	try {
 		Check.email(email);
-		Check.name(password); //check password missing
+		Check.password(password);
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}
