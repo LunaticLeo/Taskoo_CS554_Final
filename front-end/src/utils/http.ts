@@ -11,7 +11,7 @@ instance.interceptors.response.use(
 	res => (res.status >= 200 && res.status < 300 ? res.data : Promise.reject('Request error, please try again later!')),
 	err => {
 		const msg = err?.response?.data ?? err;
-		console.error(msg);
+		// console.error(msg);
 		return Promise.reject(msg);
 	}
 );
