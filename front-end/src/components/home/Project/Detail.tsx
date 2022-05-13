@@ -35,7 +35,7 @@ import { getFavoriteList } from '@/store/favoriteList';
 import { Form } from '@/@types/form';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Tasks from './Tasks';
 import {
 	FavoriteButtonProps,
@@ -396,10 +396,11 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 										margin='normal'
 										{...valid('Task', (e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
 									/>
-									<DatePicker
+									<DateTimePicker
 										label={t('task.form.dueTime')}
 										value={taskForm.dueTime}
 										onChange={value => handleInputChange({ dueTime: +(dayjs(value).valueOf()!) })}
+										minDateTime={new Date()}
 										renderInput={params => <TextField required margin='normal' {...params} />}
 									/>
 									<TextField
