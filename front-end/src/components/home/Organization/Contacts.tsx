@@ -1,12 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Styled from '@/components/widgets/Styled';
 import { Divider, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import http from '@/utils/http';
-import { toFullName, stringAvatar } from '@/utils';
-import { ContactDisplayType, ContactListItemProps, ContactListProps, ContactsProps } from '@/@types/props';
-
-import Register from './Register';
+import { ContactDisplayType, ContactsProps } from '@/@types/props';
 import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
 import TableChartRoundedIcon from '@mui/icons-material/TableChartRounded';
 import DonutLargeRoundedIcon from '@mui/icons-material/DonutLargeRounded';
@@ -42,7 +38,9 @@ const Contacts: React.FC<ContactsProps> = ({ data }) => {
 					</ToggleButton>
 				))}
 			</ToggleButtonGroup>
-			{display}
+			{/* {display} */}
+			{type === 'list' ? <ContactList data={data} /> : <RelationsChart data={data} type={type} />}
+			{/* <RelationsChart data={data} type={type} /> */}
 		</>
 	);
 };

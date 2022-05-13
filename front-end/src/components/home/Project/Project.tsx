@@ -25,7 +25,6 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import useAccountInfo from '@/hooks/useAccountInfo';
 import http from '@/utils/http';
 import { Page, toFormData } from '@/utils';
-import { useSnackbar } from 'notistack';
 import useFormatList from '@/hooks/useFormatList';
 import { Form } from '@/@types/form';
 import { PageConfig, ProjectFormDialogProps, ProjectMemberListProps, WithPage } from '@/@types/props';
