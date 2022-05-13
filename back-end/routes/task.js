@@ -16,7 +16,7 @@ router.post('/create', async (req, res) => {
 	}
 
 	try {
-		const message = await createTask(newTask);
+		const message = await createTask(newTask,req.session.accountInfo.bucket);
 		res.json({ code: 200, message });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
