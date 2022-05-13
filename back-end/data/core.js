@@ -103,7 +103,7 @@ const search = async (searchTerm, accountId) => {
  * @param {string} bucketId
  * @param {object} projection
  */
-const getListFromBucket = async (category, bucketId, { pageNum = 1, pageSize = 10 }, projection, sortExpress = {}) => {
+const getListFromBucket = async (category, bucketId, { pageNum = 1, pageSize = 10 }, projection, sortExpress) => {
 	const bucketsCol = await buckets();
 	const list = await bucketsCol
 		.aggregate([
@@ -132,7 +132,7 @@ const getListFromBucket = async (category, bucketId, { pageNum = 1, pageSize = 1
 				}
 			},
 			{ $unwind: '$list' },
-			sortExpress,
+			...(sortExpress ? [sortExpress] : []),
 			{ $skip: (+pageNum - 1) * +pageSize },
 			{ $limit: +pageSize },
 			{
@@ -149,8 +149,7 @@ const getListFromBucket = async (category, bucketId, { pageNum = 1, pageSize = 1
 			},
 			{
 				$project: projection
-			},
-
+			}
 		])
 		.toArray();
 

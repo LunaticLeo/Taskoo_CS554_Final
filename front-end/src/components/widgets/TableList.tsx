@@ -59,15 +59,15 @@ export default class TableList<T extends { _id: string; [prop: string]: any }> e
 									</TableBody>
 								)}
 							</Table>
+							{!Boolean(data.length) && (
+								<Box sx={{ textAlign: 'center', width: '100%', mt: 2 }}>
+									<Box component='img' src={empty} sx={{ width: 100, height: 100 }} />
+									<Typography variant='body2' color='text.secondary'>
+										{t('noData')}
+									</Typography>
+								</Box>
+							)}
 						</TableContainer>
-						{!Boolean(data.length) && (
-							<Box sx={{ textAlign: 'center', width: '100%' }}>
-								<Box component='img' src={empty} sx={{ width: 100, height: 100 }} />
-								<Typography variant='body2' color='text.secondary'>
-									{t('noData')}
-								</Typography>
-							</Box>
-						)}
 						{showPagination && (
 							<StyledPagination
 								color='primary'

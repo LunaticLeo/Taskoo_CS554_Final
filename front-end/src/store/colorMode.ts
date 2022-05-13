@@ -4,7 +4,7 @@ import { indigo } from '@mui/material/colors';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: { value: PaletteMode } = {
-	value: (window.localStorage.getItem('mode') as PaletteMode | null) ?? getMediaTheme()
+	value: (window.sessionStorage.getItem('mode') as PaletteMode | null) ?? getMediaTheme()
 };
 
 export const colorModeSlice = createSlice({
@@ -13,7 +13,7 @@ export const colorModeSlice = createSlice({
 	reducers: {
 		switchMode: state => {
 			const targetMode = state.value === 'light' ? 'dark' : 'light';
-			window.localStorage.setItem('mode', targetMode);
+			window.sessionStorage.setItem('mode', targetMode);
 			state.value = targetMode;
 		}
 	}
