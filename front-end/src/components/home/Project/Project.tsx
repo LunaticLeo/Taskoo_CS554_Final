@@ -172,7 +172,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 										label={t('project.form.name')}
 										variant='outlined'
 										margin='normal'
-										{...valid('Project', (e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
+										{...valid('Project', (e: ChangeEvent) => handleInputChange({ name: e.target.value }))}
 									/>
 									<TextField
 										id='description'
