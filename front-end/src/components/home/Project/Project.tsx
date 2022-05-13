@@ -106,7 +106,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 
 	useEffect(() => {
 		http.get<Account<string>[]>('/account/members').then(res => {
-			const memberList = res.data!.filter(item => item._id !== accountInfo._id);
+			const memberList = res.data!.filter(item => item._id !== accountInfo._id && item.position!=="Product Manager");
 			setMembers(memberList);
 		});
 	}, []);
@@ -171,7 +171,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 										label={t('project.form.name')}
 										variant='outlined'
 										margin='normal'
-										{...valid('Project', (e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
+										{...valid('Project', (e: ChangeEvent) => handleInputChange({ name: e.target.value }))}
 									/>
 									<TextField
 										id='description'

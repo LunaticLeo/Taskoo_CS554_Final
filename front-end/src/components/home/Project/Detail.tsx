@@ -35,7 +35,7 @@ import { getFavoriteList } from '@/store/favoriteList';
 import { Form } from '@/@types/form';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Tasks from './Tasks';
 import {
 	FavoriteButtonProps,
@@ -57,7 +57,6 @@ import { setLoading } from '@/store/loading';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import useSocket from '@/hooks/useSocket';
 import useValidation from '@/hooks/useValidation';
-import { DateTimePicker } from '@mui/x-date-pickers';
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -108,7 +107,7 @@ const Detail: React.FC = () => {
 
 	useEffect(() => {
 		if (socket) {
-			socket?.on('tasks', msg => {
+			socket?.on('tasks', (msg) => {
 				msg.projectId == id && setTasks(msg.tasks);
 			});
 		}
@@ -379,7 +378,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 				{t('button.newTask')}
 			</Fab>
 			<Styled.Dialog open={openDialog} onClose={setOpenDialog}>
-				<DialogTitle>{t('project.dialogTitle')}</DialogTitle>
+				<DialogTitle>{t('task.dialogTitle')}</DialogTitle>
 				<form onSubmit={handleSubmit}>
 					<DialogContent>
 						<Stack direction={{ xs: 'column', lg: 'row' }} spacing={1.5}>
@@ -395,12 +394,13 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 										label={t('task.form.name')}
 										variant='outlined'
 										margin='normal'
-										{...valid('Task', (e: ChangeEvent) => handleInputChange({ name: e.target.value.trim() }))}
+										{...valid('Task', (e: ChangeEvent) => handleInputChange({ name: e.target.value }))}
 									/>
 									<DateTimePicker
 										label={t('task.form.dueTime')}
 										value={taskForm.dueTime}
-										onChange={value => handleInputChange({ dueTime: +dayjs(value).valueOf()! })}
+										onChange={value => handleInputChange({ dueTime: +(dayjs(value).valueOf()!) })}
+										minDateTime={dayjs()}
 										renderInput={params => <TextField required margin='normal' {...params} />}
 									/>
 									<TextField
@@ -436,16 +436,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-					const { members } = preVal;
-					members.push({ _id: member._id, role: member.role });
-					return { ...preVal, members };
-			  })
+				const { members } = preVal;
+				members.push({ _id: member._id, role: member.role });
+				return { ...preVal, members };
+			})
 			: setMembers(preVal => {
-					const { members } = preVal;
-					const index = members.findIndex(item => item._id === member._id);
-					members.splice(index, 1);
-					return { ...preVal, members };
-			  });
+				const { members } = preVal;
+				const index = members.findIndex(item => item._id === member._id);
+				members.splice(index, 1);
+				return { ...preVal, members };
+			});
 	};
 
 	return (
