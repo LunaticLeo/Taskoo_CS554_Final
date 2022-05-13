@@ -22,7 +22,10 @@ export default class TableList<T extends { _id: string; [prop: string]: any }> e
 		const { header, data, showHeader = false, size, pageConfig, onPageChange, sx } = this.props;
 
 		const showPagination = (pageConfig?.count ?? -Infinity) > data.length;
-		const pageCount = ~~((pageConfig?.count ?? 0) / (pageConfig?.pageSize ?? 1)) + 1;
+		const count = pageConfig?.count ?? 0;
+		const pageSize = pageConfig?.pageSize ?? 1;
+		const pageCount = ~~(count / pageSize) + (count % pageSize ? 1 : 0);
+
 		let height = 'fit-content';
 		let maxHeight = 'fit-content';
 		if (showPagination) {
