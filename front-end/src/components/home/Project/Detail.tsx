@@ -400,7 +400,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 										label={t('task.form.dueTime')}
 										value={taskForm.dueTime}
 										onChange={value => handleInputChange({ dueTime: +(dayjs(value).valueOf()!) })}
-										minDateTime={new Date()}
+										
 										renderInput={params => <TextField required margin='normal' {...params} />}
 									/>
 									<TextField

@@ -34,7 +34,7 @@ const insertAccounts = async (departmentIds, positionIds) => {
 			pre.push(
 				new Account({
 					email,
-					password: firstName[0]+lastName[0]+'123456',
+					password: firstName[0].toLocaleLowerCase()+lastName[0].toLocaleLowerCase()+'123456',
 					firstName,
 					lastName,
 					department: cur,

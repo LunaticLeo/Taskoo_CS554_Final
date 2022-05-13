@@ -94,7 +94,7 @@ const search = async (searchTerm, accountId) => {
 			{ projection: { _id: 0, name: 1, project: '$_id', status: 1 } }
 		)
 		.toArray();
-
+    
 	return [...taskList, ...projectList];
 };
 
