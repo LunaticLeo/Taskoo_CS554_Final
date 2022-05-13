@@ -7,14 +7,16 @@ const { Project, Task, Bucket } = require('../lib');
 const { toCapitalize } = require('../utils/helpers');
 const { upload } = require('./file');
 
-const { sendEmail, projectCreatedMailTemplate } = require("../utils/sendmails");
+const { sendEmail, projectCreatedMailTemplate } = require('../utils/sendmails');
 
 /**
  * create function
  * @param {Project | Task} obj
  * @param {string} category project | task
+ * @param {Function} cb
+ * @param {boolean} productEvn
  */
-const create = async (obj, category, cb) => {
+const create = async (obj, category, cb, productEvn = true) => {
 	if (!['project', 'task'].includes(category)) throw Error('category is invalid');
 
 	let newObj;
@@ -38,18 +40,17 @@ const create = async (obj, category, cb) => {
 	);
 
 	// sent email to info members a new project created for them
-	if (category === 'project') {
-		const infoAccounts = await accountsCol.find(
-			{
+	if (productEvn && category === 'project') {
+		const infoAccounts = await accountsCol
+			.find({
 				_id: {
 					$in: memberId
 				}
-			}
-		).toArray();
+			})
+			.toArray();
 		infoAccounts.forEach(async element => {
 			await sendEmail(element.email, projectCreatedMailTemplate(element.firstName, newObj.name, insertedId));
 		});
-
 	}
 
 	await Promise.all(updateFunc);

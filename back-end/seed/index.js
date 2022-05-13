@@ -29,12 +29,15 @@ const insertAccounts = async (departmentIds, positionIds) => {
 		for (let i = 0; i < count; i++) {
 			const firstName = Random.first();
 			const lastName = Random.last();
-			const accountSameNamecount = pre.filter(item=>item.firstName===firstName).length;
-			const email=accountSameNamecount===0?firstName.toLowerCase() + '@taskoo.com':firstName.toLowerCase() +accountSameNamecount+ '@taskoo.com';
+			const accountSameNamecount = pre.filter(item => item.firstName === firstName).length;
+			const email =
+				accountSameNamecount === 0
+					? firstName.toLowerCase() + '@taskoo.com'
+					: firstName.toLowerCase() + accountSameNamecount + '@taskoo.com';
 			pre.push(
 				new Account({
 					email,
-					password: firstName[0].toLocaleLowerCase()+lastName[0].toLocaleLowerCase()+'123456',
+					password: firstName[0].toLocaleLowerCase() + lastName[0].toLocaleLowerCase() + '123456',
 					firstName,
 					lastName,
 					department: cur,
@@ -108,14 +111,16 @@ const insertProjects = async () => {
 								_id: manager._id,
 								role: { _id: '584b21b7-57b5-4394-825c-f488c53c7d51', name: 'Manager' }
 							},
-							...members.filter(ele => {
-								return ele.department===manager.department;
-							}).map(ele => {
-								return { _id: ele._id, role: Random.memberRoles()};
-							})
+							...members
+								.filter(ele => {
+									return ele.department === manager.department;
+								})
+								.map(ele => {
+									return { _id: ele._id, role: Random.memberRoles() };
+								})
 						]
 					}),
-					manager.bucket
+					false
 				);
 			}
 		})

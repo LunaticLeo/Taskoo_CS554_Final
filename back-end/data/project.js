@@ -5,9 +5,10 @@ const core = require('./core');
 /**
  * create project
  * @param {Project} projectObj
+ * @param {boolean} productEvn used in product environment
  */
-const createProject = async projectObj => {
-	return await core.create(projectObj, 'project');
+const createProject = async (projectObj, productEvn = true) => {
+	return await core.create(projectObj, 'project', undefined, productEvn);
 };
 
 /**
@@ -88,7 +89,13 @@ const getTaskStatistic = async bucketId => {
  * @param {object} pageConfig {pageNum: number, pageSize: number}
  */
 const getProjectList = async (bucketId, pageConfig) => {
-	return await core.getListFromBucket('projects', bucketId, pageConfig, { description: 0, tasks: 0, attachments: 0 }, { $sort: { "list.createTime": -1 } });
+	return await core.getListFromBucket(
+		'projects',
+		bucketId,
+		pageConfig,
+		{ description: 0, tasks: 0, attachments: 0 },
+		{ $sort: { 'list.createTime': -1 } }
+	);
 };
 
 /**
