@@ -7,6 +7,8 @@ const { Project, Task, Bucket } = require('../lib');
 const { toCapitalize } = require('../utils/helpers');
 const { upload } = require('./file');
 
+const { sendEmail, projectCreatedMailTemplate } = require("../utils/sendmails");
+
 /**
  * create function
  * @param {Project | Task} obj
@@ -34,6 +36,22 @@ const create = async (obj, category, cb) => {
 	const updateFunc = bucketIds.map(
 		async item => await Bucket.updateStatus(item.bucket, category + 's', insertedId, null, newObj.status)
 	);
+
+	// sent email to info members a new project created for them
+	if (category === 'project') {
+		const infoAccounts = await accountsCol.find(
+			{
+				_id: {
+					$in: memberId
+				}
+			}
+		).toArray();
+		infoAccounts.forEach(async element => {
+			await sendEmail(element.email, projectCreatedMailTemplate(element.firstName, newObj.name, insertedId));
+		});
+
+	}
+
 	await Promise.all(updateFunc);
 
 	cb && (await cb(insertedId));
@@ -94,7 +112,7 @@ const search = async (searchTerm, accountId) => {
 			{ projection: { _id: 0, name: 1, project: '$_id', status: 1 } }
 		)
 		.toArray();
-    
+
 	return [...taskList, ...projectList];
 };
 
