@@ -1,4 +1,4 @@
-const { getTasks, getDetails } = require("../data/project");
+const { getTasks, getDetails, getStatus } = require("../data/project");
 
 const constructorMethod = (io) => {
 
@@ -12,11 +12,15 @@ const constructorMethod = (io) => {
             socket.join(msg.projectId);
             const data = await getTasks(msg.projectId);
             socket.emit("tasks", data);
+            // const status = await getStatus(msg.projectId);
+            // socket.emit('projectStatus', status);
         })
         socket.on('updataTasks', async (msg) => {
             // console.log(msg, socket.id)
-            const data = await getTasks(msg.projectId);            
+            const data = await getTasks(msg.projectId);
             io.to(msg.projectId).emit("tasks", data);
+            const status = await getStatus(msg.projectId);
+            io.to(msg.projectId).emit("projectStatus", status);
         });
         socket.on('disconnect', (msg) => {
             // console.log("disconnect", msg);
