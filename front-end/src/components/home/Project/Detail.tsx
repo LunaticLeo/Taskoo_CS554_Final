@@ -91,7 +91,7 @@ const Detail: React.FC = () => {
 	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
 
 	const emitUpdate = useCallback(() => {
-		socket?.emit('updataTasks', { projectId: id });
+		socket?.emit('updateTasks', { projectId: id });
 	}, [setTasks, socket]);
 
 	useEffect(() => {
@@ -122,6 +122,9 @@ const Detail: React.FC = () => {
 			socket?.on('tasks', msg => {
 				setTasks(msg);
 			});
+			socket?.on('projectStatus', msg => {
+				setProjectInfo(preVal => ({ ...preVal, status: msg }));
+			});
 		}
 	}, [socket]);
 
@@ -146,10 +149,6 @@ const Detail: React.FC = () => {
 			.then(res => enqueueSnackbar(res.message, { variant: 'success' }))
 			.catch(err => enqueueSnackbar(err?.message ?? err, { variant: 'error' }));
 
-	const updateStatus = (status: StaticStatus) => {
-		setProjectInfo(preVal => ({ ...preVal, status }));
-	};
-
 	return (
 		<>
 			<Box>
@@ -163,7 +162,6 @@ const Detail: React.FC = () => {
 						<SwitchStatus
 							project={projectInfo._id}
 							status={projectInfo?.status?.toLowerCase() as SwitchStatusProps['status']}
-							updateStatus={updateStatus}
 						/>
 						<Typography
 							component='h1'
@@ -202,7 +200,6 @@ const Detail: React.FC = () => {
 					setData={setTasks}
 					sx={{ mt: 5 }}
 					permission={permission}
-					updateStatus={updateStatus}
 				/>
 				<Box sx={{ height: 120 }} />
 			</Box>
@@ -218,7 +215,6 @@ const Detail: React.FC = () => {
 						project={id ?? ''}
 						members={projectInfo.members}
 						emitUpdate={emitUpdate}
-						updateStatus={updateStatus}
 					/>
 				)}
 				{!largeScreen && (
@@ -356,7 +352,7 @@ class TaskFormClass implements Form.TaskForm {
 	}
 }
 
-const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdate, updateStatus }) => {
+const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdate }) => {
 	const { t } = useTranslation();
 	const { _id } = useAccountInfo();
 	const notificate = useNotification();
@@ -380,7 +376,6 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 			.then(res => {
 				notificate.success(res.message);
 				emitUpdate();
-				chekcProjectStatus();
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => {
@@ -388,13 +383,6 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 				setTaskForm(new TaskFormClass(project));
 				addCreator();
 			});
-	};
-
-	// check the project status and update it
-	const chekcProjectStatus = () => {
-		http.get<StaticStatus>('/project/status', { id: project }).then(res => {
-			updateStatus(res.data!);
-		});
 	};
 
 	useLayoutEffect(() => {
@@ -482,16 +470,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-					const { members } = preVal;
-					members.push({ _id: member._id, role: member.role });
-					return { ...preVal, members };
-			  })
+				const { members } = preVal;
+				members.push({ _id: member._id, role: member.role });
+				return { ...preVal, members };
+			})
 			: setMembers(preVal => {
-					const { members } = preVal;
-					const index = members.findIndex(item => item._id === member._id);
-					members.splice(index, 1);
-					return { ...preVal, members };
-			  });
+				const { members } = preVal;
+				const index = members.findIndex(item => item._id === member._id);
+				members.splice(index, 1);
+				return { ...preVal, members };
+			});
 	};
 
 	return (
@@ -551,9 +539,10 @@ const FloatMenu: React.FC<FloadMenuProps> = ({ isFavorite = false, onClickFavori
 	);
 };
 
-const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status, updateStatus }) => {
+const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status }) => {
 	const { t } = useTranslation();
 	const notificate = useNotification();
+	const socket = useSocket();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [showAlter, setShowAlter] = useState<boolean>(false);
 
@@ -586,7 +575,7 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status, updateStat
 			.post('/project/done/set', { id: project })
 			.then(res => {
 				notificate.success(res.message);
-				updateStatus('Done');
+				socket?.emit("updateTasks", { projectId: project });
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => setTimeout(() => setLoading(false), 1000));
