@@ -46,7 +46,13 @@ const getOption = (
 ): Option => {
 	return {
 		backgroundColor: 'transparent',
-		tooltip: { trigger: 'item' },
+		tooltip: {
+			trigger: 'item',
+			formatter: function (info: any) {
+				const { marker, value, name } = info;
+				return `${marker} ${name} ${value}`;
+			}
+		},
 		legend: { bottom: 0, left: 'center' },
 		series: [
 			{

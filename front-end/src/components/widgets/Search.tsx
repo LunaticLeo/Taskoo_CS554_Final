@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
 	Autocomplete,
-	Box,
 	Button,
 	DialogActions,
 	DialogContent,
@@ -129,19 +128,19 @@ const Search: React.FC = () => {
 							)
 						}}
 					/>
+					<List dense sx={{ maxHeight: '90vh', overflow: 'auto' }}>
+						{options.map(option => (
+							<ListItem key={option.name}>
+								<ListItemButton onClick={() => handleSelect(null, option)}>
+									<Styled.Status size='small' variant='outlined' sx={{ mr: 1 }} label={option.status} />
+									<Typography variant='body2' noWrap>
+										{option.name}
+									</Typography>
+								</ListItemButton>
+							</ListItem>
+						))}
+					</List>
 				</DialogContent>
-				<List dense sx={{ maxHeight: '90vh', overflow: 'auto' }}>
-					{options.map(option => (
-						<ListItem key={option.name}>
-							<ListItemButton onClick={() => handleSelect(null, option)}>
-								<Styled.Status size='small' variant='outlined' sx={{ mr: 1 }} label={option.status} />
-								<Typography variant='body2' noWrap>
-									{option.name}
-								</Typography>
-							</ListItemButton>
-						</ListItem>
-					))}
-				</List>
 				<DialogActions>
 					<Button onClick={() => setOpenDialog(false)}>{t('button.close')}</Button>
 				</DialogActions>

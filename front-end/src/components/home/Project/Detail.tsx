@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import http from '@/utils/http';
 import {
 	Box,
@@ -55,7 +55,7 @@ import {
 	TaskMemberListProps
 } from '@/@types/props';
 import useAccountInfo from '@/hooks/useAccountInfo';
-import { toCapitalize, toFormData } from '@/utils';
+import { toFormData } from '@/utils';
 import useNotification from '@/hooks/useNotification';
 import Folder from '@/components/widgets/Folder';
 import FileUploader from '@/components/widgets/FileUploader';
@@ -73,7 +73,6 @@ type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 const Detail: React.FC = () => {
 	const { t } = useTranslation();
 	const { id } = useParams();
-	const { _id: accountId } = useAccountInfo();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const largeScreen = useMediaQuery(theme.breakpoints.up('lg'));
@@ -603,7 +602,7 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status, updateStat
 				startIcon={<LoadingProgress loading={loading} status={status} />}
 				onClick={handleUptateStatus}
 			>
-				{toCapitalize(status)}
+				{t(`status.${status}`)}
 			</Button>
 			<Styled.Dialog open={showAlter} onClose={handleClose} maxWidth='sm'>
 				<DialogTitle>{t('confirm')}</DialogTitle>

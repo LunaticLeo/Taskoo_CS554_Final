@@ -113,6 +113,7 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 			.post('/task/attachments', formData)
 			.then(res => {
 				notificate.success(res.message);
+				setSelectedFile([]);
 			})
 			.catch(err => notificate.error(err?.message ?? err));
 	};
