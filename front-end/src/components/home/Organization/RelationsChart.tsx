@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import Chart from '@/components/widgets/Chart';
 import { Option, RelationsChartProps } from '@/@types/props';
 import { TreemapSeriesOption } from 'echarts';
@@ -11,7 +11,9 @@ const RelationsChart: React.FC<RelationsChartProps> = ({ data, type = 'treemap' 
 				const department = pre!.find(item => item.name === cur.department.name);
 				const item = {
 					name: toFullName(cur.firstName, cur.lastName),
-					value: 100 - cur.position.level!
+					value: 100 - cur.position.level!,
+					// @ts-ignore
+					meta: { ...cur, type: 'member' }
 				};
 				if (department) {
 					department.children?.push(item);
@@ -21,7 +23,9 @@ const RelationsChart: React.FC<RelationsChartProps> = ({ data, type = 'treemap' 
 					pre?.push({
 						name: cur.department.name,
 						value: item.value,
-						children: [item]
+						children: [item],
+						// @ts-ignore
+						meta: { type: 'department' }
 					});
 				}
 				return pre;
@@ -39,27 +43,52 @@ const RelationsChart: React.FC<RelationsChartProps> = ({ data, type = 'treemap' 
 
 const getTreemapOption = (data: TreemapSeriesOption['data']): Option => ({
 	backgroundColor: 'transparent',
+	tooltip: {
+		formatter: function (info: any) {
+			const { data, marker } = info;
+			return `
+				${marker} <strong>${data.name}</strong><br />
+				${data.meta.email}<br />
+				${data.meta.position.name}<br />
+				${data.meta.department.name}<br />
+			`;
+		}
+	},
 	series: [
 		{
 			type: 'treemap',
 			id: 'treemap',
 			animationDurationUpdate: 1000,
 			roam: false,
-			nodeClick: undefined,
 			data,
 			universalTransition: true,
-			label: {
-				show: true
-			},
-			breadcrumb: {
-				show: false
-			}
+			label: { show: true },
+			breadcrumb: { show: false }
 		}
 	]
 });
 
 const getSunburstOption = (data: TreemapSeriesOption['data']): Option => ({
 	backgroundColor: 'transparent',
+	tooltip: {
+		formatter: function (info: any) {
+			const { data, marker } = info;
+			console.log(info);
+
+			if (!data?.meta?.type) return 'Click to back';
+
+			return data?.meta.type === 'member'
+				? `
+				${marker} <strong>${data.name}</strong><br />
+				${data.meta.email}<br />
+				${data.meta.position.name}<br />
+				${data.meta.department.name}<br />
+			`
+				: `
+				${marker} <strong>${data.name}</strong><br />
+				`;
+		}
+	},
 	series: [
 		{
 			type: 'sunburst',

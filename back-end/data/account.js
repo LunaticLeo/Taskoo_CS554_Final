@@ -29,12 +29,11 @@ const addToRegisterList = async (accountInfo, email) => {
 
 	accountInfo.department = await getStaticData('departments', accountInfo.department);
 	accountInfo.position = await getStaticData('positions', accountInfo.position);
-
 	const registerId = uuidv4();
 	// TIPS the expire time (default is 1 hour)
 	const expireTime = dayjs().add(1, 'hour').valueOf();
-	await client.set(registerId, JSON.stringify(accountInfo), { PXAT: expireTime });
-
+	await client.set(registerId, JSON.stringify(accountInfo));
+	await client.expire(registerId, 60*60)
 	await sendEmail({
 		to: email,
 		subject: 'Taskoo Register Invitation',

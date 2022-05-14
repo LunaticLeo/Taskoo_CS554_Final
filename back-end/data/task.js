@@ -2,19 +2,25 @@ const { tasks, projects } = require('../config/mongoCollections');
 const { Check } = require('../lib');
 const Task = require('../lib/Task');
 const core = require('./core');
+const dayjs = require('dayjs');
+const { updateStatus } = require('../lib/Bucket');
 
 /**
  * create task
  * @param {Task} taskObj
+ * @param {string} bucketId
  */
-const createTask = async taskObj => {
+const createTask = async (taskObj, bucketId) => {
 	return await core.create(taskObj, 'task', async insertedId => {
 		const projectCol = await projects();
-		const { modifiedCount } = await projectCol.updateOne(
-			{ _id: taskObj.project },
-			{ $addToSet: { tasks: insertedId } }
-		);
+		if (dayjs(taskObj.createTime).isAfter(dayjs(taskObj.dueTime))) throw Error("The dueTime can't before today");
+		let { modifiedCount } = await projectCol.updateOne({ _id: taskObj.project }, { $addToSet: { tasks: insertedId } });
 		if (!modifiedCount) throw Error('The task is already in task list');
+		const project = await projectCol.findOne({ _id: taskObj.project });
+		if (project.status === 'Pending')
+			modifiedCount = await projectCol.updateOne({ _id: taskObj.project }, { $set: { status: 'Processing' } });
+		await updateStatus(bucketId, 'projects', project._id, 'Pending', 'Processing');
+		//if (!modifiedCount) throw Error('The task is already in task list');
 	});
 
 	// TODO update project status from Pending to Processing
@@ -22,18 +28,22 @@ const createTask = async taskObj => {
 
 /**
  * update task status
- * @param {taskId, preStatus, destStatus} 
+ * @param {string} bucketId
+ * @param {string} taskId
+ * @param {string} preStatus
+ * @param {string} destStatus
  */
 const updateTaskStatus = async (bucketId, taskId, preStatus, destStatus) => {
 	const taskCol = await tasks();
-	const taskObj = new Task(await taskCol.findOne({ _id: taskId }));	
+	const taskObj = new Task(await taskCol.findOne({ _id: taskId }));
 
 	taskObj.updateStatus(bucketId, destStatus);
 
 	const projectId = taskObj.project;
-	if (preStatus === "Processing" && destStatus === "Testing") {
+	if (preStatus === 'Processing' && destStatus === 'Testing') {
 		const projectCol = await projects();
-		const { modifiedCount } = await projectCol.updateOne({ _id: projectId }, { $set: { "status": "Testing" } });
+		const { modifiedCount } = await projectCol.updateOne({ _id: projectId }, { $set: { status: 'Testing' } });
+		await updateStatus(bucketId, 'projects', projectId, 'Processing', 'Testing');
 		// if (!modifiedCount) throw Error('The project is not exists');  // not required to check
 	}
 
@@ -58,7 +68,25 @@ const deleteTask = async objid => {
  * @param {object} pageConfig {pageNum: number, pageSize: number}
  */
 const getTaskList = async (bucketId, pageConfig) => {
-	return await core.getListFromBucket('tasks', bucketId, pageConfig, { attachments: 0 });
+	return await core.getListFromBucket(
+		'tasks',
+		bucketId,
+		pageConfig,
+		{ attachments: 0 },
+		{ $sort: { 'list.dueTime': 1 } }
+	);
+};
+
+/**
+ * get todo task from bucket
+ * @param {string} bucketId
+ * @param {object} pageConfig {pageNum: number, pageSize: number}
+ */
+const getTodoList = async (bucketId, pageConfig) => {
+	const { list: taskList } = await getTaskList(bucketId, pageConfig);
+	const list = taskList.filter(item => item.status !== 'Done');
+
+	return { count: list.length, list };
 };
 
 /**
@@ -82,6 +110,7 @@ const getStatusStatistic = async bucketId => {
 module.exports = {
 	createTask,
 	getTaskList,
+	getTodoList,
 	deleteTask,
 	uploadAttachments,
 	getStatusStatistic,

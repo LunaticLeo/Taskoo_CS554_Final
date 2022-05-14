@@ -1,5 +1,14 @@
 const router = require('express').Router();
-const { createTask, getTaskList, uploadAttachments, deleteTask, getStatusStatistic, updateTaskStatus } = require('../data/task');
+const {
+	createTask,
+	getTaskList,
+	uploadAttachments,
+	deleteTask,
+	getStatusStatistic,
+	updateTaskStatus,
+	getTaskby,
+	getTodoList
+} = require('../data/task');
 const { Check } = require('../lib');
 const { toCapitalize } = require('../utils/helpers');
 const Task = require('../lib/Task');
@@ -7,14 +16,16 @@ const { updateStatus } = require('../lib/Bucket');
 
 router.post('/create', async (req, res) => {
 	let newTask;
+	// console.log(req.body);
 	try {
 		newTask = new Task(req.body);
+		// console.log(newTask);
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}
 
 	try {
-		const message = await createTask(newTask);
+		const message = await createTask(newTask, req.session.accountInfo.bucket);
 		res.json({ code: 200, message });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
@@ -77,15 +88,7 @@ router.get('/todo', async (req, res) => {
 	const { pageNum, pageSize } = req.query;
 
 	try {
-		let data = await getTaskList(bucket, { pageNum, pageSize });
-		const list = data.list.map(x => {
-			if (x.status !== 'done') {
-				return x;
-			}
-		});
-
-		data.list = list;
-
+		let data = await getTodoList(bucket, { pageNum, pageSize });
 		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
@@ -116,7 +119,9 @@ router.delete('/remove', async (req, res) => {
 		const message = await deleteTask(taskId);
 		res.json({ code: 200, message });
 	} catch (error) {
-		return res.status(500).json({ code: 500, message: error?.message ?? error });
+		if (error.message === 'task cannot be deleted')
+			return res.status(403).json({ code: 403, message: error?.message ?? error });
+		else return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
 

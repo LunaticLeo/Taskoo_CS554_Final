@@ -5,16 +5,13 @@ const task = require('./task');
 const organization = require('./organization');
 
 // the whitelist routes
-const whitelist = ['/account/signin', '/account/signup'];
+const whitelist = ['/account/signin', '/account/signup','/account/signout','/account/registerInfo'];
 
 module.exports = app => {
 	app.use('*', (req, res, next) => {
-		const { originalUrl } = req;
-		// console.log(originalUrl)
-		if (!whitelist.includes(originalUrl) && !req.session.accountInfo) {
+		const { baseUrl } = req;
+		if (!whitelist.includes(baseUrl) && !req.session.accountInfo) {
 			return res.status(401).json({ code: 401, message: 'Unauthorized request' });
-			// return res.redirect("/account/signin");
-			// res.redirect("/account/signin");
 		}
 		next();
 	});

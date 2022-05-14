@@ -29,7 +29,7 @@ const FileItem: React.FC<FileItemProps> = ({ fileUrl }) => {
 				<Box
 					sx={{ width: 40, mr: 1 }}
 					component='img'
-					src={`https://storage.cloud.google.com/taskoo_bucket/file_${fileInfo.fileType}.svg`}
+					src={`/src/assets/files/file_${fileInfo.fileType}.svg`}
 					alt='file-icon'
 				/>
 				<StyledItem

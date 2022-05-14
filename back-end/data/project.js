@@ -1,13 +1,15 @@
 const { Project, Check } = require('../lib');
 const { projects, buckets } = require('../config/mongoCollections');
 const core = require('./core');
+const { updateStatus } = require('../lib/Bucket');
 
 /**
  * create project
  * @param {Project} projectObj
+ * @param {boolean} productEvn used in product environment
  */
-const createProject = async projectObj => {
-	return await core.create(projectObj, 'project');
+const createProject = async (projectObj, productEvn = true) => {
+	return await core.create(projectObj, 'project', undefined, productEvn);
 };
 
 /**
@@ -83,12 +85,81 @@ const getTaskStatistic = async bucketId => {
 };
 
 /**
+ * check project is able to be set done when all tasks is done
+ * @param {string} projectId
+ */
+const doneCheck = async projectId => {
+	const projectCol = await projects();
+	const data = await projectCol
+		.aggregate([
+			{
+				$match: {
+					_id: projectId
+				}
+			},
+			{
+				$lookup: {
+					from: 'tasks',
+					localField: 'tasks',
+					foreignField: '_id',
+					as: 'tasksDetail'
+				}
+			},
+			{
+				$project: {
+					tasksDetail: 1,
+					_id: 0
+				}
+			},
+			{
+				$unwind: '$tasksDetail'
+			},
+			{
+				$replaceRoot: {
+					newRoot: '$tasksDetail'
+				}
+			},
+			{
+				$match: {
+					status: {
+						$ne: 'Done'
+					}
+				}
+			}
+		])
+		.toArray();
+	return data.length == 0
+		? { message: '', data: true }
+		: { message: 'Cannot update project status until all the taks are set as Done', data: false };
+};
+
+/**
+ * set project status as done
+ * @param {string} projectId
+ * @param {string} bucketId
+ */
+const setDone = async (projectId, bucketId) => {
+	const projectCol = await projects();
+	const data = await projectCol.findOne({ _id: projectId });
+	const { modifiedCount } = await projectCol.updateOne({ _id: projectId }, { $set: { status: 'Done' } });
+	if (!modifiedCount) throw Error('Upload failed, please try again later');
+	await updateStatus(bucketId, 'projects', projectId, 'Testing', 'Done');
+	return `${data.name} has been set as Done`;
+};
+
+/**
  * get project list from bucket
  * @param {string} bucketId
  * @param {object} pageConfig {pageNum: number, pageSize: number}
  */
 const getProjectList = async (bucketId, pageConfig) => {
-	return await core.getListFromBucket('projects', bucketId, pageConfig, { description: 0, tasks: 0, attachments: 0 });
+	return await core.getListFromBucket(
+		'projects',
+		bucketId,
+		pageConfig,
+		{ description: 0, tasks: 0, attachments: 0 },
+		{ $sort: { 'list.createTime': -1 } }
+	);
 };
 
 /**
@@ -336,6 +407,10 @@ const getTasks = async projectId => {
 		}
 	);
 
+	for (const property in tasks) {
+		tasks[property].sort((a, b) => a.dueTime - b.dueTime);
+	}
+
 	return tasks;
 };
 
@@ -357,6 +432,19 @@ const getAttachments = async _id => {
 	return await core.getAttachments('projects', _id);
 };
 
+/**
+ * get project status
+ * @param {string} _id project id
+ */
+const getStatus = async _id => {
+	const projectCol = await projects();
+	const res = await projectCol.findOne({ _id }, { projection: { _id: 0, status: 1 } });
+
+	if (!res) throw Error('Project not found');
+
+	return res.status;
+};
+
 module.exports = {
 	createProject,
 	getStatusStatistic,
@@ -369,5 +457,8 @@ module.exports = {
 	getTasks,
 	uploadAttachments,
 	getAttachments,
-	getTaskStatistic
+	getTaskStatistic,
+	doneCheck,
+	setDone,
+	getStatus
 };

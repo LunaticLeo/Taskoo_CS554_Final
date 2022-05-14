@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, styled, Switch } from '@mui/material';
-import { useAppDispatch } from '@/hooks/useStore';
+import { useAppDispatch, useAppSelector } from '@/hooks/useStore';
 import { switchMode } from '@/store/colorMode';
 
 const ModeSwitch = styled(Switch)(({ theme }) => ({
@@ -52,10 +52,11 @@ const ModeSwitch = styled(Switch)(({ theme }) => ({
 
 const ThemeSwitch: React.FC = () => {
 	const dispatch = useAppDispatch();
+	const colorMode = useAppSelector(state => state.colorMode.value);
 
 	return (
 		<Box component='label'>
-			<ModeSwitch sx={{ mt: 1, mb: 1 }} onChange={() => dispatch(switchMode())} />
+			<ModeSwitch checked={colorMode === 'dark'} sx={{ mt: 1, mb: 1 }} onChange={() => dispatch(switchMode())} />
 		</Box>
 	);
 };

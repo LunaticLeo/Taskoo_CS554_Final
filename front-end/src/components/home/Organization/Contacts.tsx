@@ -1,12 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Styled from '@/components/widgets/Styled';
 import { Divider, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import http from '@/utils/http';
-import { toFullName, stringAvatar } from '@/utils';
-import { ContactDisplayType, ContactListItemProps, ContactListProps, ContactsProps } from '@/@types/props';
-
-import Register from './Register';
+import { ContactDisplayType, ContactsProps } from '@/@types/props';
 import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
 import TableChartRoundedIcon from '@mui/icons-material/TableChartRounded';
 import DonutLargeRoundedIcon from '@mui/icons-material/DonutLargeRounded';
@@ -18,16 +14,14 @@ const Contacts: React.FC<ContactsProps> = ({ data }) => {
 	const [type, setType] = useState<ContactDisplayType>('list');
 
 	const types = [
-		{ name: 'list', icon: <FormatListBulletedRoundedIcon />, component: <ContactList data={data} /> },
-		{ name: 'treemap', icon: <TableChartRoundedIcon />, component: <RelationsChart data={data} /> },
-		{ name: 'sunburst', icon: <DonutLargeRoundedIcon />, component: <RelationsChart data={data} type='sunburst' /> }
+		{ name: 'list', icon: <FormatListBulletedRoundedIcon /> },
+		{ name: 'treemap', icon: <TableChartRoundedIcon /> },
+		{ name: 'sunburst', icon: <DonutLargeRoundedIcon /> }
 	];
 
 	const handleSwitchType = (_: unknown, value: ContactDisplayType) => {
 		setType(value);
 	};
-
-	const display = useMemo(() => types.find(item => item.name === type)?.component, [type, data]);
 
 	return (
 		<>
@@ -42,7 +36,7 @@ const Contacts: React.FC<ContactsProps> = ({ data }) => {
 					</ToggleButton>
 				))}
 			</ToggleButtonGroup>
-			{display}
+			{type === 'list' ? <ContactList data={data} /> : <RelationsChart data={data} type={type} />}
 		</>
 	);
 };

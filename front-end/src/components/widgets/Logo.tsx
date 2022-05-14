@@ -17,9 +17,9 @@ const Logo: React.FC<LogoProps> = ({ fontSize = 50 }) => {
 	return (
 		<Chart
 			ref={logoRef}
-			sx={{ minWidth: '140px', minHeight: '75px', alignSelf: 'center' }}
-			height='20%'
-			width='60%'
+			sx={{ minWidth: '200px', minHeight: '75px', alignSelf: 'center' }}
+			height='auto'
+			width='200px'
 			option={option}
 		/>
 	);

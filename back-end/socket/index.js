@@ -1,35 +1,29 @@
-const { getTasks, getDetails } = require("../data/project");
+const { getTasks, getDetails, getStatus } = require("../data/project");
 
 const constructorMethod = (io) => {
 
-    const accountSockets = {};
-    
     io.on('connection', (socket) => {
-        let accountId;
-        socket.on('join', async (msg) => {
-            accountId = msg.accountId;
-            accountSockets[msg.accountId] = accountSockets[msg.accountId] ?? new Set();
-            accountSockets[msg.accountId].add(socket.id);
 
+        socket.on('join', async (msg) => {
+            // console.log("join", msg);
+        });
+        socket.on('viewProject', async (msg) => {
+            // console.log("viewProject", msg, socket.id);
+            socket.join(msg.projectId);
             const data = await getTasks(msg.projectId);
             socket.emit("tasks", data);
-        });
-        socket.on('queryTasks', async (msg) => {
+            // const status = await getStatus(msg.projectId);
+            // socket.emit('projectStatus', status);
+        })
+        socket.on('updateTasks', async (msg) => {
+            // console.log(msg, socket.id)
             const data = await getTasks(msg.projectId);
-            // socket.emit("tasks", data);
-            const proDate = await getDetails(msg.projectId);
-            membersInform = proDate.members.map(item => item._id);
-            membersInform.forEach(element => {
-                if (accountSockets[element]) {
-                    accountSockets[element].forEach(element2 => {
-                        io.to(element2).emit("tasks",data);
-                    });
-                }
-            });
+            io.to(msg.projectId).emit("tasks", data);
+            const status = await getStatus(msg.projectId);
+            io.to(msg.projectId).emit("projectStatus", status);
         });
         socket.on('disconnect', (msg) => {
-            accountId && accountSockets[accountId].delete(socket.id);
-            // console.log(accountSockets);
+            // console.log("disconnect", msg);
         });
     });
 

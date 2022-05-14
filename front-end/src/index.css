@@ -20,6 +20,7 @@ body {
 }
 
 .collapse {
+	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;

@@ -27,7 +27,7 @@ import {
 } from '@/@types/props';
 
 const StyledCard: React.FC<WithSxProp<{}>> = ({ children, sx }) => (
-	<Card sx={sx} elevation={3}>
+	<Card sx={{ ...sx, width: { xs: '100%', lg: 'auto' } }} elevation={3}>
 		{children}
 	</Card>
 );
@@ -94,14 +94,14 @@ const Transition = React.forwardRef(function Transition(
 ) {
 	return <Slide direction='up' ref={ref} {...props} />;
 });
-const StyledDialog: React.FC<StyledDialogProps> = ({ open, onClose, children }) => {
+const StyledDialog: React.FC<StyledDialogProps> = ({ open, onClose, children, maxWidth = 'md' }) => {
 	const theme = useTheme();
-	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+	const fullScreen = useMediaQuery(theme.breakpoints.down(maxWidth));
 	return (
 		<Dialog
 			open={open}
 			onClose={() => onClose(false)}
-			maxWidth='md'
+			maxWidth={maxWidth}
 			fullWidth
 			fullScreen={fullScreen}
 			TransitionComponent={Transition}

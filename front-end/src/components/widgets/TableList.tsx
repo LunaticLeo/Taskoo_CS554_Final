@@ -19,10 +19,13 @@ export default class TableList<T extends { _id: string; [prop: string]: any }> e
 	TableListProps<T>
 > {
 	render() {
-		const { header, data, showHeader = false, size, pageConfig, onPageChange, sx } = this.props;
+		const { header, data, showHeader = false, size, pageConfig, onPageChange, sx = {} } = this.props;
 
 		const showPagination = (pageConfig?.count ?? -Infinity) > data.length;
-		const pageCount = ~~((pageConfig?.count ?? 0) / (pageConfig?.pageSize ?? 1)) + 1;
+		const count = pageConfig?.count ?? 0;
+		const pageSize = pageConfig?.pageSize ?? 1;
+		const pageCount = ~~(count / pageSize) + (count % pageSize ? 1 : 0);
+
 		let height = 'fit-content';
 		let maxHeight = 'fit-content';
 		if (showPagination) {
@@ -59,15 +62,15 @@ export default class TableList<T extends { _id: string; [prop: string]: any }> e
 									</TableBody>
 								)}
 							</Table>
+							{!Boolean(data.length) && (
+								<Box sx={{ textAlign: 'center', width: '100%', mt: 2 }}>
+									<Box component='img' src={empty} sx={{ width: 100, height: 100 }} />
+									<Typography variant='body2' color='text.secondary'>
+										{t('noData')}
+									</Typography>
+								</Box>
+							)}
 						</TableContainer>
-						{!Boolean(data.length) && (
-							<Box sx={{ textAlign: 'center', width: '100%' }}>
-								<Box component='img' src={empty} sx={{ width: 100, height: 100 }} />
-								<Typography variant='body2' color='text.secondary'>
-									{t('noData')}
-								</Typography>
-							</Box>
-						)}
 						{showPagination && (
 							<StyledPagination
 								color='primary'

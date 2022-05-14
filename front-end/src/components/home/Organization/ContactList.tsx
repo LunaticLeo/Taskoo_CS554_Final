@@ -58,7 +58,7 @@ const ContactList: React.FC<ContactListProps> = ({ data, dense = false, sx, filt
 	return (
 		<>
 			{filteable && (
-				<Stack direction='row' spacing={1.5} mb={3}>
+				<Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5} mb={3}>
 					{['department', 'position'].map(item => (
 						<FormControl key={item} variant='filled' sx={{ minWidth: 200 }}>
 							<InputLabel id={`${item}-label`}>{t(item)}</InputLabel>

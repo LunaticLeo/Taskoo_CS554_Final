@@ -10,6 +10,8 @@
 	"department": "部门",
 	"position": "职位",
 	"signupTip": "已有账户，去",
+	"confirm": "确认",
+	"confirmContent": "点击确认更新状态为“已完成”",
 	"menu": {
 		"studio": "工作区",
 		"dashboard": "控制台",
@@ -29,7 +31,9 @@
 		"cancel": "取消",
 		"submit": "提交",
 		"upload": "上传",
-		"clear": "清空"
+		"clear": "清空",
+		"confirm": "确认",
+		"close": "关闭"
 	},
 	"table": {
 		"header": {

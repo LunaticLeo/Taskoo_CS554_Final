@@ -32,9 +32,9 @@ const Home: React.FC = () => {
 	}, [toolbar]);
 
 	return localStorage.getItem(STORAGE_KEY) ? (
-		<Box sx={{ display: 'flex', minHeight: '100vh' }}>
+		<Box sx={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
 			<Nav openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
-			<Paper component='main' square elevation={0} sx={{ flex: 1 }}>
+			<Paper component='main' square elevation={0} sx={{ flex: 1, width: '100%' }}>
 				<Toolbar
 					component='div'
 					ref={toolbar}
@@ -59,10 +59,7 @@ const Home: React.FC = () => {
 					)}
 					<Search />
 
-					<Stack direction='row' spacing={2} sx={{ ml: 'auto' }}>
-						<Notification />
-						<AvatarMenu />
-					</Stack>
+					<AvatarMenu sx={{ ml: { xs: 1, lg: 'auto' } }} />
 				</Toolbar>
 				<Box sx={{ p: 3, height: `calc(100% - ${toolbarHeight}px)` }}>
 					<Routes>

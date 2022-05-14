@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react';
 import Chart from '@/components/widgets/Chart';
-import { CardContent, Stack, Theme, useMediaQuery, useTheme } from '@mui/material';
+import { CardContent, Stack, Theme, useTheme } from '@mui/material';
 import { TFunction, useTranslation } from 'react-i18next';
 import Styled from '@/components/widgets/Styled';
 import { DashboardProps, Option } from '@/@types/props';
@@ -13,7 +13,6 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 	const { t } = useTranslation();
 	const [option, setOption] = useState<Option>({});
 	const theme = useTheme();
-	const largeScreen = useMediaQuery(theme.breakpoints.up('md'));
 	const colorMode = useAppSelector(state => state.colorMode.value);
 	let httpData: Record<Lowercase<StaticStatus>, number>;
 
@@ -22,10 +21,10 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 		!httpData
 			? http.get<Record<Lowercase<StaticStatus>, number>>(`/${category}/status/statistic`).then(res => {
 					httpData = res.data!;
-					setOption(getOption({ ...res.data!, borderColor }, t, theme, largeScreen));
+					setOption(getOption({ ...res.data!, borderColor }, t, theme));
 			  })
-			: setOption(getOption({ ...httpData!, borderColor }, t, theme, largeScreen));
-	}, [category, largeScreen, colorMode]);
+			: setOption(getOption({ ...httpData!, borderColor }, t, theme));
+	}, [category, colorMode]);
 
 	return (
 		<Styled.Card>
@@ -43,13 +42,18 @@ const StatisticChart: React.FC<DashboardProps> = ({ category, setCategoty }) => 
 const getOption = (
 	{ pending, processing, testing, done, borderColor }: StatisticPieChartOptions,
 	t: TFunction<'translation', undefined>,
-	theme: Theme,
-	largeScreen: boolean
+	theme: Theme
 ): Option => {
 	return {
 		backgroundColor: 'transparent',
-		tooltip: { trigger: 'item' },
-		legend: largeScreen ? { bottom: 0, left: 'center' } : { top: 'center', right: 'right', orient: 'vertical' },
+		tooltip: {
+			trigger: 'item',
+			formatter: function (info: any) {
+				const { marker, value, name } = info;
+				return `${marker} ${name} ${value}`;
+			}
+		},
+		legend: { bottom: 0, left: 'center' },
 		series: [
 			{
 				name: t('statisticChart.statisticData') as any,

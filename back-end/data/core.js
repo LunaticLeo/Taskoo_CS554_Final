@@ -7,12 +7,16 @@ const { Project, Task, Bucket } = require('../lib');
 const { toCapitalize } = require('../utils/helpers');
 const { upload } = require('./file');
 
+const { sendEmail, projectCreatedMailTemplate } = require('../utils/sendmails');
+
 /**
  * create function
  * @param {Project | Task} obj
  * @param {string} category project | task
+ * @param {Function} cb
+ * @param {boolean} productEvn
  */
-const create = async (obj, category, cb) => {
+const create = async (obj, category, cb, productEvn = true) => {
 	if (!['project', 'task'].includes(category)) throw Error('category is invalid');
 
 	let newObj;
@@ -34,6 +38,21 @@ const create = async (obj, category, cb) => {
 	const updateFunc = bucketIds.map(
 		async item => await Bucket.updateStatus(item.bucket, category + 's', insertedId, null, newObj.status)
 	);
+
+	// sent email to info members a new project created for them
+	if (productEvn && category === 'project') {
+		const infoAccounts = await accountsCol
+			.find({
+				_id: {
+					$in: memberId
+				}
+			})
+			.toArray();
+		infoAccounts.forEach(async element => {
+			await sendEmail(element.email, projectCreatedMailTemplate(element.firstName, newObj.name, insertedId));
+		});
+	}
+
 	await Promise.all(updateFunc);
 
 	cb && (await cb(insertedId));
@@ -57,6 +76,9 @@ const deleteobj = async (objid, category, cb) => {
 	}
 
 	const deleteobj = await collection.findOne({ _id: objid });
+	if(category==='task') {
+		if(deleteobj.status==='Done') throw Error('task cannot be deleted')
+	}
 	const { deletedCount } = await collection.deleteOne({ _id: objid });
 	if (!deletedCount) throw Error('The object is not exist in list');
 	// update bucket for members
@@ -94,6 +116,7 @@ const search = async (searchTerm, accountId) => {
 			{ projection: { _id: 0, name: 1, project: '$_id', status: 1 } }
 		)
 		.toArray();
+
 	return [...taskList, ...projectList];
 };
 
@@ -103,7 +126,7 @@ const search = async (searchTerm, accountId) => {
  * @param {string} bucketId
  * @param {object} projection
  */
-const getListFromBucket = async (category, bucketId, { pageNum = 1, pageSize = 10 }, projection) => {
+const getListFromBucket = async (category, bucketId, { pageNum = 1, pageSize = 10 }, projection, sortExpress) => {
 	const bucketsCol = await buckets();
 	const list = await bucketsCol
 		.aggregate([
@@ -132,6 +155,7 @@ const getListFromBucket = async (category, bucketId, { pageNum = 1, pageSize = 1
 				}
 			},
 			{ $unwind: '$list' },
+			...(sortExpress ? [sortExpress] : []),
 			{ $skip: (+pageNum - 1) * +pageSize },
 			{ $limit: +pageSize },
 			{

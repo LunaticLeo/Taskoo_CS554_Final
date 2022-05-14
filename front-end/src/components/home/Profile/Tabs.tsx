@@ -11,7 +11,7 @@ const tabs: TabsProps[] = [
 
 const Tabs: React.FC = () => {
 	const { t } = useTranslation();
-	const [curTab, setCurTab] = useState<string | number>(1);
+	const [curTab, setCurTab] = useState<string | number>(0);
 
 	const handleTabChange = (_: unknown, newVal: string | number) => {
 		setCurTab(newVal);

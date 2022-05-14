@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import Folder from './Folder';
 import FileUploader from './FileUploader';
 import { FileList } from '../home/Project/Detail';
-import { toFormData, toFullName } from '@/utils';
+import { formatLongStr, toFormData, toFullName } from '@/utils';
 import http from '@/utils/http';
 import useNotification from '@/hooks/useNotification';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -39,15 +39,15 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 	const [open, setOpen] = useState<boolean>(false);
 
 	const content = (
-		<CardContent>
-			<Stack spacing={1}>
+		<CardContent sx={{ flex: 1, height: '100%' }}>
+			<Stack spacing={1} sx={{ height: '100%' }}>
 				<Typography variant='h6' component='h2'>
 					{data.name}
 				</Typography>
 				<Typography variant='body2' color='text.secondary' className='collapse'>
-					{data.description}
+					{formatLongStr(data.description)}
 				</Typography>
-				<Stack direction='row' alignItems='center' justifyContent='space-between'>
+				<Stack marginTop='auto!important' direction='row' alignItems='center' justifyContent='space-between'>
 					<Styled.Status label={data.status} />
 					<Styled.AvatarGroup data={data.members} />
 				</Stack>
@@ -56,7 +56,7 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 						{t('dueTime')}
 					</Typography>
 					<Typography variant='body2' component='span'>
-						{dayjs(+data.dueTime).format('MM/DD/YYYY')}
+						{dayjs(+data.dueTime).format('L LT')}
 					</Typography>
 				</Stack>
 			</Stack>
@@ -65,9 +65,11 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 
 	return (
 		<>
-			<Card {...rest} ref={ref} sx={{ width: '100%', ...sx }}>
+			<Card {...rest} ref={ref} sx={{ width: '100%', minWidth: 240, ...sx, display: 'flex', flexDirection: 'column' }}>
 				{clickable ? (
-					<CardActionArea onClick={() => navigate(`/home/project/${data.project}`)}>{content}</CardActionArea>
+					<CardActionArea sx={{ flex: 1 }} onClick={() => navigate(`/home/project/${data.project}`)}>
+						{content}
+					</CardActionArea>
 				) : (
 					content
 				)}
@@ -76,7 +78,7 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 					<Button color='primary' onClick={() => setOpen(true)}>
 						{t('detail')}
 					</Button>
-					{deleteable && onDelete && (
+					{data.status !== 'Done' && deleteable && onDelete && (
 						<IconButton color='error' sx={{ ml: 'auto!important' }} onClick={() => onDelete(data._id)}>
 							<DeleteOutlineOutlinedIcon color='inherit' />
 						</IconButton>
@@ -111,6 +113,7 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 			.post('/task/attachments', formData)
 			.then(res => {
 				notificate.success(res.message);
+				setSelectedFile([]);
 			})
 			.catch(err => notificate.error(err?.message ?? err));
 	};
@@ -144,13 +147,13 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 									{t(item)}
 								</Typography>
 								<Typography variant='body2' component='span'>
-									{dayjs(+(data as any)[item]).format('MM/DD/YYYY')}
+									{dayjs(+(data as any)[item]).format('L LT')}
 								</Typography>
 							</Stack>
 						))}
 					</Stack>
 					{Boolean(data.attachments?.length) && <Folder filesUrl={data.attachments} />}
-					<FileUploader size={2} onFileSelected={handleFileSelect} />
+					{data.status !== 'Done' && <FileUploader size={2} onFileSelected={handleFileSelect} />}
 					<FileList files={selectedFile} onDelete={handleDelete} />
 				</Stack>
 			</DialogContent>

@@ -49,7 +49,7 @@ router.post('/signin', async (req, res) => {
 
 	try {
 		Check.email(email);
-		Check.name(password); //check password missing
+		Check.password(password);
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}
@@ -71,7 +71,7 @@ router.post('/signin', async (req, res) => {
 		const decodedInfo = await decodeAccountInfo({ ...accountInfo });
 		res.json({ code: 200, message: 'Sign in successfully', data: decodedInfo });
 	} catch (error) {
-		return res.status(400).json({ code: 400, message: error?.message ?? error });
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
 
