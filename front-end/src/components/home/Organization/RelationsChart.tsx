@@ -13,7 +13,7 @@ const RelationsChart: React.FC<RelationsChartProps> = ({ data, type = 'treemap' 
 					name: toFullName(cur.firstName, cur.lastName),
 					value: 100 - cur.position.level!,
 					// @ts-ignore
-					meta: cur
+					meta: { ...cur, type: 'member' }
 				};
 				if (department) {
 					department.children?.push(item);
@@ -23,7 +23,9 @@ const RelationsChart: React.FC<RelationsChartProps> = ({ data, type = 'treemap' 
 					pre?.push({
 						name: cur.department.name,
 						value: item.value,
-						children: [item]
+						children: [item],
+						// @ts-ignore
+						meta: { type: 'department' }
 					});
 				}
 				return pre;
@@ -71,7 +73,11 @@ const getSunburstOption = (data: TreemapSeriesOption['data']): Option => ({
 	tooltip: {
 		formatter: function (info: any) {
 			const { data, marker } = info;
-			return data.meta?.email
+			console.log(info);
+
+			if (!data?.meta?.type) return 'Click to back';
+
+			return data?.meta.type === 'member'
 				? `
 				${marker} <strong>${data.name}</strong><br />
 				${data.meta.email}<br />
