@@ -89,7 +89,7 @@ const Tasks: React.FC<TasksProps> = ({ project, data, setData, sx, permission, u
 				})
 				.then(res => {
 					notification.success(res.message);
-					socket?.emit('queryTasks', { projectId: projectId });
+					socket?.emit('updataTasks', { projectId: projectId });
 					chekcProjectStatus();
 				})
 				.catch(err => {
@@ -101,7 +101,7 @@ const Tasks: React.FC<TasksProps> = ({ project, data, setData, sx, permission, u
 						[source.droppableId]: srcColumn
 					}));
 				})
-				.finally(() => {});
+				.finally(() => { });
 		}
 	};
 
@@ -132,7 +132,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ status, data, permission }) => 
 			.delete('/task/remove', { id })
 			.then(res => {
 				notificate.success(res.message);
-				socket?.emit('queryTasks', { projectId: projectId });
+				socket?.emit('updataTasks', { projectId: projectId });
 			})
 			.catch(err => notificate.error(err?.message ?? err));
 	};

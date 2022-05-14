@@ -93,7 +93,7 @@ const Detail: React.FC = () => {
 	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
 
 	const emitUpdate = useCallback(() => {
-		socket?.emit('queryTasks', { projectId: id });
+		socket?.emit('updataTasks', { projectId: id });
 	}, [setTasks, socket]);
 
 	useEffect(() => {
@@ -115,14 +115,14 @@ const Detail: React.FC = () => {
 
 	useEffect(() => {
 		if (socket) {
-			socket?.emit('join', { accountId, projectId: id });
+			socket?.emit('viewProject', { projectId: id });
 		}
 	}, [socket]);
 
 	useEffect(() => {
 		if (socket) {
 			socket?.on('tasks', msg => {
-				msg.projectId == id && setTasks(msg.tasks);
+				setTasks(msg);
 			});
 		}
 	}, [socket]);
@@ -484,16 +484,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-					const { members } = preVal;
-					members.push({ _id: member._id, role: member.role });
-					return { ...preVal, members };
-			  })
+				const { members } = preVal;
+				members.push({ _id: member._id, role: member.role });
+				return { ...preVal, members };
+			})
 			: setMembers(preVal => {
-					const { members } = preVal;
-					const index = members.findIndex(item => item._id === member._id);
-					members.splice(index, 1);
-					return { ...preVal, members };
-			  });
+				const { members } = preVal;
+				const index = members.findIndex(item => item._id === member._id);
+				members.splice(index, 1);
+				return { ...preVal, members };
+			});
 	};
 
 	return (
