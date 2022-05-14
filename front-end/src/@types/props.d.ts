@@ -137,6 +137,10 @@ type SwitchStatusProps = {
 	status: Lowercase<StaticStatus>;
 	updateStatus: (status: StaticStatus) => void;
 };
+type LoadingProgressProps = {
+	loading: boolean;
+	status: Lowercase<StaticStatus>;
+};
 
 type FileUploaderProps = WithSxProp<{ onFileSelected: (files: File[]) => void; size?: number }>;
 type FolderProps = { filesUrl: string[] };

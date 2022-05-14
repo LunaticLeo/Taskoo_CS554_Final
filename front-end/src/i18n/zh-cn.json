@@ -32,7 +32,8 @@
 		"submit": "提交",
 		"upload": "上传",
 		"clear": "清空",
-		"confirm": "Confirm"
+		"confirm": "确认",
+		"close": "关闭"
 	},
 	"table": {
 		"header": {

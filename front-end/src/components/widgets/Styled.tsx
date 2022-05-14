@@ -96,7 +96,7 @@ const Transition = React.forwardRef(function Transition(
 });
 const StyledDialog: React.FC<StyledDialogProps> = ({ open, onClose, children, maxWidth = 'md' }) => {
 	const theme = useTheme();
-	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+	const fullScreen = useMediaQuery(theme.breakpoints.down(maxWidth));
 	return (
 		<Dialog
 			open={open}

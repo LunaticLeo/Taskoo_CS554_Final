@@ -23,7 +23,7 @@ const Nav: React.FC<NavProps> = ({ openDrawer, setOpenDrawer }) => {
 				<Drawer
 					variant='permanent'
 					sx={{
-						display: { xs: 'none', md: 'block' },
+						display: { xs: 'none', lg: 'block' },
 						position: 'relative',
 						'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
 					}}
@@ -40,7 +40,7 @@ const Nav: React.FC<NavProps> = ({ openDrawer, setOpenDrawer }) => {
 					onClose={() => setOpenDrawer(!openDrawer)}
 					ModalProps={{ keepMounted: true }}
 					sx={{
-						display: { xs: 'block', md: 'none' },
+						display: { xs: 'block', lg: 'none' },
 						position: 'relative',
 						'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
 					}}

@@ -32,7 +32,8 @@
 		"submit": "Submit",
 		"upload": "Upload",
 		"clear": "Clear",
-		"confirm": "Confirm"
+		"confirm": "Confirm",
+		"close": "Close"
 	},
 	"table": {
 		"header": {

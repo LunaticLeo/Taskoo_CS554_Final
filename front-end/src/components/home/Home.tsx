@@ -57,9 +57,9 @@ const Home: React.FC = () => {
 							{t(`menu.${curView}`)}
 						</Typography>
 					)}
-					{/* <Search /> */}
+					<Search />
 
-					<AvatarMenu sx={{ ml: 'auto' }} />
+					<AvatarMenu sx={{ ml: { xs: 1, lg: 'auto' } }} />
 				</Toolbar>
 				<Box sx={{ p: 3, height: `calc(100% - ${toolbarHeight}px)` }}>
 					<Routes>

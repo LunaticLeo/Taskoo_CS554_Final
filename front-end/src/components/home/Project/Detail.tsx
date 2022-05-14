@@ -24,8 +24,6 @@ import {
 	useMediaQuery,
 	useTheme,
 	styled,
-	Collapse,
-	Alert,
 	DialogContentText
 } from '@mui/material';
 import { useParams, Link as NavLink } from 'react-router-dom';
@@ -45,6 +43,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Tasks from './Tasks';
 import {
+	LoadingProgressProps,
 	FavoriteButtonProps,
 	FileListProps,
 	FloadMenuProps,
@@ -484,16 +483,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-				const { members } = preVal;
-				members.push({ _id: member._id, role: member.role });
-				return { ...preVal, members };
-			})
+					const { members } = preVal;
+					members.push({ _id: member._id, role: member.role });
+					return { ...preVal, members };
+			  })
 			: setMembers(preVal => {
-				const { members } = preVal;
-				const index = members.findIndex(item => item._id === member._id);
-				members.splice(index, 1);
-				return { ...preVal, members };
-			});
+					const { members } = preVal;
+					const index = members.findIndex(item => item._id === member._id);
+					members.splice(index, 1);
+					return { ...preVal, members };
+			  });
 	};
 
 	return (
@@ -601,11 +600,7 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status, updateStat
 				color={status as any}
 				sx={{ borderRadius: 50 }}
 				disabled={loading}
-				startIcon={
-					<Collapse in={loading} orientation='horizontal'>
-						<CircularProgress color={status as any} sx={{ fontSize: 16 }} />
-					</Collapse>
-				}
+				startIcon={<LoadingProgress loading={loading} status={status} />}
 				onClick={handleUptateStatus}
 			>
 				{toCapitalize(status)}
@@ -623,6 +618,20 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status, updateStat
 				</DialogActions>
 			</Styled.Dialog>
 		</>
+	);
+};
+
+const LoadingProgress: React.FC<LoadingProgressProps> = ({ loading, status }) => {
+	return (
+		<Stack
+			sx={{
+				width: loading ? 16 : 0,
+				overflow: 'hidden',
+				transition: theme => theme.transitions.create('width')
+			}}
+		>
+			<CircularProgress color={status as any} sx={{ fontSize: 16 }} />
+		</Stack>
 	);
 };
 

@@ -93,10 +93,28 @@ const insertProjects = async () => {
 	const roles = staticData.roles.filter(item => item._id !== '584b21b7-57b5-4394-825c-f488c53c7d51');
 	const members = accounts.filter(item => item.position !== '01bcb711-f5c4-44bc-a0fe-949b1a4e1273');
 
+	const groupedMembers = members.reduce((pre, cur) => {
+		pre[cur.department] = pre[cur.department] ?? [];
+		pre[cur.department].push(cur);
+		return pre;
+	}, {});
+
 	const Random = Mock.Random;
 	Random.extend({
-		memberRoles: function () {
+		memberRoles() {
 			return this.pick(roles);
+		},
+		randomMembers(department) {
+			const list = [...groupedMembers[department]];
+			const res = [];
+			const count = Random.integer(2, ~~(list.length / 2));
+
+			for (let i = 0; i < count; i++) {
+				const ran = Math.floor(Math.random() * (list.length - i));
+				res.push(list[ran]);
+				list[ran] = list[list.length - i - 1];
+			}
+			return res;
 		}
 	});
 
@@ -113,20 +131,14 @@ const insertProjects = async () => {
 								_id: manager._id,
 								role: { _id: '584b21b7-57b5-4394-825c-f488c53c7d51', name: 'Manager' }
 							},
-							...members
-								.filter(ele => {
-									return ele.department === manager.department;
-								})
-								.map(ele => {
-									return { _id: ele._id, role: Random.memberRoles() };
-								})
+							...Random.randomMembers(manager.department).map(item => ({ _id: item._id, role: Random.memberRoles() }))
 						]
 					}),
 					false
 				);
 			}
 		})
-	)
+	);
 };
 
 const insertTasks = async () => {
@@ -141,28 +153,30 @@ const insertTasks = async () => {
 	});
 	await Promise.all(
 		projects.map(async project => {
-			const random= Math.round(Math.random())
-			if(random===1){
-			const count = ~~(Math.random() * 10+1);
-			let account = await accountsCol.findOne({_id:project.members[0]._id})
-			for (let i = 0; i < count; i++) {
-				await createTask(
-					new Task({
-						name: Random.title(2, 5),
-						description: Random.sentence(),
-						project : project._id,
-						members : project.members[0],
-						dueTime : dayjs().add(1, 'days')
-					}),
-					account.bucket
-				)
+			const random = Math.round(Math.random());
+			if (random === 1) {
+				const count = ~~(Math.random() * 10 + 1);
+				let account = await accountsCol.findOne({ _id: project.members[0]._id });
+				for (let i = 0; i < count; i++) {
+					await createTask(
+						new Task({
+							name: Random.title(2, 5),
+							description: Random.sentence(),
+							project: project._id,
+							members: project.members[0],
+							dueTime: dayjs().add(1, 'days')
+						}),
+						account.bucket
+					);
+				}
 			}
-		}
 		})
 	);
-}
+};
 
 async function main() {
+	console.log('Running seeds, this may take a moment...');
+
 	const db = await dbConnection();
 	await db.dropDatabase();
 	try {
