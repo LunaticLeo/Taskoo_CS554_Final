@@ -94,14 +94,14 @@ const Transition = React.forwardRef(function Transition(
 ) {
 	return <Slide direction='up' ref={ref} {...props} />;
 });
-const StyledDialog: React.FC<StyledDialogProps> = ({ open, onClose, children }) => {
+const StyledDialog: React.FC<StyledDialogProps> = ({ open, onClose, children, maxWidth = 'md' }) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 	return (
 		<Dialog
 			open={open}
 			onClose={() => onClose(false)}
-			maxWidth='md'
+			maxWidth={maxWidth}
 			fullWidth
 			fullScreen={fullScreen}
 			TransitionComponent={Transition}

@@ -13,7 +13,8 @@ const {
 	getAttachments,
 	getTaskStatistic,
 	doneCheck,
-	setDone
+	setDone,
+	getStatus
 } = require('../data/project');
 const { search } = require('../data/core');
 const { Project, Check } = require('../lib');
@@ -167,7 +168,7 @@ router.post('/done/set', async (req, res) => {
 
 	try {
 		const data = await setDone(projectId, req.session.accountInfo.bucket);
-		res.json({ code: 200, 'message': data });
+		res.json({ code: 200, message: data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
@@ -252,6 +253,23 @@ router.get('/search', async (req, res) => {
 
 	try {
 		const data = await search(req.query.searchTerm, _id);
+		res.status(200).json({ code: 200, message: '', data });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/status', async (req, res) => {
+	const { id } = req.query;
+
+	try {
+		Check._id(id);
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const data = await getStatus(id);
 		res.status(200).json({ code: 200, message: '', data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });

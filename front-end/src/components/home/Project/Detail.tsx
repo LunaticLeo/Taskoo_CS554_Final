@@ -22,7 +22,11 @@ import {
 	TextField,
 	Typography,
 	useMediaQuery,
-	useTheme
+	useTheme,
+	styled,
+	Collapse,
+	Alert,
+	DialogContentText
 } from '@mui/material';
 import { useParams, Link as NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -46,12 +50,13 @@ import {
 	FloadMenuProps,
 	NavBreadcrumbsProps,
 	ProjectFileUploadProps,
+	SwitchStatusProps,
 	TaskColumnData,
 	TaskFormDialogProps,
 	TaskMemberListProps
 } from '@/@types/props';
 import useAccountInfo from '@/hooks/useAccountInfo';
-import { toFormData } from '@/utils';
+import { toCapitalize, toFormData } from '@/utils';
 import useNotification from '@/hooks/useNotification';
 import Folder from '@/components/widgets/Folder';
 import FileUploader from '@/components/widgets/FileUploader';
@@ -62,6 +67,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import useSocket from '@/hooks/useSocket';
 import useValidation from '@/hooks/useValidation';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import MuiCircularProgress from '@mui/material/CircularProgress';
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -141,6 +147,11 @@ const Detail: React.FC = () => {
 			.delete('/project/favorite/remove', { id })
 			.then(res => enqueueSnackbar(res.message, { variant: 'success' }))
 			.catch(err => enqueueSnackbar(err?.message ?? err, { variant: 'error' }));
+
+	const updateStatus = (status: StaticStatus) => {
+		setProjectInfo(preVal => ({ ...preVal, status }));
+	};
+
 	return (
 		<>
 			<Box>
@@ -151,7 +162,15 @@ const Detail: React.FC = () => {
 						alignItems={{ xs: 'flex-start', lg: 'center' }}
 						spacing={{ xs: 1, lg: 0 }}
 					>
-						<Typography component='h1' variant='h3' sx={{ fontWeight: 'bolder' }}>
+						<SwitchStatus
+							project={projectInfo._id}
+							status={projectInfo?.status?.toLowerCase() as SwitchStatusProps['status']}
+						/>
+						<Typography
+							component='h1'
+							variant='h3'
+							sx={{ fontWeight: 'bolder', marginLeft: theme => `${theme.spacing(1)}!important` }}
+						>
 							{projectInfo.name}
 						</Typography>
 						<Typography marginLeft={{ md: 'auto!important' }} marginRight={1} variant='body2' color='text.secondary'>
@@ -178,7 +197,14 @@ const Detail: React.FC = () => {
 					)}
 					<Styled.AvatarGroup data={allMembers} max={5} />
 				</Stack>
-				<Tasks data={tasks} setData={setTasks} sx={{ mt: 5 }} permission={permission} />
+				<Tasks
+					project={projectInfo._id}
+					data={tasks}
+					setData={setTasks}
+					sx={{ mt: 5 }}
+					permission={permission}
+					updateStatus={updateStatus}
+				/>
 				<Box sx={{ height: 120 }} />
 			</Box>
 			<FileUplaod project={id ?? ''} openDialog={uploadDialog} setOpenDialog={setUploadDialog} />
@@ -188,7 +214,14 @@ const Detail: React.FC = () => {
 				spacing={1}
 				alignItems={{ xs: 'flex-end' }}
 			>
-				{permission && <FormDialog project={id ?? ''} members={projectInfo.members} emitUpdate={emitUpdate} />}
+				{permission && (
+					<FormDialog
+						project={id ?? ''}
+						members={projectInfo.members}
+						emitUpdate={emitUpdate}
+						updateStatus={updateStatus}
+					/>
+				)}
 				{!largeScreen && (
 					<FloatMenu
 						isFavorite={favoriteStatus}
@@ -227,7 +260,6 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project, openDialog, set
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const notificate = useNotification();
-	// const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [files, setFiles] = useState<File[]>([]);
 	const [existFiles, setExistFiles] = useState<string[]>([]);
 
@@ -274,9 +306,6 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project, openDialog, set
 
 	return (
 		<>
-			{/* <Button sx={{ ml: 1 }} variant='contained' startIcon={<CloudUploadIcon />} onClick={() => setOpenDialog(true)}>
-				{t('project.attachments')}
-			</Button> */}
 			<Styled.Dialog open={openDialog} onClose={handleDialogClose}>
 				<DialogTitle>{t('project.attachments')}</DialogTitle>
 				<DialogContent>
@@ -328,7 +357,7 @@ class TaskFormClass implements Form.TaskForm {
 	}
 }
 
-const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdate }) => {
+const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdate, updateStatus }) => {
 	const { t } = useTranslation();
 	const { _id } = useAccountInfo();
 	const notificate = useNotification();
@@ -352,6 +381,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 			.then(res => {
 				notificate.success(res.message);
 				emitUpdate();
+				chekcProjectStatus();
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => {
@@ -359,6 +389,13 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 				setTaskForm(new TaskFormClass(project));
 				addCreator();
 			});
+	};
+
+	// check the project status and update it
+	const chekcProjectStatus = () => {
+		http.get<StaticStatus>('/project/status', { id: project }).then(res => {
+			updateStatus(res.data!);
+		});
 	};
 
 	useLayoutEffect(() => {
@@ -514,5 +551,82 @@ const FloatMenu: React.FC<FloadMenuProps> = ({ isFavorite = false, onClickFavori
 		</SpeedDial>
 	);
 };
+
+const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status }) => {
+	const { t } = useTranslation();
+	const notificate = useNotification();
+	const [loading, setLoading] = useState<boolean>(false);
+	const [showAlter, setShowAlter] = useState<boolean>(false);
+
+	const handleUptateStatus = async () => {
+		let checkRes;
+		try {
+			checkRes = await http.get<boolean>('project/done/check', { id: project });
+		} catch (err: any) {
+			notificate.error(err?.message ?? err);
+			return;
+		}
+		if (!checkRes.data) {
+			notificate.error(checkRes.message);
+			return;
+		}
+
+		setShowAlter(true);
+	};
+
+	const handleClose = () => {
+		setShowAlter(false);
+	};
+
+	const handleConfirm = () => {
+		handleClose();
+		setLoading(true);
+		http
+			.post('/project/done/set', { id: project })
+			.then(res => {
+				notificate.success(res.message);
+			})
+			.catch(err => notificate.error(err?.message ?? err))
+			.finally(() => setTimeout(() => setLoading(false), 1000));
+	};
+
+	return (
+		<>
+			<Button
+				variant='outlined'
+				color={status as any}
+				sx={{ borderRadius: 50 }}
+				disabled={loading}
+				startIcon={
+					<Collapse in={loading} orientation='horizontal'>
+						<CircularProgress color={status as any} sx={{ fontSize: 16 }} />
+					</Collapse>
+				}
+				onClick={handleUptateStatus}
+			>
+				{toCapitalize(status)}
+			</Button>
+			<Styled.Dialog open={showAlter} onClose={handleClose} maxWidth='sm'>
+				<DialogTitle>{t('confirm')}</DialogTitle>
+				<DialogContent>
+					<DialogContentText>{t('confirmContent')}</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose}>{t('button.cancel')}</Button>
+					<Button variant='contained' onClick={handleConfirm}>
+						{t('button.submit')}
+					</Button>
+				</DialogActions>
+			</Styled.Dialog>
+		</>
+	);
+};
+
+const CircularProgress = styled(MuiCircularProgress)(({ theme }) => ({
+	'&.MuiCircularProgress-root': {
+		width: '16px!important',
+		height: '16px!important'
+	}
+}));
 
 export default Detail;
