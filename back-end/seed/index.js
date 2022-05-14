@@ -1,9 +1,11 @@
 const dbConnection = require('../config/mongoConnection');
 const mongoCollections = require('../config/mongoCollections');
-const { DBStaticCollection, Account, Bucket, Project } = require('../lib');
+const { DBStaticCollection, Account, Bucket, Project, Task } = require('../lib');
 const { createProject } = require('../data/project');
+const { createTask } = require('../data/task');
 const staticData = require('./static.json');
 const Mock = require('mockjs');
+const dayjs = require('dayjs');
 
 const insertStatic = async collectionName => {
 	const collection = await mongoCollections[collectionName]();
@@ -124,8 +126,41 @@ const insertProjects = async () => {
 				);
 			}
 		})
-	);
+	)
 };
+
+const insertTasks = async () => {
+	const projectsCol = await mongoCollections['projects']();
+	const projects = await projectsCol.find().toArray();
+	const accountsCol = await mongoCollections['accounts']();
+	const Random = Mock.Random;
+	Random.extend({
+		memberRoles: function () {
+			return this.pick(roles);
+		}
+	});
+	await Promise.all(
+		projects.map(async project => {
+			const random= Math.round(Math.random())
+			if(random===1){
+			const count = ~~(Math.random() * 10+1);
+			let account = await accountsCol.findOne({_id:project.members[0]._id})
+			for (let i = 0; i < count; i++) {
+				await createTask(
+					new Task({
+						name: Random.title(2, 5),
+						description: Random.sentence(),
+						project : project._id,
+						members : project.members[0],
+						dueTime : dayjs().add(1, 'days')
+					}),
+					account.bucket
+				)
+			}
+		}
+		})
+	);
+}
 
 async function main() {
 	const db = await dbConnection();
@@ -135,6 +170,7 @@ async function main() {
 		const [departmentIds, positionIds] = await Promise.all(insertFunc);
 		await insertAccounts(departmentIds, positionIds);
 		await insertProjects();
+		await insertTasks();
 		console.log('Done seeding database');
 	} catch (error) {
 		console.error(error);

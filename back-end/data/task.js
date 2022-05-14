@@ -19,7 +19,7 @@ const createTask = async (taskObj, bucketId) => {
 		const project = await projectCol.findOne({ _id: taskObj.project });
 		if (project.status === 'Pending')
 			modifiedCount = await projectCol.updateOne({ _id: taskObj.project }, { $set: { status: 'Processing' } });
-		updateStatus(bucketId, 'projects', project._id, 'Pending', 'Processing');
+		await updateStatus(bucketId, 'projects', project._id, 'Pending', 'Processing');
 		//if (!modifiedCount) throw Error('The task is already in task list');
 	});
 
