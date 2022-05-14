@@ -5,7 +5,7 @@ const useSocket = (url?: string) => {
 	const [socket, setSocket] = useState<Socket | null>(null);
 
 	useEffect(() => {
-		const newSocket = io(`http://192.168.1.171:4000/${url ?? ''}`);
+		const newSocket = io(`http://localhost:4000/${url ?? ''}`);
 		setSocket(newSocket);
 		return () => {
 			socket?.disconnect();

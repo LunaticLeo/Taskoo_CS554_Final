@@ -18,6 +18,7 @@ const {
 } = require('../data/project');
 const { search } = require('../data/core');
 const { Project, Check } = require('../lib');
+const { getPermission } = require('../data/account');
 
 router.post('/create', async (req, res) => {
 	const { _id } = req.session.accountInfo;
@@ -165,6 +166,11 @@ router.post('/done/set', async (req, res) => {
 	} catch (error) {
 		return res.status(400).json({ code: 400, message: error?.message ?? error });
 	}
+
+
+	const flag = await getPermission(req.session.accountInfo.position, "projects");
+	if (flag === false)
+		return res.status(403).json({ code: 400, message: "You don't have permission to set the project as done" });
 
 	try {
 		const data = await setDone(projectId, req.session.accountInfo.bucket);
