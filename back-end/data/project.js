@@ -438,9 +438,11 @@ const getAttachments = async _id => {
  */
 const getStatus = async _id => {
 	const projectCol = await projects();
-	const { status } = await projectCol.findOne({ _id }, { projection: { _id: 0, status: 1 } });
+	const res = await projectCol.findOne({ _id }, { projection: { _id: 0, status: 1 } });
 
-	return status;
+	if (!res) throw Error('Project not found');
+
+	return res.status;
 };
 
 module.exports = {

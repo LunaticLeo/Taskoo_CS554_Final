@@ -115,7 +115,7 @@ const Detail: React.FC = () => {
 		if (socket) {
 			socket?.emit('viewProject', { projectId: id });
 		}
-	}, [socket]);
+	}, [socket, id]);
 
 	useEffect(() => {
 		if (socket) {
@@ -194,13 +194,7 @@ const Detail: React.FC = () => {
 					)}
 					<Styled.AvatarGroup data={allMembers} max={5} />
 				</Stack>
-				<Tasks
-					project={projectInfo._id}
-					data={tasks}
-					setData={setTasks}
-					sx={{ mt: 5 }}
-					permission={permission}
-				/>
+				<Tasks project={projectInfo._id} data={tasks} setData={setTasks} sx={{ mt: 5 }} permission={permission} />
 				<Box sx={{ height: 120 }} />
 			</Box>
 			<FileUplaod project={id ?? ''} openDialog={uploadDialog} setOpenDialog={setUploadDialog} />
@@ -210,12 +204,8 @@ const Detail: React.FC = () => {
 				spacing={1}
 				alignItems={{ xs: 'flex-end' }}
 			>
-				{permission && (
-					<FormDialog
-						project={id ?? ''}
-						members={projectInfo.members}
-						emitUpdate={emitUpdate}
-					/>
+				{permission && projectInfo.status !== 'Done' && (
+					<FormDialog project={id ?? ''} members={projectInfo.members} emitUpdate={emitUpdate} />
 				)}
 				{!largeScreen && (
 					<FloatMenu
@@ -470,16 +460,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-				const { members } = preVal;
-				members.push({ _id: member._id, role: member.role });
-				return { ...preVal, members };
-			})
+					const { members } = preVal;
+					members.push({ _id: member._id, role: member.role });
+					return { ...preVal, members };
+			  })
 			: setMembers(preVal => {
-				const { members } = preVal;
-				const index = members.findIndex(item => item._id === member._id);
-				members.splice(index, 1);
-				return { ...preVal, members };
-			});
+					const { members } = preVal;
+					const index = members.findIndex(item => item._id === member._id);
+					members.splice(index, 1);
+					return { ...preVal, members };
+			  });
 	};
 
 	return (
@@ -545,9 +535,16 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status }) => {
 	const socket = useSocket();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [showAlter, setShowAlter] = useState<boolean>(false);
+	const [permission, setPermission] = useState<boolean>(false);
+
+	useEffect(() => {
+		http.get<boolean>('/account/permission', { category: 'projects' }).then(res => {
+			setPermission(res.data!);
+		});
+	}, []);
 
 	const handleUptateStatus = async () => {
-		if (status === 'done') return;
+		if (!permission || status === 'done') return;
 
 		let checkRes;
 		try {
@@ -575,7 +572,7 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status }) => {
 			.post('/project/done/set', { id: project })
 			.then(res => {
 				notificate.success(res.message);
-				socket?.emit("updateTasks", { projectId: project });
+				socket?.emit('updateTasks', { projectId: project });
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => setTimeout(() => setLoading(false), 1000));
