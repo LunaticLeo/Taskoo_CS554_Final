@@ -135,6 +135,7 @@ type FloadMenuProps = {
 type SwitchStatusProps = {
 	project: string;
 	status: Lowercase<StaticStatus>;
+	updateStatus: (status: StaticStatus) => void;
 };
 
 type FileUploaderProps = WithSxProp<{ onFileSelected: (files: File[]) => void; size?: number }>;

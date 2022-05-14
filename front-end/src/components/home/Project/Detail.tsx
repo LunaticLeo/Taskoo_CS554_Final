@@ -165,6 +165,7 @@ const Detail: React.FC = () => {
 						<SwitchStatus
 							project={projectInfo._id}
 							status={projectInfo?.status?.toLowerCase() as SwitchStatusProps['status']}
+							updateStatus={updateStatus}
 						/>
 						<Typography
 							component='h1'
@@ -552,13 +553,15 @@ const FloatMenu: React.FC<FloadMenuProps> = ({ isFavorite = false, onClickFavori
 	);
 };
 
-const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status }) => {
+const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status, updateStatus }) => {
 	const { t } = useTranslation();
 	const notificate = useNotification();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [showAlter, setShowAlter] = useState<boolean>(false);
 
 	const handleUptateStatus = async () => {
+		if (status === 'done') return;
+
 		let checkRes;
 		try {
 			checkRes = await http.get<boolean>('project/done/check', { id: project });
@@ -585,6 +588,7 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status }) => {
 			.post('/project/done/set', { id: project })
 			.then(res => {
 				notificate.success(res.message);
+				updateStatus('Done');
 			})
 			.catch(err => notificate.error(err?.message ?? err))
 			.finally(() => setTimeout(() => setLoading(false), 1000));
@@ -593,7 +597,7 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status }) => {
 	return (
 		<>
 			<Button
-				variant='outlined'
+				variant={status === 'done' ? 'contained' : 'outlined'}
 				color={status as any}
 				sx={{ borderRadius: 50 }}
 				disabled={loading}
@@ -622,7 +626,7 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ project, status }) => {
 	);
 };
 
-const CircularProgress = styled(MuiCircularProgress)(({ theme }) => ({
+const CircularProgress = styled(MuiCircularProgress)(() => ({
 	'&.MuiCircularProgress-root': {
 		width: '16px!important',
 		height: '16px!important'
