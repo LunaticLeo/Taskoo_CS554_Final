@@ -12,7 +12,8 @@ const {
 	uploadAttachments,
 	getAttachments,
 	getTaskStatistic,
-	doneCheck
+	doneCheck,
+	setDone
 } = require('../data/project');
 const { search } = require('../data/core');
 const { Project, Check } = require('../lib');
@@ -155,8 +156,8 @@ router.get('/done/check', async (req, res) => {
 	}
 });
 
-router.get('/done/check', async (req, res) => {
-	const { id: projectId } = req.query;
+router.post('/done/set', async (req, res) => {
+	const { id: projectId } = req.body;
 
 	try {
 		Check._id(projectId);
@@ -165,8 +166,8 @@ router.get('/done/check', async (req, res) => {
 	}
 
 	try {
-		const data = await doneCheck(projectId);
-		res.json({ code: 200, ...data });
+		const data = await setDone(projectId, req.session.accountInfo.bucket);
+		res.json({ code: 200, 'message': data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}

@@ -1,6 +1,7 @@
 const { Project, Check } = require('../lib');
 const { projects, buckets } = require('../config/mongoCollections');
 const core = require('./core');
+const { updateStatus } = require('../lib/Bucket');
 
 /**
  * create project
@@ -125,6 +126,20 @@ const doneCheck = async (projectId) => {
 	return data.length == 0 ?
 		{ 'message': '', 'data': true } :
 		{ 'message': 'Cannot update project status until all the taks are set as Done', 'data': false };
+}
+
+/**
+ * set project status as done
+ * @param {string} projectId
+ * @param {string} bucketId
+ */
+const setDone = async (projectId, bucketId) => {
+	const projectCol = await projects();
+	const data = await projectCol.findOne({ _id: projectId });
+	const { modifiedCount } = await projectCol.updateOne({ _id: projectId }, { $set: { "status": "Done" } });
+	if (!modifiedCount) throw Error('Upload failed, please try again later');
+	await updateStatus(bucketId, 'projects', projectId, 'Testing', "Done");
+	return `${data.name} has been set as Done`;
 }
 
 /**
@@ -425,5 +440,6 @@ module.exports = {
 	uploadAttachments,
 	getAttachments,
 	getTaskStatistic,
-	doneCheck
+	doneCheck,
+	setDone
 };
