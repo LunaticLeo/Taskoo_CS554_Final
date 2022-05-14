@@ -123,6 +123,6 @@ export class Page implements PageConfig {
  * @param {number} len
  * @returns {string}
  */
-export const formatLongStr = (str: string, len: number = 50): string => {
+export const formatLongStr = (str: string, len: number = 40): string => {
 	return str.substring(0, len) + (str ? '...' : '');
 };

@@ -1,4 +1,4 @@
-import { SxProps, Theme } from '@mui/material';
+import { Breakpoint, SxProps, Theme } from '@mui/material';
 import { BarSeriesOption, PieSeriesOption, SunburstSeriesOption, TreemapSeriesOption } from 'echarts/charts';
 import {
 	DataZoomComponentOption,
@@ -56,7 +56,11 @@ type StyledAvatarGroupProps = {
 	data: Required<Pick<Account, 'avatar' | 'firstName' | 'lastName'>>[];
 	max?: number;
 };
-type StyledDialogProps = { open: boolean; onClose: React.Dispatch<React.SetStateAction<boolean>> };
+type StyledDialogProps = {
+	open: boolean;
+	onClose: React.Dispatch<React.SetStateAction<boolean>>;
+	maxWidth?: Breakpoint;
+};
 type TableListProps<T extends { _id: string; [prop: string]: any }> = WithSxProp<{
 	showHeader?: boolean;
 	header: (keyof T)[];
@@ -79,9 +83,11 @@ type DashboardProps = {
 
 type TaskColumnData = Record<Lowercase<StaticStatus>, Task[]>;
 type TasksProps = WithSxProp<{
+	project: string;
 	data: TaskColumnData;
 	setData: (value: React.SetStateAction<TaskColumnData>) => void;
 	permission: boolean;
+	updateStatus: (status: StaticStatus) => void;
 	[props: string]: any;
 }>;
 type TaskColumnProps = { status: string; data: Task[]; permission: boolean };
@@ -115,6 +121,7 @@ type TaskFormDialogProps = {
 	members: WithRole<Account<StaticData>, StaticData>[];
 	refresh?: () => void;
 	emitUpdate: () => void;
+	updateStatus: (status: StaticStatus) => void;
 };
 type TaskMemberListProps = {
 	data: WithRole<Account<StaticData>, StaticData>[];
@@ -124,6 +131,11 @@ type FloadMenuProps = {
 	isFavorite: boolean;
 	onClickFavorite: () => void;
 	setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+};
+type SwitchStatusProps = {
+	project: string;
+	status: Lowercase<StaticStatus>;
+	updateStatus: (status: StaticStatus) => void;
 };
 
 type FileUploaderProps = WithSxProp<{ onFileSelected: (files: File[]) => void; size?: number }>;

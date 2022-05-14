@@ -27,10 +27,10 @@ export default colorModeSlice.reducer;
 export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 	palette: {
 		mode,
-		pending: { main: '#FB6D57', contrastText: '#fff', light: lighten('#FB6D57', 0.8), dark: darken('#FB6D57', 0.8) },
-		processing: { main: '#4A6EFC', contrastText: '#fff', light: lighten('#4A6EFC', 0.8), dark: darken('#4A6EFC', 0.8) },
-		testing: { main: '#F5AE42', contrastText: '#fff', light: lighten('#F5AE42', 0.8), dark: darken('#F5AE42', 0.8) },
-		done: { main: '#53CC9F', contrastText: '#fff', light: lighten('#53CC9F', 0.8), dark: darken('#53CC9F', 0.8) },
+		pending: { main: '#FB6D57', contrastText: '#fff', light: lighten('#FB6D57', 0.2), dark: darken('#FB6D57', 0.2) },
+		processing: { main: '#4A6EFC', contrastText: '#fff', light: lighten('#4A6EFC', 0.2), dark: darken('#4A6EFC', 0.2) },
+		testing: { main: '#F5AE42', contrastText: '#fff', light: lighten('#F5AE42', 0.2), dark: darken('#F5AE42', 0.2) },
+		done: { main: '#53CC9F', contrastText: '#fff', light: lighten('#53CC9F', 0.2), dark: darken('#53CC9F', 0.2) },
 		...(mode === 'light'
 			? {
 					// light mode

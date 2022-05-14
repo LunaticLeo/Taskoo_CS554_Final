@@ -14,7 +14,7 @@ import useSocket from '@/hooks/useSocket';
 
 const header: (keyof TaskInfo)[] = ['name', 'createTime', 'dueTime', 'status', 'members'];
 
-const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
+const Tasks: React.FC<TasksProps> = ({ project, data, setData, sx, permission, updateStatus }) => {
 	const theme = useTheme();
 	const notification = useNotification();
 
@@ -42,6 +42,13 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 			);
 		});
 	}, []);
+
+	// check the project status and update it
+	const chekcProjectStatus = () => {
+		http.get<StaticStatus>('/project/status', { id: project }).then(res => {
+			updateStatus(res.data!);
+		});
+	};
 
 	const onDragEnd = (res: DropResult) => {
 		const { destination, source } = res;
@@ -83,6 +90,7 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 				.then(res => {
 					notification.success(res.message);
 					socket?.emit('queryTasks', { projectId: projectId });
+					chekcProjectStatus();
 				})
 				.catch(err => {
 					notification.error(err?.message ?? err);

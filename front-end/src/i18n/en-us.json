@@ -10,6 +10,8 @@
 	"department": "Department",
 	"position": "Position",
 	"signupTip": "Already have an account? Go to ",
+	"confirm": "Confirm",
+	"confirmContent": "Set status as Done, Click to confirm",
 	"menu": {
 		"studio": "Studio",
 		"dashboard": "Dashboard",
@@ -29,7 +31,8 @@
 		"cancel": "Cancel",
 		"submit": "Submit",
 		"upload": "Upload",
-		"clear": "Clear"
+		"clear": "Clear",
+		"confirm": "Confirm"
 	},
 	"table": {
 		"header": {

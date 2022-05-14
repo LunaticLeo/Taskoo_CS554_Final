@@ -43,6 +43,7 @@ const updateTaskStatus = async (bucketId, taskId, preStatus, destStatus) => {
 	if (preStatus === 'Processing' && destStatus === 'Testing') {
 		const projectCol = await projects();
 		const { modifiedCount } = await projectCol.updateOne({ _id: projectId }, { $set: { status: 'Testing' } });
+		await updateStatus(bucketId, 'projects', projectId, 'Processing', 'Testing');
 		// if (!modifiedCount) throw Error('The project is not exists');  // not required to check
 	}
 
