@@ -28,6 +28,7 @@ Shiling Ding
 * [i18next](https://react.i18next.com/)
 * [ECharts](https://echarts.apache.org/en/index.html)
 * [Socket.io](https://socket.io/)
+* [Google Storage Cloud](https://cloud.google.com/)
 
 ## Documentation 📖
 * [Technical Implementation Plan](https://stevens0-my.sharepoint.com/:w:/g/personal/sxiong5_stevens_edu/EWJkiuUG4PhEliMxonPS0RQBJVH_C_mfK4eOoFqYGfcwnQ?e=4dv2rL)
@@ -36,7 +37,7 @@ Shiling Ding
 * [Postman API Doc](https://documenter.getpostman.com/view/13354448/UVyn1yY2)
 * [Tasks Assign](https://docs.google.com/document/d/1zbjgbLGnco0On2ik0vOc84S6zpXB2IiVcLU0Z4C0ibM/edit?usp=sharing)
 
-## Installtion and Initialization
+## Installtion and Get Start
 Make sure your device have install Nodejs, Mongodb, Redis.
 
 - Install
@@ -53,7 +54,7 @@ npm run --prefix ./back-end seed
 npm start --prefix ./back-end
 ```
 
-## Taksoo Start
+## Launch Application
 ```
 # please make sure you are in the project root path first
 # please make sure the 3000 & 4000 ports are not used first
