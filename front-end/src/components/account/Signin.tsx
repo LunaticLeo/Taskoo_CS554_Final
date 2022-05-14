@@ -7,11 +7,12 @@ import { toFormData } from '@/utils';
 import http from '@/utils/http';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '@/hooks/useStore';
-import { set } from '@/store/accountInfo';
+import { clear, set } from '@/store/accountInfo';
 import { Form } from '@/@types/form';
 import { setLoading } from '@/store/loading';
 import useNotification from '@/hooks/useNotification';
 import useValidation from '@/hooks/useValidation';
+import useSocket from '@/hooks/useSocket';
 
 const Signin: React.FC = () => {
 	const { t } = useTranslation();
@@ -22,18 +23,27 @@ const Signin: React.FC = () => {
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
 	const { email, password } = useValidation();
+	const socket = useSocket();
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		dispatch(setLoading(true));
 		const formData = toFormData<Form.SignInForm>(signinForm);
 		http
-			.post('/account/signin', formData)
+			.post<Account>('/account/signin', formData)
 			.then(res => {
 				setTimeout(() => {
 					dispatch(setLoading(false));
 					dispatch(set(res.data!));
 					navigate('/home');
+
+					// connect to the socket
+					if (socket) {
+						socket && socket.emit('join', { accountId: res.data!._id });
+						socket?.on('disconnect', () => {
+							dispatch(clear());
+						});
+					}
 				}, 1000);
 			})
 			.catch(err => {

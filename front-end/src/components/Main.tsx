@@ -6,28 +6,13 @@ import Home from './home/Home';
 import Loading from './widgets/Loading';
 import Error from './layout/Error';
 import { SnackbarProvider } from 'notistack';
-import { useAppDispatch, useAppSelector } from '@/hooks/useStore';
+import { useAppSelector } from '@/hooks/useStore';
 import { getDesignTokens } from '@/store/colorMode';
-import useSocket from '@/hooks/useSocket';
-import useAccountInfo from '@/hooks/useAccountInfo';
-import { clear } from '@/store/accountInfo';
 
 const Main: React.FC = () => {
 	const loading = useAppSelector(state => state.loading.value);
 	const mode = useAppSelector(state => state.colorMode.value);
 	const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
-	const socket = useSocket();
-	const dispatch = useAppDispatch();
-	const { _id: accountId } = useAccountInfo();
-
-	useEffect(() => {
-		if (socket) {
-			socket?.emit('join', { accountId });
-			socket?.on('disconnect', () => {
-				dispatch(clear());
-			});
-		}
-	}, [socket]);
 
 	return (
 		<ThemeProvider theme={theme}>
