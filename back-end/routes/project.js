@@ -11,7 +11,8 @@ const {
 	getTasks,
 	uploadAttachments,
 	getAttachments,
-	getTaskStatistic
+	getTaskStatistic,
+	doneCheck
 } = require('../data/project');
 const { search } = require('../data/core');
 const { Project, Check } = require('../lib');
@@ -132,6 +133,40 @@ router.post('/favorite/add', async (req, res) => {
 	try {
 		const message = await addToFavorite(bucket, projectId);
 		res.json({ code: 200, message });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/done/check', async (req, res) => {
+	const { id: projectId } = req.query;
+
+	try {
+		Check._id(projectId);
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const data = await doneCheck(projectId);
+		res.json({ code: 200, ...data });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/done/check', async (req, res) => {
+	const { id: projectId } = req.query;
+
+	try {
+		Check._id(projectId);
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const data = await doneCheck(projectId);
+		res.json({ code: 200, ...data });
 	} catch (error) {
 		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}

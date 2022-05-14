@@ -84,6 +84,50 @@ const getTaskStatistic = async bucketId => {
 };
 
 /**
+ * check project is able to be set done when all tasks is done
+ * @param {string} projectId
+ */
+const doneCheck = async (projectId) => {
+	const projectCol = await projects();
+	const data = await projectCol.aggregate(
+		[
+			{
+				'$match': {
+					'_id': projectId
+				}
+			}, {
+				'$lookup': {
+					'from': 'tasks',
+					'localField': 'tasks',
+					'foreignField': '_id',
+					'as': 'tasksDetail'
+				}
+			}, {
+				'$project': {
+					'tasksDetail': 1,
+					'_id': 0
+				}
+			}, {
+				'$unwind': '$tasksDetail'
+			}, {
+				'$replaceRoot': {
+					'newRoot': '$tasksDetail'
+				}
+			}, {
+				'$match': {
+					'status': {
+						'$ne': 'Done'
+					}
+				}
+			}
+		]
+	).toArray();
+	return data.length == 0 ?
+		{ 'message': '', 'data': true } :
+		{ 'message': 'Cannot update project status until all the taks are set as Done', 'data': false };
+}
+
+/**
  * get project list from bucket
  * @param {string} bucketId
  * @param {object} pageConfig {pageNum: number, pageSize: number}
@@ -380,5 +424,6 @@ module.exports = {
 	getTasks,
 	uploadAttachments,
 	getAttachments,
-	getTaskStatistic
+	getTaskStatistic,
+	doneCheck
 };
