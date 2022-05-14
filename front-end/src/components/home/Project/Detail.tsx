@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import http from '@/utils/http';
 import {
 	Box,
@@ -16,10 +16,13 @@ import {
 	ListItemButton,
 	ListItemIcon,
 	ListItemText,
-	Popover,
+	SpeedDial,
+	SpeedDialAction,
 	Stack,
 	TextField,
-	Typography
+	Typography,
+	useMediaQuery,
+	useTheme
 } from '@mui/material';
 import { useParams, Link as NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +43,7 @@ import Tasks from './Tasks';
 import {
 	FavoriteButtonProps,
 	FileListProps,
+	FloadMenuProps,
 	NavBreadcrumbsProps,
 	ProjectFileUploadProps,
 	TaskColumnData,
@@ -57,6 +61,7 @@ import { setLoading } from '@/store/loading';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import useSocket from '@/hooks/useSocket';
 import useValidation from '@/hooks/useValidation';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -65,6 +70,8 @@ const Detail: React.FC = () => {
 	const { id } = useParams();
 	const { _id: accountId } = useAccountInfo();
 	const dispatch = useAppDispatch();
+	const theme = useTheme();
+	const largeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 	const { enqueueSnackbar } = useSnackbar();
 	const [projectInfo, setProjectInfo] = useState<Project>({} as Project);
 	const [favoriteStatus, setFavoriteStatus] = useState<boolean>(false);
@@ -76,6 +83,7 @@ const Detail: React.FC = () => {
 		testing: [],
 		done: []
 	} as TaskColumnData);
+	const [uploadDialog, setUploadDialog] = useState<boolean>(false);
 	const allMembers = useMemo(() => projectInfo.members ?? [], [projectInfo.members]);
 
 	const emitUpdate = useCallback(() => {
@@ -107,7 +115,7 @@ const Detail: React.FC = () => {
 
 	useEffect(() => {
 		if (socket) {
-			socket?.on('tasks', (msg) => {
+			socket?.on('tasks', msg => {
 				msg.projectId == id && setTasks(msg.tasks);
 			});
 		}
@@ -138,15 +146,30 @@ const Detail: React.FC = () => {
 			<Box>
 				<NavBreadcrumbs projectName={projectInfo?.name} />
 				<Stack spacing={2} mt={2}>
-					<Stack direction='row' alignItems='center'>
+					<Stack
+						direction={{ xs: 'column', lg: 'row' }}
+						alignItems={{ xs: 'flex-start', lg: 'center' }}
+						spacing={{ xs: 1, lg: 0 }}
+					>
 						<Typography component='h1' variant='h3' sx={{ fontWeight: 'bolder' }}>
 							{projectInfo.name}
 						</Typography>
-						<Typography marginLeft='auto' marginRight={1} variant='body2' color='text.secondary'>
+						<Typography marginLeft={{ md: 'auto!important' }} marginRight={1} variant='body2' color='text.secondary'>
 							{t('create')}: {dayjs(projectInfo.createTime).format('MM/DD/YYYY')}
 						</Typography>
-						<FavoriteButton favorite={favoriteStatus} onClick={swithFavoriteStatus} />
-						<FileUplaod project={id ?? ''} />
+						{largeScreen && (
+							<>
+								<FavoriteButton favorite={favoriteStatus} onClick={swithFavoriteStatus} />
+								<Button
+									sx={{ ml: theme => `${theme.spacing(1)}!important` }}
+									variant='contained'
+									startIcon={<CloudUploadIcon />}
+									onClick={() => setUploadDialog(true)}
+								>
+									{t('project.attachments')}
+								</Button>
+							</>
+						)}
 					</Stack>
 					{projectInfo?.description && (
 						<Typography variant='body1' color='text.secondary'>
@@ -156,8 +179,24 @@ const Detail: React.FC = () => {
 					<Styled.AvatarGroup data={allMembers} max={5} />
 				</Stack>
 				<Tasks data={tasks} setData={setTasks} sx={{ mt: 5 }} permission={permission} />
+				<Box sx={{ height: 120 }} />
 			</Box>
-			{permission && <FormDialog project={id ?? ''} members={projectInfo.members} emitUpdate={emitUpdate} />}
+			<FileUplaod project={id ?? ''} openDialog={uploadDialog} setOpenDialog={setUploadDialog} />
+			<Stack
+				direction={{ xs: 'column-reverse', lg: 'row' }}
+				sx={{ position: 'fixed', bottom: 24, right: 24 }}
+				spacing={1}
+				alignItems={{ xs: 'flex-end' }}
+			>
+				{permission && <FormDialog project={id ?? ''} members={projectInfo.members} emitUpdate={emitUpdate} />}
+				{!largeScreen && (
+					<FloatMenu
+						isFavorite={favoriteStatus}
+						onClickFavorite={swithFavoriteStatus}
+						setOpenDialog={setUploadDialog}
+					/>
+				)}
+			</Stack>
 		</>
 	);
 };
@@ -184,12 +223,11 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ favorite = false, onCli
 	);
 };
 
-const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
+const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project, openDialog, setOpenDialog }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const notificate = useNotification();
-	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-	const [openDialog, setOpenDialog] = useState<boolean>(false);
+	// const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [files, setFiles] = useState<File[]>([]);
 	const [existFiles, setExistFiles] = useState<string[]>([]);
 
@@ -234,43 +272,15 @@ const FileUplaod: React.FC<ProjectFileUploadProps> = ({ project }) => {
 			.finally(() => setTimeout(() => dispatch(setLoading(false)), 1000));
 	};
 
-	const open = Boolean(anchorEl);
-	const id = open ? 'folder-popover' : undefined;
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
 	return (
 		<>
-			<Button
-				sx={{ ml: 1 }}
-				variant='contained'
-				startIcon={<CloudUploadIcon />}
-				onClick={e => setAnchorEl(e.currentTarget)}
-			>
-				{t('button.upload')}
-			</Button>
-			<Popover
-				id={id}
-				open={open}
-				anchorEl={anchorEl}
-				onClose={handleClose}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left'
-				}}
-			>
-				<Stack spacing={2} sx={{ p: 3 }}>
-					<Folder filesUrl={existFiles} />
-					<Button variant='outlined' onClick={() => setOpenDialog(true)}>
-						{t('button.upload')}
-					</Button>
-				</Stack>
-			</Popover>
+			{/* <Button sx={{ ml: 1 }} variant='contained' startIcon={<CloudUploadIcon />} onClick={() => setOpenDialog(true)}>
+				{t('project.attachments')}
+			</Button> */}
 			<Styled.Dialog open={openDialog} onClose={handleDialogClose}>
-				<DialogTitle>{t('file.upload')}</DialogTitle>
+				<DialogTitle>{t('project.attachments')}</DialogTitle>
 				<DialogContent>
+					<Folder filesUrl={existFiles} />
 					<FileUploader onFileSelected={handleFileSelected} />
 					<FileList files={files} onDelete={handleDeleteFile} />
 				</DialogContent>
@@ -371,7 +381,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 			<Fab
 				variant='extended'
 				color='primary'
-				sx={{ position: 'fixed', bottom: 24, right: 24 }}
+				// sx={{ position: 'fixed', bottom: 24, right: 24 }}
 				onClick={() => setOpenDialog(true)}
 			>
 				<AddBoxOutlinedIcon sx={{ mr: 1 }} />
@@ -399,7 +409,7 @@ const FormDialog: React.FC<TaskFormDialogProps> = ({ project, members, emitUpdat
 									<DateTimePicker
 										label={t('task.form.dueTime')}
 										value={taskForm.dueTime}
-										onChange={value => handleInputChange({ dueTime: +(dayjs(value).valueOf()!) })}
+										onChange={value => handleInputChange({ dueTime: +dayjs(value).valueOf()! })}
 										minDateTime={dayjs()}
 										renderInput={params => <TextField required margin='normal' {...params} />}
 									/>
@@ -436,16 +446,16 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 	const handleToggle = (e: React.ChangeEvent<HTMLInputElement>, member: WithRole<Account<StaticData>, StaticData>) => {
 		e.target.checked
 			? setMembers(preVal => {
-				const { members } = preVal;
-				members.push({ _id: member._id, role: member.role });
-				return { ...preVal, members };
-			})
+					const { members } = preVal;
+					members.push({ _id: member._id, role: member.role });
+					return { ...preVal, members };
+			  })
 			: setMembers(preVal => {
-				const { members } = preVal;
-				const index = members.findIndex(item => item._id === member._id);
-				members.splice(index, 1);
-				return { ...preVal, members };
-			});
+					const { members } = preVal;
+					const index = members.findIndex(item => item._id === member._id);
+					members.splice(index, 1);
+					return { ...preVal, members };
+			  });
 	};
 
 	return (
@@ -477,6 +487,31 @@ const MemberList: React.FC<TaskMemberListProps> = ({ data, setMembers }) => {
 				))}
 			</List>
 		</Stack>
+	);
+};
+
+const FloatMenu: React.FC<FloadMenuProps> = ({ isFavorite = false, onClickFavorite, setOpenDialog }) => {
+	const { t } = useTranslation();
+
+	return (
+		<SpeedDial ariaLabel='float-menu' icon={<SpeedDialIcon />}>
+			<SpeedDialAction
+				onClick={onClickFavorite}
+				icon={
+					isFavorite ? (
+						<StarRoundedIcon sx={{ color: yellow[700] }} />
+					) : (
+						<StarOutlineRoundedIcon sx={{ color: yellow[700] }} />
+					)
+				}
+				tooltipTitle={t('menu.favorite')}
+			/>
+			<SpeedDialAction
+				onClick={() => setOpenDialog(true)}
+				icon={<CloudUploadIcon />}
+				tooltipTitle={t('project.attachments')}
+			/>
+		</SpeedDial>
 	);
 };
 

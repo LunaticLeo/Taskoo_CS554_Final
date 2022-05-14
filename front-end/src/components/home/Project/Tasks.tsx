@@ -19,7 +19,7 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 	const notification = useNotification();
 
 	const [STATUS, setSTATUS] = useState<StatusPrerquest>({} as any);
-	const hideColumns = useMediaQuery(theme.breakpoints.down('md'));
+	const hideColumns = useMediaQuery(theme.breakpoints.down('lg'));
 	const listData = useFormatList(
 		useMemo(
 			() =>
@@ -68,28 +68,32 @@ const Tasks: React.FC<TasksProps> = ({ data, setData, sx, permission }) => {
 				[source.droppableId]: srcColumn
 			}));
 		} else {
-			// const draggedItem = srcColumn.splice(source.index, 1)[0];
-			// const targetColumn = [...data[destination.droppableId as keyof TaskColumnData]];
-			// targetColumn.splice(destination.index, 0, draggedItem);
-			// setData(preVal => ({
-			// 	...preVal,
-			// 	[source.droppableId]: srcColumn,
-			// 	[destination.droppableId]: targetColumn
-			// }));
-			// console.log(srcColumn[source.index]);
-			// console.log(source, destination);
+			const draggedItem = srcColumn.splice(source.index, 1)[0];
+			setData(preVal => ({
+				...preVal,
+				[source.droppableId]: srcColumn
+			}));
+
 			http
 				.post('/task/updateTaskStatus', {
-					"taskId": srcColumn[source.index]._id,
-					"preStatus": source.droppableId,
-					"destStatus": destination.droppableId
+					taskId: draggedItem._id,
+					preStatus: source.droppableId,
+					destStatus: destination.droppableId
 				})
 				.then(res => {
 					notification.success(res.message);
 					socket?.emit('queryTasks', { projectId: projectId });
 				})
-				.catch(err => notification.error(err?.message ?? err))
-				.finally(() => { });
+				.catch(err => {
+					notification.error(err?.message ?? err);
+					// reset the srcColumn
+					srcColumn.splice(source.index, 0, draggedItem);
+					setData(preVal => ({
+						...preVal,
+						[source.droppableId]: srcColumn
+					}));
+				})
+				.finally(() => {});
 		}
 	};
 

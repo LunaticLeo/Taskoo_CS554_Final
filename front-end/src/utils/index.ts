@@ -116,3 +116,13 @@ export class Page implements PageConfig {
 		this.pageSize = obj?.pageSize ?? 10;
 	}
 }
+
+/**
+ * cut the long string
+ * @param {string} str
+ * @param {number} len
+ * @returns {string}
+ */
+export const formatLongStr = (str: string, len: number = 50): string => {
+	return str.substring(0, len) + (str ? '...' : '');
+};

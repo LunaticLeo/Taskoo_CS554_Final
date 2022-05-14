@@ -19,7 +19,7 @@ export default class TableList<T extends { _id: string; [prop: string]: any }> e
 	TableListProps<T>
 > {
 	render() {
-		const { header, data, showHeader = false, size, pageConfig, onPageChange, sx } = this.props;
+		const { header, data, showHeader = false, size, pageConfig, onPageChange, sx = {} } = this.props;
 
 		const showPagination = (pageConfig?.count ?? -Infinity) > data.length;
 		const count = pageConfig?.count ?? 0;

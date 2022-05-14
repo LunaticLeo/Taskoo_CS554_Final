@@ -27,7 +27,7 @@ import {
 } from '@/@types/props';
 
 const StyledCard: React.FC<WithSxProp<{}>> = ({ children, sx }) => (
-	<Card sx={sx} elevation={3}>
+	<Card sx={{ ...sx, width: { xs: '100%', lg: 'auto' } }} elevation={3}>
 		{children}
 	</Card>
 );

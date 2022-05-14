@@ -83,6 +83,7 @@ const Project: React.FC = () => {
 					/>
 				</Grid>
 			</Grid>
+			<Box sx={{ height: 56 }} />
 			{permission && <FormDialog refresh={getProjectList} />}
 		</>
 	);
@@ -106,7 +107,7 @@ const FormDialog: React.FC<ProjectFormDialogProps> = ({ refresh }) => {
 
 	useEffect(() => {
 		http.get<Account<string>[]>('/account/members').then(res => {
-			const memberList = res.data!.filter(item => item._id !== accountInfo._id && item.position!=="Product Manager");
+			const memberList = res.data!.filter(item => item._id !== accountInfo._id && item.position !== 'Product Manager');
 			setMembers(memberList);
 		});
 	}, []);

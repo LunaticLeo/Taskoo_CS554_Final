@@ -14,16 +14,14 @@ const Contacts: React.FC<ContactsProps> = ({ data }) => {
 	const [type, setType] = useState<ContactDisplayType>('list');
 
 	const types = [
-		{ name: 'list', icon: <FormatListBulletedRoundedIcon />, component: <ContactList data={data} /> },
-		{ name: 'treemap', icon: <TableChartRoundedIcon />, component: <RelationsChart data={data} /> },
-		{ name: 'sunburst', icon: <DonutLargeRoundedIcon />, component: <RelationsChart data={data} type='sunburst' /> }
+		{ name: 'list', icon: <FormatListBulletedRoundedIcon /> },
+		{ name: 'treemap', icon: <TableChartRoundedIcon /> },
+		{ name: 'sunburst', icon: <DonutLargeRoundedIcon /> }
 	];
 
 	const handleSwitchType = (_: unknown, value: ContactDisplayType) => {
 		setType(value);
 	};
-
-	const display = useMemo(() => types.find(item => item.name === type)?.component, [type, data]);
 
 	return (
 		<>
@@ -38,9 +36,7 @@ const Contacts: React.FC<ContactsProps> = ({ data }) => {
 					</ToggleButton>
 				))}
 			</ToggleButtonGroup>
-			{/* {display} */}
 			{type === 'list' ? <ContactList data={data} /> : <RelationsChart data={data} type={type} />}
-			{/* <RelationsChart data={data} type={type} /> */}
 		</>
 	);
 };

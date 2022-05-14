@@ -96,7 +96,11 @@ type DetailDialogProps = StyledDialogProps & { data: Task };
 type TabPanelProps = { value: string | number; hidden: boolean; [props: string]: any };
 type TabsProps = { text: string; value: string | number };
 
-type ProjectFileUploadProps = { project: string };
+type ProjectFileUploadProps = {
+	project: string;
+	openDialog: boolean;
+	setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+};
 type ProjectFormDialogProps = { refresh?: () => void };
 type ProjectMemberListProps = {
 	data: Account<string>[];
@@ -115,6 +119,11 @@ type TaskFormDialogProps = {
 type TaskMemberListProps = {
 	data: WithRole<Account<StaticData>, StaticData>[];
 	setMembers: (value: React.SetStateAction<Form.TaskForm>) => void;
+};
+type FloadMenuProps = {
+	isFavorite: boolean;
+	onClickFavorite: () => void;
+	setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type FileUploaderProps = WithSxProp<{ onFileSelected: (files: File[]) => void; size?: number }>;

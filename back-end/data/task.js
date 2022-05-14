@@ -13,18 +13,13 @@ const { updateStatus } = require('../lib/Bucket');
 const createTask = async (taskObj, bucketId) => {
 	return await core.create(taskObj, 'task', async insertedId => {
 		const projectCol = await projects();
-		if(dayjs(taskObj.createTime).isAfter(dayjs(taskObj.dueTime))) throw Error("The dueTime can't before today")
-		let { modifiedCount } = await projectCol.updateOne(
-			{ _id: taskObj.project },
-			{ $addToSet: { tasks: insertedId } }
-		);
+		if (dayjs(taskObj.createTime).isAfter(dayjs(taskObj.dueTime))) throw Error("The dueTime can't before today");
+		let { modifiedCount } = await projectCol.updateOne({ _id: taskObj.project }, { $addToSet: { tasks: insertedId } });
 		if (!modifiedCount) throw Error('The task is already in task list');
-		const project = await projectCol.findOne({ _id: taskObj.project })
-		if (project.status === "Pending") modifiedCount = await projectCol.updateOne(
-			{ _id: taskObj.project },
-			{ $set: { "status": "Processing" } }
-		)
-		updateStatus(bucketId, "projects", project._id, "Pending", "Processing");
+		const project = await projectCol.findOne({ _id: taskObj.project });
+		if (project.status === 'Pending')
+			modifiedCount = await projectCol.updateOne({ _id: taskObj.project }, { $set: { status: 'Processing' } });
+		updateStatus(bucketId, 'projects', project._id, 'Pending', 'Processing');
 		//if (!modifiedCount) throw Error('The task is already in task list');
 	});
 
@@ -45,9 +40,9 @@ const updateTaskStatus = async (bucketId, taskId, preStatus, destStatus) => {
 	taskObj.updateStatus(bucketId, destStatus);
 
 	const projectId = taskObj.project;
-	if (preStatus === "Processing" && destStatus === "Testing") {
+	if (preStatus === 'Processing' && destStatus === 'Testing') {
 		const projectCol = await projects();
-		const { modifiedCount } = await projectCol.updateOne({ _id: projectId }, { $set: { "status": "Testing" } });
+		const { modifiedCount } = await projectCol.updateOne({ _id: projectId }, { $set: { status: 'Testing' } });
 		// if (!modifiedCount) throw Error('The project is not exists');  // not required to check
 	}
 
@@ -72,7 +67,25 @@ const deleteTask = async objid => {
  * @param {object} pageConfig {pageNum: number, pageSize: number}
  */
 const getTaskList = async (bucketId, pageConfig) => {
-	return await core.getListFromBucket('tasks', bucketId, pageConfig, { attachments: 0 });
+	return await core.getListFromBucket(
+		'tasks',
+		bucketId,
+		pageConfig,
+		{ attachments: 0 },
+		{ $sort: { 'list.dueTime': 1 } }
+	);
+};
+
+/**
+ * get todo task from bucket
+ * @param {string} bucketId
+ * @param {object} pageConfig {pageNum: number, pageSize: number}
+ */
+const getTodoList = async (bucketId, pageConfig) => {
+	const { list: taskList } = await getTaskList(bucketId, pageConfig);
+	const list = taskList.filter(item => item.status !== 'Done');
+
+	return { count: list.length, list };
 };
 
 /**
@@ -96,6 +109,7 @@ const getStatusStatistic = async bucketId => {
 module.exports = {
 	createTask,
 	getTaskList,
+	getTodoList,
 	deleteTask,
 	uploadAttachments,
 	getStatusStatistic,
