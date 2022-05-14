@@ -15,7 +15,7 @@ const constructorMethod = (io) => {
             // const status = await getStatus(msg.projectId);
             // socket.emit('projectStatus', status);
         })
-        socket.on('updataTasks', async (msg) => {
+        socket.on('updateTasks', async (msg) => {
             // console.log(msg, socket.id)
             const data = await getTasks(msg.projectId);
             io.to(msg.projectId).emit("tasks", data);

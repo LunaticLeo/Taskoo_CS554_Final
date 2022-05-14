@@ -14,7 +14,7 @@ import useSocket from '@/hooks/useSocket';
 
 const header: (keyof TaskInfo)[] = ['name', 'createTime', 'dueTime', 'status', 'members'];
 
-const Tasks: React.FC<TasksProps> = ({ project, data, setData, sx, permission, updateStatus }) => {
+const Tasks: React.FC<TasksProps> = ({ project, data, setData, sx, permission }) => {
 	const theme = useTheme();
 	const notification = useNotification();
 
@@ -42,13 +42,6 @@ const Tasks: React.FC<TasksProps> = ({ project, data, setData, sx, permission, u
 			);
 		});
 	}, []);
-
-	// check the project status and update it
-	const chekcProjectStatus = () => {
-		http.get<StaticStatus>('/project/status', { id: project }).then(res => {
-			updateStatus(res.data!);
-		});
-	};
 
 	const onDragEnd = (res: DropResult) => {
 		const { destination, source } = res;
@@ -89,8 +82,7 @@ const Tasks: React.FC<TasksProps> = ({ project, data, setData, sx, permission, u
 				})
 				.then(res => {
 					notification.success(res.message);
-					socket?.emit('updataTasks', { projectId: projectId });
-					chekcProjectStatus();
+					socket?.emit('updateTasks', { projectId: projectId });
 				})
 				.catch(err => {
 					notification.error(err?.message ?? err);
@@ -132,7 +124,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ status, data, permission }) => 
 			.delete('/task/remove', { id })
 			.then(res => {
 				notificate.success(res.message);
-				socket?.emit('updataTasks', { projectId: projectId });
+				socket?.emit('updateTasks', { projectId: projectId });
 			})
 			.catch(err => notificate.error(err?.message ?? err));
 	};

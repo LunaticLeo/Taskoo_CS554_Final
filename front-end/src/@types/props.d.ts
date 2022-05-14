@@ -87,7 +87,6 @@ type TasksProps = WithSxProp<{
 	data: TaskColumnData;
 	setData: (value: React.SetStateAction<TaskColumnData>) => void;
 	permission: boolean;
-	updateStatus: (status: StaticStatus) => void;
 	[props: string]: any;
 }>;
 type TaskColumnProps = { status: string; data: Task[]; permission: boolean };
@@ -121,7 +120,6 @@ type TaskFormDialogProps = {
 	members: WithRole<Account<StaticData>, StaticData>[];
 	refresh?: () => void;
 	emitUpdate: () => void;
-	updateStatus: (status: StaticStatus) => void;
 };
 type TaskMemberListProps = {
 	data: WithRole<Account<StaticData>, StaticData>[];
@@ -135,7 +133,6 @@ type FloadMenuProps = {
 type SwitchStatusProps = {
 	project: string;
 	status: Lowercase<StaticStatus>;
-	updateStatus: (status: StaticStatus) => void;
 };
 type LoadingProgressProps = {
 	loading: boolean;
