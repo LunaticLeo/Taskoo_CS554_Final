@@ -7,7 +7,8 @@ const {
 	getStatusStatistic,
 	updateTaskStatus,
 	getTaskby,
-	getTodoList
+	getTodoList,
+	getAttachments
 } = require('../data/task');
 const { Check } = require('../lib');
 const { toCapitalize } = require('../utils/helpers');
@@ -122,6 +123,28 @@ router.delete('/remove', async (req, res) => {
 		if (error.message === 'task cannot be deleted')
 			return res.status(403).json({ code: 403, message: error?.message ?? error });
 		else return res.status(500).json({ code: 500, message: error?.message ?? error });
+	}
+});
+
+router.get('/attachments/list', async (req, res) => {
+	const { id } = req.query;
+	let pageNum, pageSize;
+	if (req.query.pageNum) pageNum = req.query.pageNum;
+	else pageNum = 1;
+	if (req.query.pageSize) pageSize = req.query.pageSize;
+	else pageSize = 10;
+	try {
+		Check._id(id);
+	} catch (error) {
+		return res.status(400).json({ code: 400, message: error?.message ?? error });
+	}
+
+	try {
+		const attachments = await getAttachments(id);
+		const attachmentdata = attachments.slice((pageNum - 1) * pageSize, pageNum * pageSize);
+		res.json({ code: 200, message: '', data: attachmentdata });
+	} catch (error) {
+		return res.status(500).json({ code: 500, message: error?.message ?? error });
 	}
 });
 
