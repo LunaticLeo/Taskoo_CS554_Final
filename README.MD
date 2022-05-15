@@ -15,11 +15,11 @@ This web application is used by organizations (company/university) to manage pro
 </p>
 
 ## Group Member
-Yufu Liao  
-Shihao Xiong  
-Peixi Dai  
-Wenqian Zhou  
-Shiling Ding  
+Yufu Liao
+Shihao Xiong
+Peixi Dai
+Wenjing Zhou
+Shiling Ding
 
 ## Tech Stack 💻
 * [React](https://reactjs.org/)
@@ -41,7 +41,7 @@ Shiling Ding
 Make sure your device have install Nodejs, MongoDB, Redis.
 
 - Install
-``` 
+```
 git clone https://github.com/liaoyufu-leo/StevensMarketPlace_CS_546_Group16_FinalProject.git
 ```
 - Initialization
@@ -64,7 +64,7 @@ npm start --prefix ./front-end
 ```
 
 Once commands run successfully, you can see the website in [localhost:3000](http://localhost:3000/)
-! 
+!
 
 ## Default accounts
 | Account| Password|
