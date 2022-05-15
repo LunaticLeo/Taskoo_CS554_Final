@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import {
 	Button,
 	Card,
@@ -93,7 +93,18 @@ const TaskCard: React.ForwardRefRenderFunction<HTMLDivElement, TaskCardProps> = 
 const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 	const { t } = useTranslation();
 	const notificate = useNotification();
+	const [existFiles, setExistFiles] = useState<string[]>(data.attachments);
 	const [selectedFile, setSelectedFile] = useState<File[]>([]);
+
+	const getFileList = useCallback(() => {
+		http.get<string[]>('/task/attachments/list', { id: data._id }).then(res => {
+			setExistFiles(res.data!);
+		});
+	}, []);
+
+	useEffect(() => {
+		getFileList();
+	}, []);
 
 	const handleFileSelect = (files: File[]) => {
 		setSelectedFile(preVal => [...preVal, ...files]);
@@ -114,6 +125,7 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 			.then(res => {
 				notificate.success(res.message);
 				setSelectedFile([]);
+				getFileList();
 			})
 			.catch(err => notificate.error(err?.message ?? err));
 	};
@@ -152,7 +164,7 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, onClose, data }) => {
 							</Stack>
 						))}
 					</Stack>
-					{Boolean(data.attachments?.length) && <Folder filesUrl={data.attachments} />}
+					{Boolean(existFiles?.length) && <Folder filesUrl={existFiles} />}
 					{data.status !== 'Done' && <FileUploader size={2} onFileSelected={handleFileSelect} />}
 					<FileList files={selectedFile} onDelete={handleDelete} />
 				</Stack>

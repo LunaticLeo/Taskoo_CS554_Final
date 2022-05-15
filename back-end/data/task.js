@@ -107,6 +107,14 @@ const getStatusStatistic = async bucketId => {
 	return await core.getStatusStatistic('tasks', bucketId);
 };
 
+/**
+ * get attachments
+ * @param {string} _id project id | task id
+ */
+const getAttachments = async _id => {
+	return await core.getAttachments('tasks', _id);
+};
+
 module.exports = {
 	createTask,
 	getTaskList,
@@ -114,5 +122,6 @@ module.exports = {
 	deleteTask,
 	uploadAttachments,
 	getStatusStatistic,
-	updateTaskStatus
+	updateTaskStatus,
+	getAttachments
 };
