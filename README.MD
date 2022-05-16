@@ -42,7 +42,7 @@ Make sure your device have install Nodejs, MongoDB, Redis.
 
 - Install
 ```
-git clone https://github.com/liaoyufu-leo/StevensMarketPlace_CS_546_Group16_FinalProject.git
+git clone https://github.com/liaoyufu-leo/Taskoo_CS554_Final.git
 ```
 - Initialization
 ```
