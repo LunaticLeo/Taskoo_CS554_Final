@@ -46,11 +46,11 @@ git clone https://github.com/liaoyufu-leo/Taskoo_CS554_Final.git
 ```
 - Initialization
 ```
-cd /Taskoo_CS554_Final/back-end
+cd .\Taskoo_CS554_Final\back-end
 npm install
 #this usually take more than 1 minutes, please wait for it end
 npm run seed
-cd ../front-end
+cd ..\front-end
 npm install 
 ```
 
@@ -61,11 +61,10 @@ npm install
 # open two terminals to run these commands seperately, CTRL + C will close the project.
 
 # terminal 1
-cd ./back-end
+cd .\back-end
 npm start 
 
-
-cd ./front-end
+cd .\front-end
 npm start
 ```
 
