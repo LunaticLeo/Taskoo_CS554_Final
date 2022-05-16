@@ -15,11 +15,11 @@ This web application is used by organizations (company/university) to manage pro
 </p>
 
 ## Group Member
-Yufu Liao
-Shihao Xiong
-Peixi Dai
-Wenjing Zhou
-Shiling Ding
+Yufu Liao  
+Shihao Xiong  
+Peixi Dai  
+Wenjing Zhou  
+Shiling Ding  
 
 ## Tech Stack 💻
 * [React](https://reactjs.org/)
@@ -46,12 +46,12 @@ git clone https://github.com/liaoyufu-leo/StevensMarketPlace_CS_546_Group16_Fina
 ```
 - Initialization
 ```
-cd /Taskoo_CS554_Final
-npm install --prefix ./back-end
-npm install --prefix ./front-end
+cd /Taskoo_CS554_Final/back-end
+npm install
 #this usually take more than 1 minutes, please wait for it end
-npm run --prefix ./back-end seed
-npm start --prefix ./back-end
+npm run seed
+cd ../front-end
+npm install 
 ```
 
 ## Launch Application
@@ -59,8 +59,14 @@ npm start --prefix ./back-end
 # please make sure you are in the project root path first
 # please make sure the 3000 & 4000 ports are not used first
 # open two terminals to run these commands seperately, CTRL + C will close the project.
-npm start --prefix ./back-end
-npm start --prefix ./front-end
+
+# terminal 1
+cd ./back-end
+npm start 
+
+
+cd ./front-end
+npm start
 ```
 
 Once commands run successfully, you can see the website in [localhost:3000](http://localhost:3000/)
