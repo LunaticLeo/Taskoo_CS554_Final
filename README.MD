@@ -17,7 +17,7 @@ This web application is used by organizations (company/university) to manage pro
 ## Group Member
 Yufu Liao  
 Shihao Xiong  
-Peixi Dai  
+Peixin Dai  
 Wenjing Zhou  
 Shiling Ding  
 
